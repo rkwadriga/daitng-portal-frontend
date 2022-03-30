@@ -1,1 +1,2 @@
-<p>{{user ? user.fullNameAndEmail : 'Not logged'}}</p>
+<h2 *ngIf="user">{{user.fullName}}</h2>
+<h2 *ngIf="!user">Not logged</h2>

@@ -10,22 +10,16 @@ export interface LoginParams extends KeyValueInterface {
     password: string
 }
 
-export interface Token extends KeyValueInterface {
-    accessToken: string,
-    refreshToken: string
-}
-
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
+    private userEntity?: User;
+
     constructor(
         private readonly api: ApiClient,
         private readonly logger: Logger
-    ) { }
-
-    public token?: Token;
-    public user?: User;
+    ) {}
 
     async login(params: LoginParams): Promise<User> {
         const response = await this.api.call(apiUrls.login, params);
@@ -35,14 +29,27 @@ export class UserService {
             throw new Error(message);
         }
 
-        this.token = response.body.token;
+        this.api.setToken(response.body.token);
+        this.logger.log(`User ${params.username} successfully logged in.`, response.body.token);
 
-        this.logger.log(`User ${params.username} successfully logged in.`, this.token);
-
-        return this.user = Object.assign(new User('', ''), response.body);
+        return this.userEntity = Object.assign(new User('', ''), response.body);
     }
 
     get isLogged(): boolean {
-        return this.token !== undefined;
+        return this.api.token !== undefined;
+    }
+
+    async getUser(): Promise<User> {
+        if (this.userEntity !== undefined) {
+            return new Promise<User>(() => this.userEntity);
+        }
+        const response = await this.api.call(apiUrls.userInfo);
+        if (!response.ok) {
+            const message = `Can not get user info: ${response.error?.message}.`;
+            this.logger.log(message, response.error);
+            throw new Error(message);
+        }
+
+        return this.userEntity = Object.assign(new User('', ''), response.body);
     }
 }

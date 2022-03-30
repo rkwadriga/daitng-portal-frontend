@@ -22,18 +22,32 @@ interface Response {
     error?: ErrorResponse
 }
 
+export interface Token extends KeyValueInterface {
+    accessToken: string,
+    refreshToken: string
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class ApiClient {
     private baseUrl: string;
-    private token?: string;
+    public token?: Token;
 
     constructor(
         private readonly http: HttpClient,
         private readonly logger: Logger
     ) {
         this.baseUrl = environment.apiUrl;
+        const token = localStorage.getItem('UserService.token');
+        if (token !== null) {
+            this.token = JSON.parse(token);
+        }
+    }
+
+    setToken(token: Token): void {
+        this.token = token;
+        localStorage.setItem('UserService.token', JSON.stringify(this.token));
     }
 
     async call(apiUrl: ApiUrl, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
@@ -48,8 +62,8 @@ export class ApiClient {
         if (headers === undefined) {
             headers = {};
         }
-        if (this.token && headers['Authorization'] === undefined) {
-            headers['Authorization'] = `Bearer ${this.token}`;
+        if (this.token !== undefined && headers['Authorization'] === undefined) {
+            headers['Authorization'] = `Bearer ${this.token.accessToken}`;
         }
 
         const requestParams = {body: body, headers: headers};

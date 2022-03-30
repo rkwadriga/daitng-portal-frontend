@@ -17,5 +17,9 @@ export const apiUrls = {
     login: {
         method: RequestMethods.POST,
         path: '/auth/login'
+    },
+    userInfo: {
+        method: RequestMethods.GET,
+        path: '/profile'
     }
 };

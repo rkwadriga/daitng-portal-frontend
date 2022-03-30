@@ -17,12 +17,12 @@ export class AccountsComponent implements OnInit {
     ) { }
 
     async ngOnInit(): Promise<void> {
-        /*if (!this.userService.isLogged) {
+        if (!this.userService.isLogged) {
             // Go to the login page
             await this.router.navigate(['/auth', 'login']);
             return;
-        }*/
-        this.user = this.userService.user;
-    }
+        }
 
+        this.user = await this.userService.getUser();
+    }
 }
