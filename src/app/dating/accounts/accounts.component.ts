@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {UserService} from "../../services/UserService";
 import {User} from "../../auth/user.entity";
-import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-accounts',
@@ -12,17 +11,10 @@ export class AccountsComponent implements OnInit {
     user?: User;
 
     constructor(
-        private readonly userService: UserService,
-        private readonly router: Router
+        private readonly userService: UserService
     ) { }
 
     async ngOnInit(): Promise<void> {
-        if (!this.userService.isLogged) {
-            // Go to the login page
-            await this.router.navigate(['/auth', 'login']);
-            return;
-        }
-
         this.user = await this.userService.getUser();
     }
 }

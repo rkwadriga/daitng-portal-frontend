@@ -11,8 +11,8 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
     loginParams = {
-        email: 'user1@mail.com',
-        password: 'test'
+        email: '',
+        password: ''
     };
 
     validationForm = new FormGroup({
@@ -53,6 +53,7 @@ export class LoginComponent {
         await this.userService.login(loginParams);
 
         // Go to the accounts list page
-        return await this.router.navigate(['/dating', 'accounts']);
+        await this.router.navigate(['/dating', 'accounts']);
+        window.location.reload();
     }
 }

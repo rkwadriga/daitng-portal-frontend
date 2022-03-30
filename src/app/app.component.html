@@ -1,6 +1,6 @@
 <nav class="nav grey lighten-4 py-4">
-  <a class="nav-link" routerLink="/">Home</a>
-  <a class="nav-link" routerLink="/auth">Authenticate</a>
+  <a class="nav-link" routerLink="/" *ngIf="user">Home</a>
+  <a class="nav-link" href="javascript:;" rel="nofollow" *ngIf="user" (click)="logout()">Logout</a>
 </nav>
 
 <div class="container">
