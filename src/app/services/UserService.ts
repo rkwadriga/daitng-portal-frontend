@@ -21,7 +21,15 @@ export class UserService {
         private readonly logger: Logger
     ) {}
 
+    get isLogged(): boolean {
+        return this.api.token !== undefined;
+    }
+
     async login(params: LoginParams): Promise<User> {
+        // Logout current user
+        this.logout();
+
+        // Make "POST /auth/login" request
         const response = await this.api.call(apiUrls.login, params);
         if (!response.ok) {
             const message = `Can not login user ${params.username}: ${response.error?.message}.`;
@@ -29,14 +37,19 @@ export class UserService {
             throw new Error(message);
         }
 
+        // Remember the token
         this.api.setToken(response.body.token);
         this.logger.log(`User ${params.username} successfully logged in.`, response.body.token);
 
-        return this.userEntity = Object.assign(new User('', ''), response.body);
+        // Get user info
+        return await this.getUser();
     }
 
-    get isLogged(): boolean {
-        return this.api.token !== undefined;
+    logout(): void {
+        this.userEntity = undefined;
+        if (this.isLogged) {
+            this.api.setToken(undefined);
+        }
     }
 
     async getUser(): Promise<User> {

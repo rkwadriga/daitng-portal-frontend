@@ -45,9 +45,13 @@ export class ApiClient {
         }
     }
 
-    setToken(token: Token): void {
+    setToken(token?: Token): void {
         this.token = token;
-        localStorage.setItem('UserService.token', JSON.stringify(this.token));
+        if (this.token === undefined) {
+            localStorage.removeItem('UserService.token');
+        } else {
+            localStorage.setItem('UserService.token', JSON.stringify(this.token));
+        }
     }
 
     async call(apiUrl: ApiUrl, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
