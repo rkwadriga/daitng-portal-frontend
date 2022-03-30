@@ -25,6 +25,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { DatingComponent } from './dating/dating.component';
 import { AccountsComponent } from './dating/accounts/accounts.component';
+import { ImgPipe } from './pipes/img.pipe';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import { AccountsComponent } from './dating/accounts/accounts.component';
         LoginComponent,
         RegistrationComponent,
         DatingComponent,
-        AccountsComponent
+        AccountsComponent,
+        ImgPipe
     ],
     imports: [
         BrowserModule,

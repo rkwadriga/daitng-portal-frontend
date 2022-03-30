@@ -30,7 +30,11 @@ const routes: Routes = [
                 component: AccountsComponent
             }
         ]
-    }
+    },
+    {
+        path: '**',
+        component: AccountsComponent
+    },
 ];
 
 @NgModule({
