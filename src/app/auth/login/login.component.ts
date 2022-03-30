@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {Logger} from "../../services/Logger";
+import {ApiClient} from "../../services/ApiClient";
 
 @Component({
     selector: 'auth-login',
@@ -23,18 +25,22 @@ export class LoginComponent {
         ])
     });
 
-    constructor() { }
+    constructor(
+        private readonly api: ApiClient,
+        private readonly logger: Logger
+    ) { }
 
-    onSubmit() {
+    async onSubmit() {
         const loginParams = {
-            email: this.email?.valid ? this.email?.value : null,
+            username: this.email?.valid ? this.email?.value : null,
             password: this.password?.valid ? this.password?.value : null
         };
-        if (!loginParams.email || !loginParams.password) {
+        if (!loginParams.username || !loginParams.password) {
             throw new Error('Invalid login params');
         }
 
-        console.log(loginParams);
+        const result = await this.api.post('/auth/login', loginParams);
+        this.logger.log(result.body);
     }
 
     get email() {
