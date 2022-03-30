@@ -41,7 +41,7 @@ export class UserService {
 
     async getUser(): Promise<User> {
         if (this.userEntity !== undefined) {
-            return new Promise<User>(() => this.userEntity);
+            return this.userEntity;
         }
         const response = await this.api.call(apiUrls.userInfo);
         if (!response.ok) {
