@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Logger } from "../../services/Logger";
 import { ApiClient } from "../../services/ApiClient";
-import { apiUrls } from "../../config/api";
+import {UserService} from "../../services/UserService";
 
 @Component({
     selector: 'auth-login',
@@ -28,6 +28,7 @@ export class LoginComponent {
 
     constructor(
         private readonly api: ApiClient,
+        private readonly userService: UserService,
         private readonly logger: Logger
     ) { }
 
@@ -48,7 +49,7 @@ export class LoginComponent {
             throw new Error('Invalid login params');
         }
 
-        const result = await this.api.call(apiUrls.login, loginParams);
-        this.logger.log(result.body);
+        const user = await this.userService.login(loginParams);
+        console.log(user.fullNameAndEmail);
     }
 }
