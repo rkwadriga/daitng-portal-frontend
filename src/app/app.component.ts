@@ -10,6 +10,7 @@ styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
     title = 'daitng-portal-frontend';
+    showUserLinks = false;
 
     user?: User;
 
@@ -25,7 +26,6 @@ export class AppComponent implements OnInit{
             return;
         }
 
-        console.log('AppComponent');
         this.user = await this.userService.getUser();
     }
 
@@ -34,5 +34,9 @@ export class AppComponent implements OnInit{
         this.userService.logout();
 
         return await this.router.navigate(['/auth', 'login']);
+    }
+
+    toggleUserLinks() {
+        this.showUserLinks = !this.showUserLinks;
     }
 }
