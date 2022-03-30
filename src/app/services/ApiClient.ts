@@ -3,6 +3,8 @@ import { Injectable } from "@angular/core";
 import { Logger } from "./Logger";
 import { firstValueFrom } from 'rxjs';
 import { KeyValueInterface } from '../interfaces/keyvalue.interface';
+import { environment } from '../../environments/environment';
+import { ApiUrl } from "../config/api";
 
 interface ErrorResponse {
     statusCode: number,
@@ -24,18 +26,20 @@ interface Response {
     providedIn: 'root'
 })
 export class ApiClient {
-    private baseUrl = 'http://localhost:3000/api';
+    private baseUrl: string;
     private token?: string;
 
     constructor(
         private readonly http: HttpClient,
         private readonly logger: Logger
-    ) { }
+    ) {
+        this.baseUrl = environment.apiUrl;
+    }
 
-    async post(url: string, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
-        url = this.baseUrl + url;
-        const apiUrl = `GET ${url}`;
-        this.logger.log(`Send request ${apiUrl}`);
+    async call(apiUrl: ApiUrl, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
+        const url = this.baseUrl + apiUrl.path;
+        const apiRequest = `GET ${url}`;
+        this.logger.log(`Send request ${apiRequest}`);
 
         if (body === undefined) {
             body = {};
@@ -48,7 +52,8 @@ export class ApiClient {
             headers['Authorization'] = `Bearer ${this.token}`;
         }
 
-        const request = this.http.post<Response>(url, body, {headers: headers});
+        const requestParams = {body: body, headers: headers};
+        const request = this.http.request<Response>(apiUrl.method, url, requestParams);
 
         const response = await firstValueFrom(request).catch((response: Response) => {
             if (!response.error) {
@@ -60,14 +65,14 @@ export class ApiClient {
             }
             response.message = response.error.message;
 
-            this.logger.log(`Request ${apiUrl} failed`, response)
+            this.logger.log(`Request ${apiRequest} failed (${response.error.statusCode})`, response)
 
             return response;
         });
 
-        if (response.status === undefined && response.ok === undefined) {
-            this.logger.log(`Request ${apiUrl} successful`, response)
+        this.logger.log(`Request ${apiRequest} successful`, response);
 
+        if (response.status === undefined && response.ok === undefined) {
             return {
                 url: url,
                 ok: true,
