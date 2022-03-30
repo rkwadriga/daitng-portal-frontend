@@ -23,13 +23,17 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { DatingComponent } from './dating/dating.component';
+import { AccountsComponent } from './dating/accounts/accounts.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AuthComponent,
         LoginComponent,
-        RegistrationComponent
+        RegistrationComponent,
+        DatingComponent,
+        AccountsComponent
     ],
     imports: [
         BrowserModule,

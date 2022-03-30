@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { Logger } from "../../services/Logger";
 import { ApiClient } from "../../services/ApiClient";
-import {UserService} from "../../services/UserService";
+import { UserService } from "../../services/UserService";
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'auth-login',
@@ -29,7 +29,7 @@ export class LoginComponent {
     constructor(
         private readonly api: ApiClient,
         private readonly userService: UserService,
-        private readonly logger: Logger
+        private readonly router: Router
     ) { }
 
     get email() {
@@ -49,7 +49,10 @@ export class LoginComponent {
             throw new Error('Invalid login params');
         }
 
-        const user = await this.userService.login(loginParams);
-        console.log(user.fullNameAndEmail);
+        // Login user
+        await this.userService.login(loginParams);
+
+        // Go to the accounts list page
+        return await this.router.navigate(['/dating', 'accounts']);
     }
 }

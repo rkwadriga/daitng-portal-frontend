@@ -41,4 +41,8 @@ export class UserService {
 
         return this.user = Object.assign(new User('', ''), response.body);
     }
+
+    get isLogged(): boolean {
+        return this.token !== undefined;
+    }
 }
