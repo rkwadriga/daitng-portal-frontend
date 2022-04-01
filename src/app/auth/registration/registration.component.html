@@ -1,1 +1,74 @@
-<h2>Registration</h2>
+<!-- Registration form -->
+<form
+    class="text-center border border-light p-4"
+    [formGroup]="validationForm"
+    (ngSubmit)="onSubmit()"
+>
+    <p class="h4 mb-4">Sign up</p>
+
+    <!-- Email -->
+    <div class="md-form mb-4">
+        <input
+            type="email"
+            class="form-control"
+            placeholder="E-mail"
+            formControlName="email"
+        />
+        <div *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+            <div class="error-message-1">
+                {{ email?.errors?.['required'] ? 'Email is required' : 'Invalid email' }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Password -->
+    <div class="md-form mb-4">
+        <input
+            type="password"
+            class="form-control"
+            placeholder="Password"
+            formControlName="password"
+        />
+        <div *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+            <div *ngIf="password?.errors?.['required']" class="error-message-1">
+                Password is required.
+            </div>
+            <div *ngIf="password?.errors?.['minlength']" class="error-message-1">
+                Password must be at least {{password?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+        </div>
+    </div>
+
+    <!-- Retype Password -->
+    <div class="md-form mb-4">
+        <input
+            type="password"
+            class="form-control"
+            placeholder="Retype Password"
+            formControlName="retypePassword"
+        />
+        <div *ngIf="retypePassword?.invalid && (retypePassword?.dirty || retypePassword?.touched)">
+            <div *ngIf="retypePassword?.errors?.['required']" class="error-message-1">
+                Password is required.
+            </div>
+            <div *ngIf="retypePassword?.errors?.['minlength']" class="error-message-1">
+                Password must be at least {{retypePassword?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="retypePassword?.errors?.['passwordsComparison']">
+                Passwords doesn't match
+            </div>
+        </div>
+    </div>
+
+    <button
+        mdbBtn
+        color="info"
+        block="true"
+        class="my-4"
+        type="submit"
+        [disabled]="!validationForm.valid"
+    >
+        Sign up
+    </button>
+</form>
+<!-- /Registration form -->

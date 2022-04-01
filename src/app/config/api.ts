@@ -18,6 +18,10 @@ export const apiUrls = {
         method: RequestMethods.POST,
         path: '/auth/login'
     },
+    registration: {
+        method: RequestMethods.POST,
+        path: '/auth/registration'
+    },
     userInfo: {
         method: RequestMethods.GET,
         path: '/profile'

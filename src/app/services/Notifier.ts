@@ -6,7 +6,7 @@ import { Response as HttpResponse } from './ApiClient';
 })
 export class Notifier {
     error (message: HttpResponse | string): void {
-        //const msg = typeof message === 'string' ? message : `${message.message} (${message.status})`;
-        //alert(msg);
+        const msg = typeof message === 'string' ? message : `${message.message} (${message.status})`;
+        alert(msg);
     }
 }
