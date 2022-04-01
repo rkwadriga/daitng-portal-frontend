@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {StaticService} from "../services/StaticService";
+import {User} from "../auth/user.entity";
 
 @Pipe({
     name: 'img'
@@ -9,8 +10,7 @@ export class ImgPipe implements PipeTransform {
         private readonly staticService: StaticService
     ) { }
 
-    transform(path?: string, ...args: unknown[]): string {
-        return path !== undefined ? this.staticService.getUrl(path) : '';
+    transform(user: User, ...args: unknown[]): string {
+        return this.staticService.getImgUrl(user);
     }
-
 }

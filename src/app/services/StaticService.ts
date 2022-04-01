@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import {environment} from "../../environments/environment";
+import {User} from "../auth/user.entity";
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,7 @@ export class StaticService {
         this.baseUrl = environment.staticUrl;
     }
 
-    public getUrl(path: string): string {
-        return this.baseUrl + path;
+    public getImgUrl(user: User): string {
+        return user.avatar !== undefined ? `${this.baseUrl}/img/${user.id}/${user.avatar}` : '';
     }
 }

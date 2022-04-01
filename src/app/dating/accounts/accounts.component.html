@@ -1,5 +1,5 @@
 <h2 *ngIf="user">
     <p>{{ user.fullNameAndEmail }}</p>
-    <img src="{{ user?.avatar | img }}" />
+    <img src="{{ user | img }}" />
 </h2>
 <h2 *ngIf="!user">Not logged</h2>
