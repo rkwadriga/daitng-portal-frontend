@@ -70,13 +70,11 @@ export class UserService {
             throw new Error(message);
         }
 
-        this.userEntity = Object.assign<User, User>(new User('', ''), response.body);
-        this.setUser(this.userEntity);
-        return this.userEntity;
+        return this.setUser(Object.assign(new User('', ''), response.body));
     }
 
-    public setUser(user: User): void {
-        this.userEntity = user;
-        localStorage.setItem('Current_user', JSON.stringify(this.userEntity));
+    public setUser(user: User): User {
+        localStorage.setItem('Current_user', JSON.stringify(user));
+        return this.userEntity = user;
     }
 }
