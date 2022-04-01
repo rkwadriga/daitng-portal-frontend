@@ -4,6 +4,7 @@ import { apiUrls } from "../../config/api";
 import {Notifier} from "../../services/Notifier";
 import { routes } from "../../config/routes";
 import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
+import {Gender} from "../../profile/gender.enum";
 
 @Component({
     selector: 'auth-registration',
@@ -12,14 +13,28 @@ import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErr
 })
 export class RegistrationComponent {
     routes = routes;
+    genders = [
+        {
+            name: Gender.Male,
+            value: Gender.Male
+        },
+        {
+            name: Gender.Female,
+            value: Gender.Female
+        },
+        {
+            name: Gender.Other,
+            value: Gender.Other
+        }
+    ];
 
     registrationParams = {
-        email: 'user1@mail.com',
+        email: 'user3@mail.com',
         password: 'test',
-        retypePassword: '1234',
-        firstName: '',
-        lastName: '',
-        gender: '',
+        retypePassword: 'test',
+        firstName: 'User',
+        lastName: 'Third',
+        gender: Gender.Other,
         birthday: ''
     }
 
@@ -44,10 +59,7 @@ export class RegistrationComponent {
             Validators.minLength(2),
             Validators.maxLength(50),
         ]),
-        gender: new FormControl(this.registrationParams.gender, [
-            Validators.minLength(4),
-            Validators.maxLength(6),
-        ]),
+        gender: new FormControl(this.registrationParams.gender, [], this.genderValidator),
         birthday: new FormControl(this.registrationParams.birthday, [
             Validators.minLength(10), // 2001-02-01
             Validators.maxLength(10), // 2005-10-11
@@ -70,6 +82,17 @@ export class RegistrationComponent {
 
             return group.setErrors({
                 'passwordsComparison': true
+            });
+        });
+    }
+
+    async genderValidator (group: AbstractControl): Promise<ValidationErrors | null> {
+        return new Promise(() => {
+            if (group.value === Gender.Male || group.value === Gender.Female || group.value === Gender.Other) {
+                return null;
+            }
+            return group.setErrors({
+                'genderIsCorrect': true
             });
         });
     }
