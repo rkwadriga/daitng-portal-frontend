@@ -12,7 +12,7 @@ interface ErrorResponse {
     error: string
 }
 
-interface Response {
+export interface Response {
     url: string,
     ok: boolean,
     status: number,

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from "../../services/UserService";
-import {User} from "../../auth/user.entity";
+import {ApiClient} from "../../services/ApiClient";
+import {apiUrls} from "../../config/api";
+import {Account} from "./account.entity";
+import {Notifier} from "../../services/Notifier";
+import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
 
 @Component({
     selector: 'app-accounts',
@@ -8,13 +11,22 @@ import {User} from "../../auth/user.entity";
     styleUrls: ['./accounts.component.scss']
 })
 export class AccountsComponent implements OnInit {
-    user?: User;
+    accounts: Account[] = [];
 
     constructor(
-        private readonly userService: UserService
+        private readonly api: ApiClient,
+        private readonly notifier: Notifier
     ) { }
 
-    async ngOnInit(): Promise<void> {
-        this.user = await this.userService.getUser();
+    async ngOnInit() {
+        const resp = await this.api.call(apiUrls.accountsList);
+        if (!resp.ok) {
+            this.notifier.error(resp);
+            return;
+        }
+        resp.body.forEach((params: KeyValueInterface) => {
+            this.accounts.push(new Account(params))
+        })
+        console.log(this.accounts);
     }
 }

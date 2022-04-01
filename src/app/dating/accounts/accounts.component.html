@@ -1,5 +1,1 @@
-<h2 *ngIf="user">
-    <p>{{ user.fullNameAndEmail }}</p>
-    <img src="{{ user | img:user.avatar }}" />
-</h2>
-<h2 *ngIf="!user">Not logged</h2>
+<p *ngFor="let account of accounts">{{account | json}}</p>

@@ -21,5 +21,9 @@ export const apiUrls = {
     userInfo: {
         method: RequestMethods.GET,
         path: '/profile'
+    },
+    accountsList: {
+        method: RequestMethods.GET,
+        path: '/profiles'
     }
 };

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Logger } from "./Logger";
 import { ApiClient } from "./ApiClient";
 import { apiUrls } from "../config/api";
-import {KeyValueInterface} from "../interfaces/keyvalue.interface";
+import { KeyValueInterface } from "../interfaces/keyvalue.interface";
 import { User } from "../auth/user.entity";
 
 export interface LoginParams extends KeyValueInterface {
