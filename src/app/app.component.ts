@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {User} from "./auth/user.entity";
-import {UserService} from "./services/UserService";
-import {Router} from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { User } from "./auth/user.entity";
+import { UserService } from "./services/UserService";
+import { Router } from "@angular/router";
+import { Location } from '@angular/common';
+import { routes } from "./config/routes";
 
 @Component({
 selector: 'app-root',
@@ -10,19 +12,25 @@ styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
     title = 'daitng-portal-frontend';
+    routes = routes;
+
     showUserLinks = false;
 
     user?: User;
 
     constructor(
         private readonly userService: UserService,
-        private readonly router: Router
-    ) {}
+        private readonly router: Router,
+        private readonly location: Location
+    ) { }
 
     async ngOnInit() {
         if (!this.userService.isLogged) {
             // Go to the login page
-            await this.router.navigate(['/auth', 'login']);
+            const currentPath = this.location.path();
+            if (currentPath !== this.routes.authLogin && currentPath !== this.routes.authRegistration) {
+                await this.router.navigateByUrl(this.routes.authLogin);
+            }
             return;
         }
 

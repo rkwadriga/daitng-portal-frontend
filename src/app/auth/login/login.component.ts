@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ApiClient } from "../../services/ApiClient";
 import { UserService } from "../../services/UserService";
 import { Router } from '@angular/router';
+import { routes } from "../../config/routes";
 
 @Component({
     selector: 'auth-login',
@@ -10,6 +11,8 @@ import { Router } from '@angular/router';
     styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+    routes = routes;
+
     loginParams = {
         email: '',
         password: ''
