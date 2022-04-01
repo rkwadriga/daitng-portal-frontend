@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { ApiClient } from "../../services/ApiClient";
 import { apiUrls } from "../../config/api";
-import {Notifier} from "../../services/Notifier";
+import { Notifier } from "../../services/Notifier";
 import { routes } from "../../config/routes";
-import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {Gender} from "../../profile/gender.enum";
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { Gender } from "../../profile/gender.enum";
+import { environment } from "../../../environments/environment";
+import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import {Router} from "@angular/router";
+import {Logger} from "../../services/Logger";
 
 @Component({
     selector: 'auth-registration',
@@ -29,11 +33,11 @@ export class RegistrationComponent {
     ];
 
     registrationParams = {
-        email: 'user3@mail.com',
-        password: 'test',
-        retypePassword: 'test',
-        firstName: 'User',
-        lastName: 'Third',
+        email: '',
+        password: '',
+        retypedPassword: '',
+        firstName: '',
+        lastName: '',
         gender: Gender.Other,
         birthday: ''
     }
@@ -47,10 +51,11 @@ export class RegistrationComponent {
             Validators.required,
             Validators.minLength(4)
         ]),
-        retypePassword: new FormControl(this.registrationParams.retypePassword, [
+        retypedPassword: new FormControl(this.registrationParams.retypedPassword, [
             Validators.required,
-            Validators.minLength(4)
-        ], this.retypePasswordValidator),
+            Validators.minLength(4),
+            this.retypePasswordValidator
+        ]),
         firstName: new FormControl(this.registrationParams.firstName, [
             Validators.minLength(2),
             Validators.maxLength(50),
@@ -59,42 +64,50 @@ export class RegistrationComponent {
             Validators.minLength(2),
             Validators.maxLength(50),
         ]),
-        gender: new FormControl(this.registrationParams.gender, [], this.genderValidator),
+        gender: new FormControl(this.registrationParams.gender, [this.genderValidator]),
         birthday: new FormControl(this.registrationParams.birthday, [
-            Validators.minLength(10), // 2001-02-01
-            Validators.maxLength(10), // 2005-10-11
+            Validators.required,
+            Validators.pattern(dateFormatPattern),
+            this.dateValidator,
+            this.ageValidator
         ]),
     });
 
     constructor(
         private readonly api: ApiClient,
-        private readonly notifier: Notifier
+        private readonly router: Router,
+        private readonly notifier: Notifier,
+        private readonly logger: Logger
     ) { }
 
-    async retypePasswordValidator (group: AbstractControl): Promise<ValidationErrors | null> {
+    retypePasswordValidator (group: AbstractControl): ValidationErrors | null {
         const password = group.parent?.get('password')?.value;
         const retypePassword = group.value;
-
-        return new Promise(() => {
-            if (password === null || retypePassword === null || password === retypePassword) {
-                return null;
-            }
-
-            return group.setErrors({
-                'passwordsComparison': true
-            });
-        });
+        if (password === null || retypePassword === null || password === retypePassword) {
+            return null;
+        } else {
+            return  {passwordsComparison: true};
+        }
     }
 
-    async genderValidator (group: AbstractControl): Promise<ValidationErrors | null> {
-        return new Promise(() => {
-            if (group.value === Gender.Male || group.value === Gender.Female || group.value === Gender.Other) {
-                return null;
+    genderValidator (group: AbstractControl): ValidationErrors | null {
+        const result = group.value === Gender.Male || group.value === Gender.Female || group.value === Gender.Other;
+        return result ? null : {genderIsCorrect: true};
+    }
+
+    dateValidator (group: AbstractControl): ValidationErrors | null {
+        return isDateValid(group.value) ? null : {dateValidation: true};
+    }
+
+    ageValidator (group: AbstractControl): ValidationErrors | null {
+        const age = yearsFromDate(group.value);
+
+        return age >= environment.minAge ? null : {
+            ageValidation: {
+                actual: age,
+                min: environment.minAge
             }
-            return group.setErrors({
-                'genderIsCorrect': true
-            });
-        });
+        };
     }
 
     get email() {
@@ -105,8 +118,8 @@ export class RegistrationComponent {
         return this.validationForm.get('password');
     }
 
-    get retypePassword() {
-        return this.validationForm.get('retypePassword');
+    get retypedPassword() {
+        return this.validationForm.get('retypedPassword');
     }
 
     get firstName() {
@@ -126,6 +139,27 @@ export class RegistrationComponent {
     }
 
     async onSubmit() {
-        console.log(this.validationForm.value);
+        // Check form
+        if (!this.validationForm.valid) {
+            const errorMsg = JSON.stringify(this.validationForm.errors);
+            this.notifier.error(errorMsg);
+            throw new Error(errorMsg);
+        }
+
+        // Register user
+        const result = await this.api.call(apiUrls.registration, this.validationForm.value);
+        if (!result.ok) {
+            this.notifier.error(result);
+            throw new Error(result.error?.message);
+        }
+
+        this.logger.log(`User ${result.body.email} successful signed up`);
+
+        // Remember user's token
+        this.api.setToken(result.body.token);
+
+        // Go to the accounts list page
+        await this.router.navigateByUrl(routes.datingAccounts);
+        window.location.reload();
     }
 }

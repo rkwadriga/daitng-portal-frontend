@@ -45,16 +45,16 @@
             type="password"
             class="form-control"
             placeholder="Retype Password"
-            formControlName="retypePassword"
+            formControlName="retypedPassword"
         />
-        <div *ngIf="retypePassword?.invalid && (retypePassword?.dirty || retypePassword?.touched)">
-            <div *ngIf="retypePassword?.errors?.['required']" class="error-message-1">
+        <div *ngIf="retypedPassword?.invalid && (retypedPassword?.dirty || retypedPassword?.touched)">
+            <div *ngIf="retypedPassword?.errors?.['required']" class="error-message-1">
                 Password is required.
             </div>
-            <div *ngIf="retypePassword?.errors?.['minlength']" class="error-message-1">
-                Password must be at least {{retypePassword?.errors?.['minlength']?.['requiredLength']}} characters long.
+            <div *ngIf="retypedPassword?.errors?.['minlength']" class="error-message-1">
+                Password must be at least {{retypedPassword?.errors?.['minlength']?.['requiredLength']}} characters long.
             </div>
-            <div *ngIf="retypePassword?.errors?.['passwordsComparison']">
+            <div *ngIf="retypedPassword?.errors?.['passwordsComparison']">
                 Passwords doesn't match
             </div>
         </div>
@@ -96,6 +96,7 @@
         </div>
     </div>
 
+    <!-- Gender -->
     <div class="md-form mb-4">
         <label for="registration_form_gender_input">Gender</label>
         <select
@@ -108,6 +109,30 @@
         <div *ngIf="gender?.invalid && (gender?.dirty || gender?.touched)">
             <div *ngIf="gender?.errors?.['genderIsCorrect']" class="error-message-1">
                 Invalid gender value
+            </div>
+        </div>
+    </div>
+
+    <!-- Birthday -->
+    <div class="md-form mb-4">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Birthday"
+            formControlName="birthday"
+        />
+        <div *ngIf="birthday?.invalid && (birthday?.dirty || birthday?.touched)">
+            <div *ngIf="birthday?.errors?.['required']">
+                Birthday is required
+            </div>
+            <div *ngIf="birthday?.errors?.['pattern']">
+                Invalid birthday format. Correct format is "yyyy-mm-dd"
+            </div>
+            <div *ngIf="birthday?.errors?.['dateValidation']">
+                Invalid birthday date
+            </div>
+            <div *ngIf="birthday?.errors?.['ageValidation']">
+                You are too young to use this service, come back when you're {{ birthday?.errors?.['ageValidation']?.['min'] }}
             </div>
         </div>
     </div>

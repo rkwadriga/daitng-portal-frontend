@@ -4,7 +4,7 @@ import { Logger } from "./Logger";
 import { firstValueFrom } from 'rxjs';
 import { KeyValueInterface } from '../interfaces/keyvalue.interface';
 import { environment } from '../../environments/environment';
-import { ApiUrl } from "../config/api";
+import { ApiUrl, apiUrls } from "../config/api";
 
 interface ErrorResponse {
     statusCode: number,
@@ -56,7 +56,7 @@ export class ApiClient {
 
     async call(apiUrl: ApiUrl, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
         const url = this.baseUrl + apiUrl.path;
-        const apiRequest = `GET ${url}`;
+        const apiRequest = `${apiUrl.method} ${url}`;
         this.logger.log(`Send request ${apiRequest}`);
 
         if (body === undefined) {
@@ -66,7 +66,12 @@ export class ApiClient {
         if (headers === undefined) {
             headers = {};
         }
-        if (this.token !== undefined && headers['Authorization'] === undefined) {
+        if (
+            apiUrl.path !== apiUrls.login.path &&
+            apiUrl.path !== apiUrls.registration.path &&
+            this.token !== undefined &&
+            headers['Authorization'] === undefined
+        ) {
             headers['Authorization'] = `Bearer ${this.token.accessToken}`;
         }
 

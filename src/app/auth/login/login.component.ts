@@ -4,6 +4,7 @@ import { ApiClient } from "../../services/ApiClient";
 import { UserService } from "../../services/UserService";
 import { Router } from '@angular/router';
 import { routes } from "../../config/routes";
+import {Logger} from "../../services/Logger";
 
 @Component({
     selector: 'auth-login',
@@ -56,7 +57,7 @@ export class LoginComponent {
         await this.userService.login(loginParams);
 
         // Go to the accounts list page
-        await this.router.navigate(['/dating', 'accounts']);
+        await this.router.navigateByUrl(routes.datingAccounts);
         window.location.reload();
     }
 }
