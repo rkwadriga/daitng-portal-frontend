@@ -4,7 +4,6 @@ import { ApiClient } from "../../services/ApiClient";
 import { UserService } from "../../services/UserService";
 import { Router } from '@angular/router';
 import { routes } from "../../config/routes";
-import {Logger} from "../../services/Logger";
 
 @Component({
     selector: 'auth-login',

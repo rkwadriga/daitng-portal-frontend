@@ -47,6 +47,7 @@ export class UserService {
 
     logout(): void {
         this.userEntity = undefined;
+        localStorage.removeItem('Current_user');
         if (this.isLogged) {
             this.api.setToken(undefined);
         }
@@ -56,6 +57,12 @@ export class UserService {
         if (this.userEntity !== undefined) {
             return this.userEntity;
         }
+
+        const storageUser = localStorage.getItem('Current_user');
+        if (storageUser !== null) {
+            return this.userEntity = JSON.parse(storageUser);
+        }
+
         const response = await this.api.call(apiUrls.userInfo);
         if (!response.ok) {
             const message = `Can not get user info: ${response.error?.message}.`;
@@ -63,6 +70,13 @@ export class UserService {
             throw new Error(message);
         }
 
-        return this.userEntity = Object.assign(new User('', ''), response.body);
+        this.userEntity = Object.assign<User, User>(new User('', ''), response.body);
+        this.setUser(this.userEntity);
+        return this.userEntity;
+    }
+
+    public setUser(user: User): void {
+        this.userEntity = user;
+        localStorage.setItem('Current_user', JSON.stringify(this.userEntity));
     }
 }
