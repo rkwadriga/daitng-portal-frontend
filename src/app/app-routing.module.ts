@@ -5,6 +5,7 @@ import {LoginComponent} from "./auth/login/login.component";
 import {RegistrationComponent} from "./auth/registration/registration.component";
 import {DatingComponent} from "./dating/dating.component";
 import {AccountsComponent} from "./dating/accounts/accounts.component";
+import {ProfileComponent} from "./profile/profile.component";
 
 const routes: Routes = [
     {
@@ -30,6 +31,10 @@ const routes: Routes = [
                 component: AccountsComponent
             }
         ]
+    },
+    {
+        path: 'profile',
+        component: ProfileComponent
     },
     {
         path: '**',

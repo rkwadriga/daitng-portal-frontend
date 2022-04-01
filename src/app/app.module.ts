@@ -26,6 +26,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { DatingComponent } from './dating/dating.component';
 import { AccountsComponent } from './dating/accounts/accounts.component';
 import { ImgPipe } from './pipes/img.pipe';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import { ImgPipe } from './pipes/img.pipe';
         RegistrationComponent,
         DatingComponent,
         AccountsComponent,
-        ImgPipe
+        ImgPipe,
+        ProfileComponent
     ],
     imports: [
         BrowserModule,
