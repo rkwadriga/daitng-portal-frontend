@@ -10,7 +10,7 @@ export class ImgPipe implements PipeTransform {
         private readonly staticService: StaticService
     ) { }
 
-    transform(user: User, ...args: unknown[]): string {
-        return this.staticService.getImgUrl(user);
+    transform(user: User, path?: string): string {
+        return this.staticService.getImgUrl(user, path);
     }
 }
