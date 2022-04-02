@@ -96,6 +96,11 @@ export class ImagesComponent implements OnInit {
         reader.readAsDataURL(file);
     }
 
+    clickDeleteImg(name: string) {
+        this.filesNames[name] = false;
+        this.files = this.files.filter(file => file.name !== name);
+    }
+
     async onSave() {
         console.log(this.user?.avatar);
     }

@@ -16,7 +16,8 @@
 </form>
 
 <div class="row">
-    <div class="col-lg-10 col-md-12 mb-4 mb-lg-0">
-        <img *ngFor="let file of files" class="img-fluid w-10 shadow-1-strong rounded mb-4" [src]="file.src" alt="{{file.name}}" />
+    <div *ngFor="let file of files" class="col-sm-3 d-flex flex-row-reverse">
+        <button type="button" class="btn-close btn-close-black" aria-label="Close" (click)="clickDeleteImg(file.name)"></button>
+        <img [src]="file.src" alt="{{file.name}}" class="img-fluid" />
     </div>
 </div>
