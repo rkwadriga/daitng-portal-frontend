@@ -13,7 +13,5 @@ export const bytesToReadable = (bytes: number, decimals = 2): string => {
     } else {
         sizeText = Math.round(size).toString() + ' B';
     }
-
-    // toFixed(2)
     return sizeText;
 }

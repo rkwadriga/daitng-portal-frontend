@@ -1,0 +1,20 @@
+<form
+    class="text-center border border-light p-4"
+>
+    <!-- File input -->
+    <div class="md-form mb-4">
+        <label for="profile_image_input" class="form-label">Upload image</label>
+        <input
+            id="profile_image_input"
+            class="form-control"
+            type="file"
+            name="file"
+            multiple
+            (change)="onFileSelected($event)"
+        />
+    </div>
+    <div *ngFor="let file of files">
+        <img [src]="file.src" alt="{{file.name}}" height="120" />
+    </div>
+
+</form>

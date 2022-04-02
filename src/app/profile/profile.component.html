@@ -1,23 +1,5 @@
-<form
-    class="text-center border border-light p-4"
->
-    <p class="h4 mb-4">Profile</p>
+<h4>My Profile</h4>
 
-    <!-- File input -->
-    <div class="md-form mb-4">
-        <label for="profile_image_input" class="form-label">Upload image</label>
-        <input
-            id="profile_image_input"
-            class="form-control"
-            type="file"
-            name="file"
-            multiple
-            (change)="onFileSelected($event)"
-        />
-    </div>
-    <div *ngFor="let file of files">
-        <img [src]="file.src" alt="{{file.name}}" height="120" />
-    </div>
+<a class="nav-link" routerLink="{{ routes.myImages }}">My Images</a>
 
-</form>
-
+<router-outlet></router-outlet>

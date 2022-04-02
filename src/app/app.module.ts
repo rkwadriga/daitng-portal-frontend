@@ -27,6 +27,7 @@ import { DatingComponent } from './dating/dating.component';
 import { AccountsComponent } from './dating/accounts/accounts.component';
 import { ImgPipe } from './pipes/img.pipe';
 import { ProfileComponent } from './profile/profile.component';
+import { ImagesComponent } from './profile/images/images.component';
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import { ProfileComponent } from './profile/profile.component';
         DatingComponent,
         AccountsComponent,
         ImgPipe,
-        ProfileComponent
+        ProfileComponent,
+        ImagesComponent
     ],
     imports: [
         BrowserModule,

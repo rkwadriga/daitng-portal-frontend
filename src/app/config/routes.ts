@@ -3,5 +3,6 @@ export const routes = {
     authLogin: '/auth/login',
     authRegistration: '/auth/registration',
     myProfile: '/profile',
+    myImages: '/profile/images',
     datingAccounts: '/dating/accounts',
 }
