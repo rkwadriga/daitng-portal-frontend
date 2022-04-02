@@ -60,7 +60,7 @@ export class UserService {
 
         const storageUser = localStorage.getItem('Current_user');
         if (storageUser !== null) {
-            return this.userEntity = JSON.parse(storageUser);
+            return this.userEntity = Object.assign(new User('', ''), JSON.parse(storageUser));
         }
 
         const response = await this.api.call(apiUrls.userInfo);
