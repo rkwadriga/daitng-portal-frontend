@@ -6,7 +6,9 @@ export class User {
         public lastName?: string,
         public avatar?: string,
         public gender?: string,
-        public age?: number
+        public age?: number,
+        public imagesLimit?: number,
+        public maximumImageSIze?: number
     ) {}
 
     get fullName(): string {

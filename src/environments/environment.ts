@@ -7,6 +7,8 @@ export const environment = {
     apiUrl: 'http://localhost:3000/api',
     staticUrl: 'http://localhost:3000/public',
     minAge: 18,
+    defaultUserImagesLimit: 10,
+    defaultUserMaximumImageSIze: 15728640 // 15 Mb
 };
 
 /*
