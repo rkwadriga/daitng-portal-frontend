@@ -26,6 +26,11 @@ export const apiUrls = {
         method: RequestMethods.GET,
         path: '/profile'
     },
+    userPhotos: {
+        method: RequestMethods.GET,
+        path: '/profile/:id/photos',
+        params: {id: ''}
+    },
     accountsList: {
         method: RequestMethods.GET,
         path: '/profiles'

@@ -7,6 +7,8 @@ import { Notifier } from "../../services/Notifier";
 import { FormControl } from "@angular/forms";
 import { environment } from "../../../environments/environment";
 import { bytesToReadable } from "../../helpers/string.helper";
+import {Photo} from "../photo.entity";
+import {StaticService} from "../../services/StaticService";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -32,13 +34,30 @@ export class ImagesComponent implements OnInit {
     constructor(
         private readonly userService: UserService,
         private readonly api: ApiClient,
+        private readonly staticService: StaticService,
         private readonly notifier: Notifier
     ) { }
 
     async ngOnInit() {
-        this.user = await this.userService.getUser();
+        const user = this.user = await this.userService.getUser();
         this.userImagesLimit = this.user.imagesLimit ?? environment.defaultUserImagesLimit;
         this.userMaximumImageSIze = this.user.maximumImageSIze ?? environment.defaultUserMaximumImageSIze;
+
+        // Add user id to "GET /account/:id/photos" url and get user's photos
+        apiUrls.userPhotos.params.id = user.id;
+        const response = await this.api.call(apiUrls.userPhotos);
+        if (!response.ok) {
+            this.notifier.error(response);
+            throw new Error(`Can not get user's photos: ${response.error?.message}`);
+        }
+
+        response.body.forEach((photo: Photo) => {
+            this.filesNames[photo.name] = true;
+            this.files.push({
+                name: photo.name,
+                src: this.staticService.getImgUrl(user, photo.name),
+            });
+        });
     }
 
     onFileSelected(event: any) {

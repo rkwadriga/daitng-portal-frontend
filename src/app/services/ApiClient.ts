@@ -55,9 +55,16 @@ export class ApiClient {
     }
 
     async call(apiUrl: ApiUrl, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
-        const url = this.baseUrl + apiUrl.path;
+        let url = this.baseUrl + apiUrl.path;
         const apiRequest = `${apiUrl.method} ${url}`;
         this.logger.log(`Send request ${apiRequest}`);
+
+        // Add rul params to url
+        if (apiUrl.params !== undefined) {
+            Object.keys(apiUrl.params).forEach(key => {
+                url = url.replace(`:${key}`, apiUrl.params?.[key] ?? '');
+            });
+        }
 
         if (body === undefined) {
             body = {};
