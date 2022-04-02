@@ -5,10 +5,10 @@ import { apiUrls } from "../../config/api";
 import { User } from "../../auth/user.entity";
 import { Notifier } from "../../services/Notifier";
 import { FormControl } from "@angular/forms";
-import { environment } from "../../../environments/environment";
 import { bytesToReadable } from "../../helpers/string.helper";
-import {Photo} from "../photo.entity";
-import {StaticService} from "../../services/StaticService";
+import { Photo } from "../photo.entity";
+import { StaticService } from "../../services/StaticService";
+import { userSettings } from "../../config/user.settings";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -39,9 +39,10 @@ export class ImagesComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
+        // Get current user and set user's photos limits
         const user = this.user = await this.userService.getUser();
-        this.userImagesLimit = this.user.imagesLimit ?? environment.defaultUserImagesLimit;
-        this.userMaximumImageSIze = this.user.maximumImageSIze ?? environment.defaultUserMaximumImageSIze;
+        this.userImagesLimit = this.user.imagesLimit ?? userSettings.defaultUserImagesLimit;
+        this.userMaximumImageSIze = this.user.maximumImageSIze ?? userSettings.defaultUserMaximumImageSIze;
 
         // Add user id to "GET /account/:id/photos" url and get user's photos
         apiUrls.userPhotos.params.id = user.id;
@@ -51,6 +52,7 @@ export class ImagesComponent implements OnInit {
             throw new Error(`Can not get user's photos: ${response.error?.message}`);
         }
 
+        // Add user's photos to page
         response.body.forEach((photo: Photo) => {
             this.filesNames[photo.name] = true;
             this.files.push({
