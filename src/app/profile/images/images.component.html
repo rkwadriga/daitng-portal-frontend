@@ -1,5 +1,5 @@
 <form
-    class="text-center border border-light p-4"
+    class="text-center border border-light"
 >
     <!-- File input -->
     <div class="md-form mb-4">
@@ -13,8 +13,10 @@
             (change)="onFileSelected($event)"
         />
     </div>
-    <div *ngFor="let file of files">
-        <img [src]="file.src" alt="{{file.name}}" height="120" />
-    </div>
-
 </form>
+
+<div class="row">
+    <div class="col-lg-10 col-md-12 mb-4 mb-lg-0">
+        <img *ngFor="let file of files" class="img-fluid w-10 shadow-1-strong rounded mb-4" [src]="file.src" alt="{{file.name}}" />
+    </div>
+</div>
