@@ -34,7 +34,8 @@ export class ImagesComponent implements OnInit {
     private filesNames: ControlFilesNamesInterface = {};
     private userImagesLimit = 0;
     private userMaximumImageSIze = 0;
-    private currentAvatar: Photo | null = null;
+    private currentAvatar: string | null = null;
+    private avatarIsChanged = false;
 
     constructor(
         private readonly userService: UserService,
@@ -68,9 +69,12 @@ export class ImagesComponent implements OnInit {
                 isUrl: true
             });
             if (photo.isAvatar) {
-                this.currentAvatar = photo;
+                this.currentAvatar = photo.name;
             }
         });
+
+        // If user has no avatar - that's mean than any new photo is an avatar and user's avatar is changed
+        this.avatarIsChanged = !user.avatar;
     }
 
     onFileSelected(event: any) {
@@ -115,11 +119,20 @@ export class ImagesComponent implements OnInit {
             if (file.name === name) {
                 if (file.isAvatar) {
                     this.currentAvatar = null;
+                    this.avatarIsChanged = true;
                 }
                 return false;
             } else {
                 return true;
             }
+        });
+    }
+
+    clickSetAvatar(name: string) {
+        this.avatarIsChanged = this.currentAvatar !== name;
+
+        this.files.forEach(file => {
+            file.isAvatar = file.name === name;
         });
     }
 
@@ -130,7 +143,6 @@ export class ImagesComponent implements OnInit {
         }
 
         // Set files base64 content to "src" attributes adn find a new avatar
-        let newAvatar: ImageFile | null = null;
         let requestBody: ImageFile[] = [];
         for (const file of this.files) {
             requestBody.push({
@@ -139,9 +151,6 @@ export class ImagesComponent implements OnInit {
                 isAvatar: file.isAvatar,
                 src: file.isUrl ? await getBase64FromUrl(file.src) : file.src
             });
-            if (file.isAvatar && !file.isUrl && this.currentAvatar === null) {
-                newAvatar = file;
-            }
         }
 
         const response = await this.api.call(apiUrls.uploadPhotos, requestBody);
@@ -151,7 +160,7 @@ export class ImagesComponent implements OnInit {
         }
 
         // If user's avatar is changed - refresh the user
-        if (newAvatar !== null) {
+        if (this.avatarIsChanged) {
             await this.userService.refresh();
         }
     }
