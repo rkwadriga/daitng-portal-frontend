@@ -1,7 +1,7 @@
 export class Photo {
     constructor(
         public name: string,
-        public isAvatar: boolean,
-        public size: number
+        public size: number,
+        public isAvatar: boolean
     ) {}
 }

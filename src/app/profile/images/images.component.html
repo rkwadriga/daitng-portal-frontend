@@ -21,3 +21,15 @@
         <img [src]="file.src" alt="{{file.name}}" class="img-fluid" />
     </div>
 </div>
+
+<button
+    mdbBtn
+    color="info"
+    block="true"
+    class="my-4"
+    type="submit"
+    [disabled]="files.length === 0"
+    (click)="upload()"
+>
+    Upload
+</button>

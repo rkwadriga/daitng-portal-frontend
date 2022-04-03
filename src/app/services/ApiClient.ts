@@ -54,7 +54,7 @@ export class ApiClient {
         }
     }
 
-    async call(apiUrl: ApiUrl, body?: KeyValueInterface, headers?: KeyValueInterface): Promise<Response> {
+    async call(apiUrl: ApiUrl, body?: any, headers?: KeyValueInterface): Promise<Response> {
         let url = this.baseUrl + apiUrl.path;
         const apiRequest = `${apiUrl.method} ${url}`;
         this.logger.log(`Send request ${apiRequest}`);
@@ -101,6 +101,9 @@ export class ApiClient {
         });
 
         this.logger.log(`Request ${apiRequest} successful`, response);
+        if (response === null) {
+            throw Error(`There is no response from request ${apiRequest} given`);
+        }
 
         if (response.status === undefined && response.ok === undefined) {
             return {

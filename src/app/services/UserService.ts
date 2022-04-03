@@ -77,4 +77,11 @@ export class UserService {
         localStorage.setItem('Current_user', JSON.stringify(user));
         return this.userEntity = user;
     }
+
+    public async refresh() {
+        this.userEntity = undefined;
+        localStorage.removeItem('Current_user');
+        await this.getUser();
+        window.location.reload();
+    }
 }

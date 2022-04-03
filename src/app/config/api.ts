@@ -26,10 +26,14 @@ export const apiUrls = {
         method: RequestMethods.GET,
         path: '/profile'
     },
-    userPhotos: {
+    getUserPhotos: {
         method: RequestMethods.GET,
         path: '/profile/:id/photos',
         params: {id: ''}
+    },
+    uploadPhotos: {
+        method: RequestMethods.POST,
+        path: '/profile/photos'
     },
     accountsList: {
         method: RequestMethods.GET,
