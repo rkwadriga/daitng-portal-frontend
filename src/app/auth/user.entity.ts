@@ -7,6 +7,7 @@ export class User {
         public avatar?: string,
         public gender?: string,
         public age?: number,
+        public about?: string,
         public imagesLimit?: number,
         public maximumImageSIze?: number
     ) {}

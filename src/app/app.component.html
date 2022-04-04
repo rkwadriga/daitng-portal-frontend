@@ -43,7 +43,7 @@
                 >
                     <span class="fs-6">{{ user.fullName }}</span>
                     <img
-                        src="{{ user | img:user.avatar }}"
+                        [src]="user | img:user.avatar"
                         class="rounded-circle"
                         height="55"
                         loading="lazy"

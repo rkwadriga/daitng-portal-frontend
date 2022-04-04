@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from "../services/UserService";
 import { ApiClient } from "../services/ApiClient";
-import { apiUrls } from "../config/api";
 import { User } from "../auth/user.entity";
 import { Notifier } from "../services/Notifier";
 import { routes } from "../config/routes";
@@ -14,7 +13,7 @@ import { routes } from "../config/routes";
 export class ProfileComponent implements OnInit {
     user?: User;
     routes = routes;
-    isImagesPage = false;
+    isProfilePage = true;
 
     constructor(
         private readonly userService: UserService,

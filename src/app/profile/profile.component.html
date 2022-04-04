@@ -1,15 +1,29 @@
-<div class="row" *ngIf="!isImagesPage">
-    <h4>My Profile</h4>
-    <a
-        class="nav-link"
-        routerLink="{{ routes.myImages }}"
-        (click)="isImagesPage=!isImagesPage"
-    >
-        My Images
-    </a>
+<div *ngIf="isProfilePage">
+    <div class="row">
+        <h4>My Profile</h4>
+        <a
+            class="nav-link"
+            routerLink="{{ routes.myImages }}"
+            (click)="isProfilePage = !isProfilePage"
+        >
+            My Images
+        </a>
+    </div>
 
-
-
+    <div class="card" *ngIf="user">
+        <div class="row g-0">
+            <div class="col-md-5">
+                <img [src]="user | img:user.avatar" class="img-fluid rounded-start" alt="Avatar">
+            </div>
+            <div class="col-md-7">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.fullName }}, {{ user.age }}</h5>
+                    <p class="card-text">{{ user.about }}</p>
+                    <p class="card-text"><small class="text-muted">{{ user.fullNameAndEmail }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <router-outlet></router-outlet>
