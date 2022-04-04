@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from "../services/UserService";
-import { ApiClient } from "../services/ApiClient";
 import { User } from "../auth/user.entity";
-import { Notifier } from "../services/Notifier";
 import { routes } from "../config/routes";
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -17,11 +16,11 @@ export class ProfileComponent implements OnInit {
 
     constructor(
         private readonly userService: UserService,
-        private readonly api: ApiClient,
-        private readonly notifier: Notifier
+        private readonly location: Location
     ) { }
 
     async ngOnInit() {
         this.user = await this.userService.getUser();
+        this.isProfilePage = this.location.path() === routes.myProfile;
     }
 }

@@ -8,6 +8,13 @@
         >
             My Images
         </a>
+        <a
+            class="nav-link"
+            routerLink="{{ routes.updateProfile }}"
+            (click)="isProfilePage = !isProfilePage"
+        >
+            Update
+        </a>
     </div>
 
     <div class="card" *ngIf="user">

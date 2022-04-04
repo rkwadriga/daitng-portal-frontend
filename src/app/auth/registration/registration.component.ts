@@ -9,6 +9,7 @@ import { environment } from "../../../environments/environment";
 import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
 import {Router} from "@angular/router";
 import {Logger} from "../../services/Logger";
+import {genders} from "../../config/genders";
 
 @Component({
     selector: 'auth-registration',
@@ -17,20 +18,7 @@ import {Logger} from "../../services/Logger";
 })
 export class RegistrationComponent {
     routes = routes;
-    genders = [
-        {
-            name: Gender.Male,
-            value: Gender.Male
-        },
-        {
-            name: Gender.Female,
-            value: Gender.Female
-        },
-        {
-            name: Gender.Other,
-            value: Gender.Other
-        }
-    ];
+    genders = genders;
 
     registrationParams = {
         email: '',
@@ -39,7 +27,8 @@ export class RegistrationComponent {
         firstName: '',
         lastName: '',
         gender: Gender.Other,
-        birthday: ''
+        birthday: '',
+        about: '',
     }
 
     validationForm = new FormGroup({
@@ -70,6 +59,10 @@ export class RegistrationComponent {
             Validators.pattern(dateFormatPattern),
             this.dateValidator,
             this.ageValidator
+        ]),
+        about: new FormControl(this.registrationParams.about, [
+            Validators.minLength(2),
+            Validators.maxLength(5000),
         ]),
     });
 
@@ -136,6 +129,10 @@ export class RegistrationComponent {
 
     get birthday() {
         return this.validationForm.get('birthday');
+    }
+
+    get about() {
+        return this.validationForm.get('about');
     }
 
     async onSubmit() {

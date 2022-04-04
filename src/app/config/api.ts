@@ -3,6 +3,7 @@ import { KeyValueInterface } from "../interfaces/keyvalue.interface";
 export enum RequestMethods {
     GET = 'GET',
     POST = 'POST',
+    PUT = 'PUT',
     PATCH = 'PATCH',
     DELETE = 'DELETE'
 }
@@ -24,6 +25,10 @@ export const apiUrls = {
     },
     userInfo: {
         method: RequestMethods.GET,
+        path: '/profile'
+    },
+    updateProfile: {
+        method: RequestMethods.PATCH,
         path: '/profile'
     },
     getUserPhotos: {

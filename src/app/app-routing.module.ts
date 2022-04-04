@@ -7,6 +7,7 @@ import {DatingComponent} from "./dating/dating.component";
 import {AccountsComponent} from "./dating/accounts/accounts.component";
 import {ProfileComponent} from "./profile/profile.component";
 import {ImagesComponent} from "./profile/images/images.component";
+import {UpdateComponent} from "./profile/update/update.component";
 
 const routes: Routes = [
     {
@@ -40,6 +41,10 @@ const routes: Routes = [
             {
                 path: 'images',
                 component: ImagesComponent
+            },
+            {
+                path: 'update',
+                component: UpdateComponent
             }
         ]
     },
