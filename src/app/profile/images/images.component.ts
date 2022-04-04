@@ -4,12 +4,12 @@ import { ApiClient } from "../../services/ApiClient";
 import { apiUrls } from "../../config/api";
 import { User } from "../../auth/user.entity";
 import { Notifier } from "../../services/Notifier";
-import { FormControl } from "@angular/forms";
 import { bytesToReadable } from "../../helpers/string.helper";
 import { Photo } from "../photo.entity";
 import { StaticService } from "../../services/StaticService";
 import { userSettings } from "../../config/user.settings";
 import {getBase64FromUrl} from "../../helpers/image.helper";
+import { routes } from "../../config/routes";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -30,6 +30,7 @@ interface ImageFile {
 })
 export class ImagesComponent implements OnInit {
     user?: User;
+    routes = routes;
     files: ImageFile[] = [];
     private filesNames: ControlFilesNamesInterface = {};
     private userImagesLimit = 0;

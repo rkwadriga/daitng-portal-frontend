@@ -1,5 +1,15 @@
-<h4>My Profile</h4>
+<div class="row" *ngIf="!isImagesPage">
+    <h4>My Profile</h4>
+    <a
+        class="nav-link"
+        routerLink="{{ routes.myImages }}"
+        (click)="isImagesPage=!isImagesPage"
+    >
+        My Images
+    </a>
 
-<a class="nav-link" routerLink="{{ routes.myImages }}">My Images</a>
+
+
+</div>
 
 <router-outlet></router-outlet>

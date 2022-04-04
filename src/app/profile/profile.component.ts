@@ -14,6 +14,7 @@ import { routes } from "../config/routes";
 export class ProfileComponent implements OnInit {
     user?: User;
     routes = routes;
+    isImagesPage = false;
 
     constructor(
         private readonly userService: UserService,
