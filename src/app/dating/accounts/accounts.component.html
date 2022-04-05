@@ -1,5 +1,6 @@
 <div class="row" *ngIf="account">
-    <div class="card" style="width: 18rem;">
+    <div class="col-sm-4"></div>
+    <div class="card col-sm-4" style="width: 20rem;">
         <img [src]="account | img:account.photos[0]" class="card-img-top" alt="Avatar">
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
@@ -7,4 +8,5 @@
             <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
     </div>
+    <div class="col-sm-4"></div>
 </div>
