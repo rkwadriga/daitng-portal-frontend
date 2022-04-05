@@ -1,0 +1,181 @@
+<!-- Sign In -->
+<p>Already have an account?
+    <a routerLink="{{ routes.authLogin }}">Sign In</a>
+</p>
+
+<!-- Registration form -->
+<form
+    class="text-center border border-light p-4"
+    [formGroup]="validationForm"
+    (ngSubmit)="onSubmit()"
+>
+    <p class="h4 mb-4">Sign up</p>
+
+    <!-- Email -->
+    <div class="md-form mb-4">
+        <input
+            type="email"
+            class="form-control"
+            placeholder="E-mail"
+            formControlName="email"
+        />
+        <div *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+            <div class="error-message-1">
+                {{ email?.errors?.['required'] ? 'Email is required' : 'Invalid email' }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Password -->
+    <div class="md-form mb-4">
+        <input
+            type="password"
+            class="form-control"
+            placeholder="Password"
+            formControlName="password"
+        />
+        <div *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+            <div *ngIf="password?.errors?.['required']" class="error-message-1">
+                Password is required.
+            </div>
+            <div *ngIf="password?.errors?.['minlength']" class="error-message-1">
+                Password must be at least {{password?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="password?.errors?.['maxlength']" class="error-message-1">
+                Password must not be greater than {{password?.errors?.['maxlength']?.['requiredLength']}} characters long.
+            </div>
+        </div>
+    </div>
+
+    <!-- Retype Password -->
+    <div class="md-form mb-4">
+        <input
+            type="password"
+            class="form-control"
+            placeholder="Retype Password"
+            formControlName="retypedPassword"
+        />
+        <div *ngIf="retypedPassword?.invalid && (retypedPassword?.dirty || retypedPassword?.touched)">
+            <div *ngIf="retypedPassword?.errors?.['required']" class="error-message-1">
+                Password is required.
+            </div>
+            <div *ngIf="retypedPassword?.errors?.['minlength']" class="error-message-1">
+                Password must be at least {{retypedPassword?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="retypedPassword?.errors?.['maxlength']" class="error-message-1">
+                Password must not be greater than {{retypedPassword?.errors?.['maxlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="retypedPassword?.errors?.['passwordsComparison']">
+                Passwords doesn't match
+            </div>
+        </div>
+    </div>
+
+    <!-- First name -->
+    <div class="md-form mb-4">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="First name"
+            formControlName="firstName"
+        />
+        <div *ngIf="firstName?.invalid && (firstName?.dirty || firstName?.touched)">
+            <div *ngIf="firstName?.errors?.['minlength']" class="error-message-1">
+                First name must be more than {{firstName?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="firstName?.errors?.['maxlength']" class="error-message-1">
+                First name must be less than {{firstName?.errors?.['maxlength']?.['requiredLength']}} characters long.
+            </div>
+        </div>
+    </div>
+
+    <!-- Last name -->
+    <div class="md-form mb-4">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Last name"
+            formControlName="lastName"
+        />
+        <div *ngIf="lastName?.invalid && (lastName?.dirty || lastName?.touched)">
+            <div *ngIf="lastName?.errors?.['minlength']" class="error-message-1">
+                First name must be more than {{lastName?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="lastName?.errors?.['maxlength']" class="error-message-1">
+                First name must be less than {{lastName?.errors?.['maxlength']?.['requiredLength']}} characters long.
+            </div>
+        </div>
+    </div>
+
+    <!-- Gender -->
+    <div class="md-form mb-4">
+        <label for="registration_form_gender_input">Gender</label>
+        <select
+            id="registration_form_gender_input"
+            class="form-control"
+            formControlName="gender"
+        >
+            <option *ngFor="let gender of genders" [value]="gender.value">{{ gender.name }}</option>
+        </select>
+        <div *ngIf="gender?.invalid && (gender?.dirty || gender?.touched)">
+            <div *ngIf="gender?.errors?.['genderIsCorrect']" class="error-message-1">
+                Invalid gender value
+            </div>
+        </div>
+    </div>
+
+    <!-- Birthday -->
+    <div class="md-form mb-4">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Birthday"
+            formControlName="birthday"
+        />
+        <div *ngIf="birthday?.invalid && (birthday?.dirty || birthday?.touched)">
+            <div *ngIf="birthday?.errors?.['required']">
+                Birthday is required
+            </div>
+            <div *ngIf="birthday?.errors?.['pattern']">
+                Invalid birthday format. Correct format is "yyyy-mm-dd"
+            </div>
+            <div *ngIf="birthday?.errors?.['dateValidation']">
+                Invalid birthday date
+            </div>
+            <div *ngIf="birthday?.errors?.['ageValidation']">
+                You are too young to use this service, come back when you're {{ birthday?.errors?.['ageValidation']?.['min'] }}
+            </div>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="md-form mb-4">
+        <textarea
+            type="textarea"
+            class="form-control"
+            placeholder="About"
+            formControlName="about"
+            rows="4"
+        ></textarea>
+        <div *ngIf="about?.invalid && (about?.dirty || about?.touched)">
+            <div *ngIf="about?.errors?.['minlength']" class="error-message-1">
+                About must be more than {{about?.errors?.['minlength']?.['requiredLength']}} characters long.
+            </div>
+            <div *ngIf="about?.errors?.['maxlength']" class="error-message-1">
+                About must be less than {{about?.errors?.['maxlength']?.['requiredLength']}} characters long.
+            </div>
+        </div>
+    </div>
+
+    <button
+        mdbBtn
+        color="info"
+        block="true"
+        class="my-4"
+        type="submit"
+        [disabled]="!validationForm.valid"
+    >
+        Sign up
+    </button>
+</form>
+<!-- /Registration form -->

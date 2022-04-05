@@ -1,0 +1,43 @@
+<a
+    class="nav-link"
+    href="{{ routes.myProfile }}"
+>
+    My Profile
+</a>
+
+<form
+    class="text-center border border-light"
+>
+    <!-- File input -->
+    <div class="md-form mb-4">
+        <label for="profile_image_input" class="form-label">Upload image</label>
+        <input
+            id="profile_image_input"
+            class="form-control"
+            type="file"
+            name="file"
+            multiple
+            (change)="onFileSelected($event)"
+        />
+    </div>
+</form>
+
+<div class="row">
+    <div *ngFor="let file of files" class="col-sm-3 d-flex flex-row-reverse">
+        <button type="button" class="btn-close" aria-label="Close" (click)="clickDeleteImg(file.name)"></button>
+        <a *ngIf="!file.isAvatar" href="javascript:;" title="Make an avatar" (click)="clickSetAvatar(file.name)">V</a>
+        <img [src]="file.src" alt="{{file.name}}" class="img-fluid" />
+    </div>
+</div>
+
+<button
+    mdbBtn
+    color="info"
+    block="true"
+    class="my-4"
+    type="submit"
+    [disabled]="files.length === 0"
+    (click)="upload()"
+>
+    Upload
+</button>
