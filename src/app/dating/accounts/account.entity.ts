@@ -7,6 +7,8 @@ export class Account {
     public gender = '';
     public avatar = '';
     public age = 0;
+    public photos: string[] = [];
+    public about = '';
 
     constructor(params: KeyValueInterface) {
         Object.assign(this, params);

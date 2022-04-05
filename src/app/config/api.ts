@@ -55,5 +55,9 @@ export const apiUrls = {
     datingNextProfile: {
         method: RequestMethods.GET,
         path: '/dating/profiles/next'
+    },
+    clearDatings: {
+        method: RequestMethods.DELETE,
+        path: '/dating/profiles'
     }
 };

@@ -30,6 +30,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ImagesComponent } from './profile/images/images.component';
 import { UpdateComponent } from './profile/update/update.component';
 import { ChangePasswordComponent } from './profile/change-password/change-password.component';
+import { ShortPipe } from './pipes/short.pipe';
 
 @NgModule({
     declarations: [
@@ -43,7 +44,8 @@ import { ChangePasswordComponent } from './profile/change-password/change-passwo
         ProfileComponent,
         ImagesComponent,
         UpdateComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
+        ShortPipe
     ],
     imports: [
         BrowserModule,

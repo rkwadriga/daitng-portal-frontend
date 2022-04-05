@@ -3,7 +3,6 @@ import { ApiClient } from "../../services/ApiClient";
 import { apiUrls } from "../../config/api";
 import { Account } from "./account.entity";
 import { Notifier } from "../../services/Notifier";
-import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 
 @Component({
     selector: 'app-accounts',
@@ -24,6 +23,7 @@ export class AccountsComponent implements OnInit {
             this.notifier.error(resp);
             return;
         }
-        this.account = resp.body;
+
+        this.account = new Account(resp.body);
     }
 }
