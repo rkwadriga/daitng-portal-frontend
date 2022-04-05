@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {ApiClient} from "../../services/ApiClient";
-import {apiUrls} from "../../config/api";
-import {Account} from "./account.entity";
-import {Notifier} from "../../services/Notifier";
-import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
+import { ApiClient } from "../../services/ApiClient";
+import { apiUrls } from "../../config/api";
+import { Account } from "./account.entity";
+import { Notifier } from "../../services/Notifier";
+import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 
 @Component({
     selector: 'app-accounts',
@@ -11,7 +11,7 @@ import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
     styleUrls: ['./accounts.component.scss']
 })
 export class AccountsComponent implements OnInit {
-    accounts: Account[] = [];
+    account?: Account;
 
     constructor(
         private readonly api: ApiClient,
@@ -19,14 +19,11 @@ export class AccountsComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-        const resp = await this.api.call(apiUrls.accountsList);
+        const resp = await this.api.call(apiUrls.datingNextAccount);
         if (!resp.ok) {
             this.notifier.error(resp);
             return;
         }
-        resp.body.forEach((params: KeyValueInterface) => {
-            this.accounts.push(new Account(params))
-        })
-        console.log(this.accounts);
+        this.account = resp.body;
     }
 }

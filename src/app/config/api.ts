@@ -52,8 +52,8 @@ export const apiUrls = {
         method: RequestMethods.PATCH,
         path: '/profile/password',
     },
-    accountsList: {
+    datingNextAccount: {
         method: RequestMethods.GET,
-        path: '/profiles'
+        path: '/dating/next'
     }
 };
