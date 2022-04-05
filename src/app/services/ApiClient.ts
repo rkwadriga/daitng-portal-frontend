@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { KeyValueInterface } from '../interfaces/keyvalue.interface';
 import { environment } from '../../environments/environment';
 import { ApiUrl, apiUrls } from "../config/api";
+import {inArray} from "../helpers/array.helper";
 
 interface ErrorResponse {
     statusCode: number,
@@ -39,7 +40,7 @@ export class ApiClient {
         private readonly logger: Logger
     ) {
         this.baseUrl = environment.apiUrl;
-        const token = localStorage.getItem('UserService.token');
+        const token = localStorage.getItem('ApiClient.token');
         if (token !== null) {
             this.token = JSON.parse(token);
         }
@@ -48,15 +49,17 @@ export class ApiClient {
     setToken(token?: Token): void {
         this.token = token;
         if (this.token === undefined) {
-            localStorage.removeItem('UserService.token');
+            localStorage.removeItem('ApiClient.token');
         } else {
-            localStorage.setItem('UserService.token', JSON.stringify(this.token));
+            localStorage.setItem('ApiClient.token', JSON.stringify(this.token));
         }
     }
 
-    async call(apiUrl: ApiUrl, body?: any, headers?: KeyValueInterface): Promise<Response> {
+    async call(apiUrl: ApiUrl, body?: any, headers?: KeyValueInterface, firstRequest = true): Promise<Response> {
         let url = this.baseUrl + apiUrl.path;
         const apiRequest = `${apiUrl.method} ${url}`;
+        const isAuthRequest = inArray(apiUrl.path, [apiUrls.login.path, apiUrls.registration.path, apiUrls.refreshToken.path]);
+
         this.logger.log(`Send request ${apiRequest}`);
 
         // Add rul params to url
@@ -73,19 +76,14 @@ export class ApiClient {
         if (headers === undefined) {
             headers = {};
         }
-        if (
-            apiUrl.path !== apiUrls.login.path &&
-            apiUrl.path !== apiUrls.registration.path &&
-            this.token !== undefined &&
-            headers['Authorization'] === undefined
-        ) {
+        if (!isAuthRequest && this.token !== undefined && headers['Authorization'] === undefined) {
             headers['Authorization'] = `Bearer ${this.token.accessToken}`;
         }
 
         const requestParams = {body: body, headers: headers};
         const request = this.http.request<Response>(apiUrl.method, url, requestParams);
 
-        const response = await firstValueFrom(request).catch((response: Response) => {
+        let response = await firstValueFrom(request).catch((response: Response) => {
             if (!response.error) {
                 response.error = {
                     statusCode: response.status,
@@ -103,6 +101,27 @@ export class ApiClient {
         this.logger.log(`Request ${apiRequest} successful`, response);
         if (response === null) {
             throw Error(`There is no response from request ${apiRequest} given`);
+        }
+
+        // Refresh token
+        if (
+            response.error?.statusCode === 401 &&
+            response.error.message === 'Expired token' &&
+            !isAuthRequest &&
+            firstRequest &&
+            this.token
+        ) {
+            const prevApiUrl = apiUrl, prevBody = body, prevHeaders = headers;
+            response = await this.call(apiUrls.refreshToken, {
+                accessToken: this.token.accessToken,
+                refreshToken: this.token.refreshToken
+            });
+            // If token is refreshed - make an old request one more time
+            if (response.ok) {
+                this.setToken(response.body.token);
+                prevHeaders['Authorization'] = undefined;
+                return this.call(prevApiUrl, prevBody, prevHeaders, false);
+            }
         }
 
         if (response.status === undefined && response.ok === undefined) {

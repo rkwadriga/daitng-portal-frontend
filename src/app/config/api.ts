@@ -23,6 +23,10 @@ export const apiUrls = {
         method: RequestMethods.POST,
         path: '/auth/registration'
     },
+    refreshToken: {
+        method: RequestMethods.PUT,
+        path: '/auth/refresh'
+    },
     userInfo: {
         method: RequestMethods.GET,
         path: '/profile'
