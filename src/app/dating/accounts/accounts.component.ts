@@ -19,7 +19,7 @@ export class AccountsComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-        const resp = await this.api.call(apiUrls.datingNextAccount);
+        const resp = await this.api.call(apiUrls.datingNextProfile);
         if (!resp.ok) {
             this.notifier.error(resp);
             return;
