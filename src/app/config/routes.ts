@@ -5,5 +5,6 @@ export const routes = {
     myProfile: '/profile',
     myImages: '/profile/images',
     updateProfile: '/profile/update',
+    changePassword: '/profile/change-password',
     datingAccounts: '/dating/accounts',
 }

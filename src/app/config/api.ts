@@ -40,6 +40,14 @@ export const apiUrls = {
         method: RequestMethods.POST,
         path: '/profile/photos'
     },
+    checkPassword: {
+        method: RequestMethods.PUT,
+        path: '/profile/password-check',
+    },
+    updatePassword: {
+        method: RequestMethods.PATCH,
+        path: '/profile/password',
+    },
     accountsList: {
         method: RequestMethods.GET,
         path: '/profiles'

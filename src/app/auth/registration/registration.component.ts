@@ -20,47 +20,36 @@ export class RegistrationComponent {
     routes = routes;
     genders = genders;
 
-    registrationParams = {
-        email: '',
-        password: '',
-        retypedPassword: '',
-        firstName: '',
-        lastName: '',
-        gender: Gender.Other,
-        birthday: '',
-        about: '',
-    }
-
     validationForm = new FormGroup({
-        email: new FormControl(this.registrationParams.email, [
+        email: new FormControl('', [
             Validators.required,
             Validators.email
         ]),
-        password: new FormControl(this.registrationParams.password, [
+        password: new FormControl('', [
             Validators.required,
             Validators.minLength(4)
         ]),
-        retypedPassword: new FormControl(this.registrationParams.retypedPassword, [
+        retypedPassword: new FormControl('', [
             Validators.required,
             Validators.minLength(4),
             this.retypePasswordValidator
         ]),
-        firstName: new FormControl(this.registrationParams.firstName, [
+        firstName: new FormControl('', [
             Validators.minLength(2),
             Validators.maxLength(50),
         ]),
-        lastName: new FormControl(this.registrationParams.lastName, [
+        lastName: new FormControl('', [
             Validators.minLength(2),
             Validators.maxLength(50),
         ]),
-        gender: new FormControl(this.registrationParams.gender, [this.genderValidator]),
-        birthday: new FormControl(this.registrationParams.birthday, [
+        gender: new FormControl('', [this.genderValidator]),
+        birthday: new FormControl('', [
             Validators.required,
             Validators.pattern(dateFormatPattern),
             this.dateValidator,
             this.ageValidator
         ]),
-        about: new FormControl(this.registrationParams.about, [
+        about: new FormControl('', [
             Validators.minLength(2),
             Validators.maxLength(5000),
         ]),
