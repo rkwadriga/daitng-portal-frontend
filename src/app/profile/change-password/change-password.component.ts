@@ -9,6 +9,7 @@ import { apiUrls } from "../../config/api";
 import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
 import {UserService} from "../../services/UserService";
 import {User} from "../../auth/user.entity";
+import {userSettings} from "../../config/user.settings";
 
 let api: ApiClient | null = null;
 let checkedPasswords: KeyValueInterface = {};
@@ -25,16 +26,19 @@ export class ChangePasswordComponent implements OnInit {
     validationForm = new FormGroup({
         oldPassword: new FormControl('', [
             Validators.required,
-            Validators.minLength(4)
+            Validators.minLength(userSettings.minPasswordLength),
+            Validators.maxLength(userSettings.maxPasswordLength)
         ], this.oldPasswordValidatorAsync),
         password: new FormControl('', [
             Validators.required,
-            Validators.minLength(4),
+            Validators.minLength(userSettings.minPasswordLength),
+            Validators.maxLength(userSettings.maxPasswordLength),
             this.passwordValidator
         ]),
         retypedPassword: new FormControl('', [
             Validators.required,
-            Validators.minLength(4),
+            Validators.minLength(userSettings.minPasswordLength),
+            Validators.maxLength(userSettings.maxPasswordLength),
             this.retypePasswordValidator
         ]),
     });
@@ -54,7 +58,7 @@ export class ChangePasswordComponent implements OnInit {
 
     async oldPasswordValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
         const password = group.value;
-        if (!password || password.length < 4 || api === null) {
+        if (!password || password.length < userSettings.minPasswordLength || api === null) {
             return null;
         }
 

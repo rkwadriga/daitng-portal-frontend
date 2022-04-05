@@ -38,6 +38,9 @@
             <div *ngIf="password?.errors?.['minlength']" class="error-message-1">
                 Password must be at least {{password?.errors?.['minlength']?.['requiredLength']}} characters long.
             </div>
+            <div *ngIf="password?.errors?.['maxlength']" class="error-message-1">
+                Password must not be greater than {{password?.errors?.['maxlength']?.['requiredLength']}} characters long.
+            </div>
         </div>
     </div>
 

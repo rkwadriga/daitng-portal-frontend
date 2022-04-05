@@ -10,6 +10,7 @@ import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/tim
 import {Router} from "@angular/router";
 import {Logger} from "../../services/Logger";
 import {genders} from "../../config/genders";
+import {userSettings} from "../../config/user.settings";
 
 @Component({
     selector: 'auth-registration',
@@ -27,11 +28,13 @@ export class RegistrationComponent {
         ]),
         password: new FormControl('', [
             Validators.required,
-            Validators.minLength(4)
+            Validators.minLength(userSettings.minPasswordLength),
+            Validators.maxLength(userSettings.maxPasswordLength)
         ]),
         retypedPassword: new FormControl('', [
             Validators.required,
-            Validators.minLength(4),
+            Validators.minLength(userSettings.minPasswordLength),
+            Validators.maxLength(userSettings.maxPasswordLength),
             this.retypePasswordValidator
         ]),
         firstName: new FormControl('', [

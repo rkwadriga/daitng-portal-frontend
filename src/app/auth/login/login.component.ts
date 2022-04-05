@@ -4,6 +4,7 @@ import { ApiClient } from "../../services/ApiClient";
 import { UserService } from "../../services/UserService";
 import { Router } from '@angular/router';
 import { routes } from "../../config/routes";
+import {userSettings} from "../../config/user.settings";
 
 @Component({
     selector: 'auth-login',
@@ -13,19 +14,15 @@ import { routes } from "../../config/routes";
 export class LoginComponent {
     routes = routes;
 
-    loginParams = {
-        email: '',
-        password: ''
-    };
-
     validationForm = new FormGroup({
-        email: new FormControl(this.loginParams.email, [
+        email: new FormControl('', [
             Validators.required,
             Validators.email
         ]),
-        password: new FormControl(this.loginParams.password, [
+        password: new FormControl('', [
             Validators.required,
-            Validators.minLength(4)
+            Validators.minLength(userSettings.minPasswordLength),
+            Validators.maxLength(userSettings.maxPasswordLength)
         ])
     });
 
