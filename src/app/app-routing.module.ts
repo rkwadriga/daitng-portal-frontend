@@ -9,6 +9,7 @@ import {ProfileComponent} from "./profile/profile.component";
 import {ImagesComponent} from "./profile/images/images.component";
 import {UpdateComponent} from "./profile/update/update.component";
 import {ChangePasswordComponent} from "./profile/change-password/change-password.component";
+import {PersonComponent} from "./dating/person/person.component";
 
 const routes: Routes = [
     {
@@ -32,6 +33,10 @@ const routes: Routes = [
             {
                 path: 'accounts',
                 component: AccountsComponent
+            },
+            {
+                path: 'accounts/:id',
+                component: PersonComponent
             }
         ]
     },

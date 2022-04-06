@@ -1,3 +1,5 @@
+<a routerLink="{{ routes.datingAccounts }}" class="nav-link">Back</a>
+
 <div class="row" *ngIf="account">
     <div class="col-sm-4"></div>
     <div class="card col-sm-4" style="width: 20rem;">
@@ -5,7 +7,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
             <p class="card-text">{{ account.about | short }}</p>
-            <a [routerLink]="[routes.datingAccounts, account.id]" class="btn btn-primary nav-link">Info</a>
+            <button (click)="onLike()" class="btn btn-primary">Like</button>
         </div>
     </div>
     <div class="col-sm-4"></div>

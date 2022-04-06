@@ -31,6 +31,7 @@ import { ImagesComponent } from './profile/images/images.component';
 import { UpdateComponent } from './profile/update/update.component';
 import { ChangePasswordComponent } from './profile/change-password/change-password.component';
 import { ShortPipe } from './pipes/short.pipe';
+import { PersonComponent } from './dating/person/person.component';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import { ShortPipe } from './pipes/short.pipe';
         ImagesComponent,
         UpdateComponent,
         ChangePasswordComponent,
-        ShortPipe
+        ShortPipe,
+        PersonComponent
     ],
     imports: [
         BrowserModule,
