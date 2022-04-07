@@ -65,6 +65,11 @@ export const apiUrls = {
         method: RequestMethods.GET,
         path: '/dating/profiles/next'
     },
+    datingLikeProfile: {
+        method: RequestMethods.POST,
+        path: '/dating/profiles/:id/like',
+        params: {id: ''}
+    },
     clearDatings: {
         method: RequestMethods.DELETE,
         path: '/dating/profiles'
