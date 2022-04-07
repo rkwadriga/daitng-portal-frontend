@@ -6,11 +6,12 @@
         <img [src]="account | img:account.photos[photoIndex]" class="card-img-top" alt="Avatar">
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
-            <p class="card-text">{{ account.about | short }}</p>
+            <p class="card-text">Gender: {{ account.gender }} ({{ account.orientation }})</p>
+            <p class="card-text">{{ account.about }}</p>
             <div class="row">
                 <div class="col-sm-4">
                     <button
-                        (click)="onPrevPhoto()"
+                        (click)="photoIndex = photoIndex  - 1"
                         class="btn btn-primary"
                         [disabled]="photoIndex === 0"
                         title="Prev photo"
@@ -19,13 +20,18 @@
                     </button>
                 </div>
                 <div class="col-sm-4">
-                    <button (click)="onLike()" class="btn btn-success" title="Like">
+                    <button
+                        (click)="onLike()"
+                        class="btn btn-success"
+                        title="Like"
+                        [disabled]="liked"
+                    >
                         <i class="bi bi-heart-fill"></i>
                     </button>
                 </div>
                 <div class="col-sm-4">
                     <button
-                        (click)="onNextPhoto()"
+                        (click)="photoIndex = photoIndex + 1"
                         class="btn btn-primary"
                         title="Next photo"
                         [disabled]="photoIndex === photosCount - 1"

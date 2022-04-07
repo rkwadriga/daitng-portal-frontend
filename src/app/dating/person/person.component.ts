@@ -19,6 +19,7 @@ export class PersonComponent implements OnInit {
     routes = routes;
     photoIndex = 0;
     photosCount = 0;
+    liked = false;
 
     constructor(
         private readonly userService: UserService,
@@ -51,18 +52,6 @@ export class PersonComponent implements OnInit {
         this.photosCount = this.account.photos.length;
     }
 
-    async onPrevPhoto() {
-        if (this.photosCount > 0) {
-            this.photoIndex--;
-        }
-    }
-
-    async onNextPhoto() {
-        if (this.photoIndex < this.photosCount) {
-            this.photoIndex++;
-        }
-    }
-
     async onLike() {
         if (this.account === undefined) {
             const message = 'The account for like is not specified';
@@ -77,5 +66,7 @@ export class PersonComponent implements OnInit {
             this.notifier.error(message);
             throw new Error(message);
         }
+
+        this.liked = true;
     }
 }

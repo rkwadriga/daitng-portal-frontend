@@ -5,6 +5,7 @@ export class Account {
     public firstName = '';
     public lastName = '';
     public gender = '';
+    public orientation = '';
     public avatar = '';
     public age = 0;
     public photos: string[] = [];
