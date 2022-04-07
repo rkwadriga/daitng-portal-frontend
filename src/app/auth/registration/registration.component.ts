@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
-import { ApiClient } from "../../services/ApiClient";
-import { apiUrls } from "../../config/api";
-import { Notifier } from "../../services/Notifier";
-import { routes } from "../../config/routes";
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
-import { Gender } from "../../profile/gender.enum";
-import { environment } from "../../../environments/environment";
-import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import {Component} from '@angular/core';
+import {ApiClient} from "../../services/ApiClient";
+import {apiUrls} from "../../config/api";
+import {Notifier} from "../../services/Notifier";
+import {routes} from "../../config/routes";
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
+import {environment} from "../../../environments/environment";
+import {dateFormatPattern, isDateValid, yearsFromDate} from "../../helpers/time.helper";
 import {Router} from "@angular/router";
 import {Logger} from "../../services/Logger";
 import {genders} from "../../config/genders";
+import {orientations} from "../../config/orientations";
 import {userSettings} from "../../config/user.settings";
+import {enumsKeysToArray, inArray} from "../../helpers/array.helper";
+import {Orientation} from "../../profile/orientation.enum";
+import {Gender} from "../../profile/gender.enum";
 
 @Component({
     selector: 'auth-registration',
@@ -20,6 +23,7 @@ import {userSettings} from "../../config/user.settings";
 export class RegistrationComponent {
     routes = routes;
     genders = genders;
+    orientations = orientations;
 
     validationForm = new FormGroup({
         email: new FormControl('', [
@@ -46,6 +50,8 @@ export class RegistrationComponent {
             Validators.maxLength(50),
         ]),
         gender: new FormControl('', [this.genderValidator]),
+        orientation: new FormControl(Orientation.Hetero, [this.orientationValidator]),
+        showGender: new FormControl('', [this.showGenderValidator]),
         birthday: new FormControl('', [
             Validators.required,
             Validators.pattern(dateFormatPattern),
@@ -76,8 +82,26 @@ export class RegistrationComponent {
     }
 
     genderValidator (group: AbstractControl): ValidationErrors | null {
-        const result = group.value === Gender.Male || group.value === Gender.Female || group.value === Gender.Other;
+        const result = inArray(group.value, enumsKeysToArray(genders));
+        const showGenderValue = group.parent?.get('showGender')?.value;
+        if (result && !showGenderValue) {
+            if (group.value === Gender.Male) {
+                group.parent?.get('showGender')?.setValue(Gender.Female);
+            } else if (group.value === Gender.Female) {
+                group.parent?.get('showGender')?.setValue(Gender.Male);
+            }
+        }
         return result ? null : {genderIsCorrect: true};
+    }
+
+    orientationValidator (group: AbstractControl): ValidationErrors | null {
+        const result = inArray(group.value, enumsKeysToArray(orientations));
+        return result ? null : {orientationIsCorrect: true};
+    }
+
+    showGenderValidator (group: AbstractControl): ValidationErrors | null {
+        const result = inArray(group.value, enumsKeysToArray(genders));
+        return result ? null : {showGenderIsCorrect: true};
     }
 
     dateValidator (group: AbstractControl): ValidationErrors | null {
@@ -117,6 +141,14 @@ export class RegistrationComponent {
 
     get gender() {
         return this.validationForm.get('gender');
+    }
+
+    get orientation() {
+        return this.validationForm.get('orientation');
+    }
+
+    get showGender() {
+        return this.validationForm.get('showGender');
     }
 
     get birthday() {

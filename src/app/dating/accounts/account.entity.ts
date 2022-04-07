@@ -10,6 +10,7 @@ export class Account {
     public age = 0;
     public photos: string[] = [];
     public about = '';
+    public showGender = '';
 
     constructor(params: KeyValueInterface) {
         Object.assign(this, params);

@@ -6,6 +6,8 @@ export class User {
         public lastName?: string,
         public avatar?: string,
         public gender?: string,
+        public orientation?: string,
+        public showGender?: string,
         public birthday?: string,
         public age?: number,
         public about?: string,

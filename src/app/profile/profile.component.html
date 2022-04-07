@@ -24,10 +24,13 @@
             </div>
             <div class="col-md-7">
                 <div class="card-body">
-                    <h5 class="card-title">{{ user.fullName }}, {{ user.age }}</h5>
+                    <h5 class="card-title">{{ user.fullName }}</h5>
                     <p class="card-text">{{ user.about }}</p>
                     <p class="card-text">Email: <small class="text-muted">{{ user.email }}</small></p>
                     <p class="card-text">Gender: <small class="text-muted">{{ user.gender }}</small></p>
+                    <p class="card-text">Orientation: <small class="text-muted">{{ user.orientation }}</small></p>
+                    <p class="card-text">I'm looking for: {{ user.showGender ? user.showGender : 'Undefined' }}</p>
+                    <p class="card-text">Birthday: {{ user.birthday }} ({{ user.age }})</p>
                 </div>
             </div>
         </div>
