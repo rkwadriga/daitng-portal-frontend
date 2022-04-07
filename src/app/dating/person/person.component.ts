@@ -17,6 +17,8 @@ export class PersonComponent implements OnInit {
     user?: User;
     account?: Account;
     routes = routes;
+    photoIndex = 0;
+    photosCount = 0;
 
     constructor(
         private readonly userService: UserService,
@@ -44,6 +46,21 @@ export class PersonComponent implements OnInit {
             return;
         }
         this.account = new Account(resp.body);
+
+        // Remember photos count
+        this.photosCount = this.account.photos.length;
+    }
+
+    async onPrevPhoto() {
+        if (this.photosCount > 0) {
+            this.photoIndex--;
+        }
+    }
+
+    async onNextPhoto() {
+        if (this.photoIndex < this.photosCount) {
+            this.photoIndex++;
+        }
     }
 
     async onLike() {
@@ -54,9 +71,9 @@ export class PersonComponent implements OnInit {
         }
 
         apiUrls.datingLikeProfile.params.id = this.account.id;
-        const response = await this.api.call(apiUrls.datingLikeProfile);
-        if (!response.ok) {
-            const message = response.error?.message ?? `Can not like user ${this.account.id}`;
+        const resp = await this.api.call(apiUrls.datingLikeProfile);
+        if (!resp.ok) {
+            const message = resp.error?.message ?? `Can not like user ${this.account.id}`;
             this.notifier.error(message);
             throw new Error(message);
         }
