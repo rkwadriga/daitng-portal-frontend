@@ -180,7 +180,7 @@ export class RegistrationComponent {
         this.api.setToken(result.body.token);
 
         // Go to the accounts list page
-        await this.router.navigateByUrl(routes.datingAccounts);
+        await this.router.navigateByUrl(routes.myImages);
         window.location.reload();
     }
 }

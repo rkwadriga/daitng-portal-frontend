@@ -75,7 +75,7 @@ export class ImagesComponent implements OnInit {
         });
 
         // If user has no avatar - that's mean than any new photo is an avatar and user's avatar is changed
-        this.avatarIsChanged = !user.avatar;
+        this.avatarIsChanged = this.currentAvatar === null;
     }
 
     onFileSelected(event: any) {
