@@ -63,7 +63,8 @@ export const apiUrls = {
     },
     datingNextProfile: {
         method: RequestMethods.GET,
-        path: '/dating/profiles/next'
+        path: '/dating/profiles/next',
+        params: {id: ''}
     },
     datingLikeProfile: {
         method: RequestMethods.POST,

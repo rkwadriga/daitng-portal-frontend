@@ -65,7 +65,20 @@ export class ApiClient {
         // Add rul params to url
         if (apiUrl.params !== undefined) {
             Object.keys(apiUrl.params).forEach(key => {
-                url = url.replace(`:${key}`, apiUrl.params?.[key] ?? '');
+                const paramValue = apiUrl.params?.[key];
+                if (paramValue === '' || paramValue === undefined) {
+                    return;
+                }
+                if (url.includes(`:${key}`)) {
+                    url = url.replace(`:${key}`, paramValue);
+                } else {
+                    if (url.includes('?')) {
+                        url += '&';
+                    } else {
+                        url += '?';
+                    }
+                    url += `${key}=${paramValue}`;
+                }
             });
         }
 

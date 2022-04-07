@@ -16,6 +16,7 @@ export class AccountsComponent implements OnInit {
     user?: User;
     account?: Account;
     routes = routes;
+    private skipUserId?: string;
 
     constructor(
         private readonly userService: UserService,
@@ -35,6 +36,9 @@ export class AccountsComponent implements OnInit {
         }
 
         this.account = new Account(resp.body);
+
+        // Remember the last user id
+        this.skipUserId = this.account.id;
     }
 
     async onLike() {
@@ -64,13 +68,21 @@ export class AccountsComponent implements OnInit {
     }
 
     async onNext() {
+        if (this.account === undefined) {
+            const message = 'Current user is not specified';
+            this.notifier.error(message);
+            throw new Error(message);
+        }
+
         // Get the next dating profile
-        const resp = await this.api.call(apiUrls.datingNextProfile);
+        apiUrls.datingNextProfile.params.id = this.skipUserId ?? '';
+        let resp = await this.api.call(apiUrls.datingNextProfile);
         if (!resp.ok) {
             this.notifier.error(resp);
             return;
         }
 
+        this.skipUserId = undefined;
         this.account = new Account(resp.body);
     }
 }
