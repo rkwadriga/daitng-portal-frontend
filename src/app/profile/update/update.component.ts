@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { User, UserService } from "../../services/UserService";
-import { ApiClient } from "../../services/ApiClient";
+import { User, UserService } from "../../services/user.service";
+import { ApiService } from "../../services/api.service";
 import { Notifier } from "../../services/Notifier";
 import { routes } from "../../config/routes";
 import { genders } from "../../config/genders";
@@ -9,7 +9,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators }
 import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
 import { environment } from "../../../environments/environment";
 import { apiUrls } from "../../config/api";
-import { Logger } from "../../services/Logger";
+import { LoggerService } from "../../services/logger.service";
 import { Router } from "@angular/router";
 import { orientations } from "../../config/orientations";
 import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
@@ -28,10 +28,10 @@ export class UpdateComponent implements OnInit {
 
     constructor(
         private readonly userService: UserService,
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly router: Router,
         private readonly notifier: Notifier,
-        private readonly logger: Logger
+        private readonly logger: LoggerService
     ) { }
 
     async ngOnInit() {

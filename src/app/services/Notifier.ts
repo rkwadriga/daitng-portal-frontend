@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Response as HttpResponse } from './ApiClient';
+import { Response as HttpResponse } from './api.service';
 
 enum MessageType {
     Error,

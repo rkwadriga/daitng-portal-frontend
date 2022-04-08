@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { routes } from "../../config/routes";
-import { ApiClient } from "../../services/ApiClient";
+import { ApiService } from "../../services/api.service";
 import { Router } from "@angular/router";
 import { Notifier } from "../../services/Notifier";
-import { Logger } from "../../services/Logger";
+import { LoggerService } from "../../services/logger.service";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { apiUrls } from "../../config/api";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
-import { User, UserService } from "../../services/UserService";
+import { User, UserService } from "../../services/user.service";
 import { userSettings } from "../../config/user.settings";
 
-let api: ApiClient | null = null;
+let api: ApiService | null = null;
 let checkedPasswords: KeyValueInterface = {};
 
 @Component({
@@ -43,11 +43,11 @@ export class ChangePasswordComponent implements OnInit {
     });
 
     constructor(
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly userService: UserService,
         private readonly router: Router,
         private readonly notifier: Notifier,
-        private readonly logger: Logger
+        private readonly logger: LoggerService
     ) { }
 
     async ngOnInit() {

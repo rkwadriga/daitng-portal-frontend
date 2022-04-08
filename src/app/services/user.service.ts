@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Logger } from "./Logger";
-import { ApiClient } from "./ApiClient";
+import { LoggerService } from "./logger.service";
+import { ApiService } from "./api.service";
 import { apiUrls } from "../config/api";
 import { KeyValueInterface } from "../interfaces/keyvalue.interface";
 import { BehaviorSubject } from "rxjs";
@@ -56,8 +56,8 @@ export class UserService {
     private user = new BehaviorSubject<User|null>(null);
 
     constructor(
-        private readonly api: ApiClient,
-        private readonly logger: Logger
+        private readonly api: ApiService,
+        private readonly logger: LoggerService
     ) {}
 
     get isLogged(): boolean {

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { User, UserService } from "../../services/UserService";
-import { ApiClient } from "../../services/ApiClient";
+import { User, UserService } from "../../services/user.service";
+import { ApiService } from "../../services/api.service";
 import { apiUrls } from "../../config/api";
 import { Notifier } from "../../services/Notifier";
 import { bytesToReadable } from "../../helpers/string.helper";
 import { Photo } from "../photo.entity";
-import { StaticService } from "../../services/StaticService";
+import { StaticService } from "../../services/static.service";
 import { userSettings } from "../../config/user.settings";
 import {getBase64FromUrl} from "../../helpers/image.helper";
 import { routes } from "../../config/routes";
@@ -39,7 +39,7 @@ export class ImagesComponent implements OnInit {
 
     constructor(
         private readonly userService: UserService,
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly staticService: StaticService,
         private readonly notifier: Notifier
     ) { }

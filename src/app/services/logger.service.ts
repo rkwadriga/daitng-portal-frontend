@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 @Injectable({
     providedIn: 'root'
 })
-export class Logger {
+export class LoggerService {
     log(message: any, context?: any): void {
         if (context !== undefined) {
             context = typeof context !== 'string' ? JSON.stringify(context) : context;

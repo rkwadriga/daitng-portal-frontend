@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { KeyValueInterface } from "../interfaces/keyvalue.interface";
-import { ApiClient } from "./ApiClient";
+import { ApiService } from "./api.service";
 import { apiUrls } from "../config/api";
 
 export class Account {
@@ -44,7 +44,7 @@ export class DatingService {
     private account = new BehaviorSubject<Account|null>(null);
 
     constructor(
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
     ) { }
 
     public async current(): Promise<Account> {

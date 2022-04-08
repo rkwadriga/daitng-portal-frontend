@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiClient } from "../../services/ApiClient";
+import { ApiService } from "../../services/api.service";
 import { apiUrls } from "../../config/api";
 import { Notifier } from "../../services/Notifier";
 import { routes } from "../../config/routes";
-import { User, UserService } from "../../services/UserService";
+import { User, UserService } from "../../services/user.service";
 import { Account, DatingService } from "../../services/dating.service";
 
 @Component({
@@ -19,7 +19,7 @@ export class AccountsComponent implements OnInit {
     constructor(
         private readonly userService: UserService,
         private readonly datingService: DatingService,
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly notifier: Notifier
     ) { }
 

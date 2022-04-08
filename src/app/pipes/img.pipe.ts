@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {StaticService} from "../services/StaticService";
+import {StaticService} from "../services/static.service";
 import {AccountInterface} from "../interfaces/account.interface";
 
 @Pipe({

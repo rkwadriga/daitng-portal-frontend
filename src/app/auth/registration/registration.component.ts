@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ApiClient} from "../../services/ApiClient";
+import {ApiService} from "../../services/api.service";
 import {apiUrls} from "../../config/api";
 import {Notifier} from "../../services/Notifier";
 import {routes} from "../../config/routes";
@@ -7,7 +7,7 @@ import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} f
 import {environment} from "../../../environments/environment";
 import {dateFormatPattern, isDateValid, yearsFromDate} from "../../helpers/time.helper";
 import {Router} from "@angular/router";
-import {Logger} from "../../services/Logger";
+import {LoggerService} from "../../services/logger.service";
 import {genders} from "../../config/genders";
 import {orientations} from "../../config/orientations";
 import {userSettings} from "../../config/user.settings";
@@ -65,10 +65,10 @@ export class RegistrationComponent {
     });
 
     constructor(
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly router: Router,
         private readonly notifier: Notifier,
-        private readonly logger: Logger
+        private readonly logger: LoggerService
     ) { }
 
     retypePasswordValidator (group: AbstractControl): ValidationErrors | null {

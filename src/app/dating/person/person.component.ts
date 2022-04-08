@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { routes } from "../../config/routes";
-import { ApiClient } from "../../services/ApiClient";
+import { ApiService } from "../../services/api.service";
 import { Notifier } from "../../services/Notifier";
 import { apiUrls } from "../../config/api";
-import { User, UserService } from "../../services/UserService";
+import { User, UserService } from "../../services/user.service";
 import { Account } from "../../services/dating.service";
 
 @Component({
@@ -23,7 +23,7 @@ export class PersonComponent implements OnInit {
     constructor(
         private readonly userService: UserService,
         private readonly route: ActivatedRoute,
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly notifier: Notifier
     ) { }
 
