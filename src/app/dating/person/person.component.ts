@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
-import { Notifier } from "../../services/Notifier";
+import { NotifierService } from "../../services/notifier.service";
 import { apiUrls } from "../../config/api";
 import { User, UserService } from "../../services/user.service";
 import { Account } from "../../services/dating.service";
@@ -24,7 +24,7 @@ export class PersonComponent implements OnInit {
         private readonly userService: UserService,
         private readonly route: ActivatedRoute,
         private readonly api: ApiService,
-        private readonly notifier: Notifier
+        private readonly notifier: NotifierService
     ) { }
 
     async ngOnInit() {

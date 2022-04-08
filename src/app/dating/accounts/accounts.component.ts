@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from "../../services/api.service";
 import { apiUrls } from "../../config/api";
-import { Notifier } from "../../services/Notifier";
+import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
 import { User, UserService } from "../../services/user.service";
 import { Account, DatingService } from "../../services/dating.service";
@@ -20,7 +20,7 @@ export class AccountsComponent implements OnInit {
         private readonly userService: UserService,
         private readonly datingService: DatingService,
         private readonly api: ApiService,
-        private readonly notifier: Notifier
+        private readonly notifier: NotifierService
     ) { }
 
     async ngOnInit() {

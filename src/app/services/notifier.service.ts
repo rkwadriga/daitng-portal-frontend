@@ -10,7 +10,7 @@ enum MessageType {
 @Injectable({
     providedIn: 'root'
 })
-export class Notifier {
+export class NotifierService {
     error(message: HttpResponse | string): void {
         this.viewMsg(message, MessageType.Error);
     }

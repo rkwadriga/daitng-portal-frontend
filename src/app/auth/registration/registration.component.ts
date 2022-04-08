@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {ApiService} from "../../services/api.service";
 import {apiUrls} from "../../config/api";
-import {Notifier} from "../../services/Notifier";
+import {NotifierService} from "../../services/notifier.service";
 import {routes} from "../../config/routes";
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {environment} from "../../../environments/environment";
@@ -67,7 +67,7 @@ export class RegistrationComponent {
     constructor(
         private readonly api: ApiService,
         private readonly router: Router,
-        private readonly notifier: Notifier,
+        private readonly notifier: NotifierService,
         private readonly logger: LoggerService
     ) { }
 

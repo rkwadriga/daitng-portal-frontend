@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
 import { Router } from "@angular/router";
-import { Notifier } from "../../services/Notifier";
+import { NotifierService } from "../../services/notifier.service";
 import { LoggerService } from "../../services/logger.service";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { apiUrls } from "../../config/api";
@@ -46,7 +46,7 @@ export class ChangePasswordComponent implements OnInit {
         private readonly api: ApiService,
         private readonly userService: UserService,
         private readonly router: Router,
-        private readonly notifier: Notifier,
+        private readonly notifier: NotifierService,
         private readonly logger: LoggerService
     ) { }
 

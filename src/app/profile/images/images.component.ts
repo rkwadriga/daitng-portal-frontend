@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { ApiService } from "../../services/api.service";
 import { apiUrls } from "../../config/api";
-import { Notifier } from "../../services/Notifier";
+import { NotifierService } from "../../services/notifier.service";
 import { bytesToReadable } from "../../helpers/string.helper";
 import { Photo } from "../photo.entity";
 import { StaticService } from "../../services/static.service";
@@ -41,7 +41,7 @@ export class ImagesComponent implements OnInit {
         private readonly userService: UserService,
         private readonly api: ApiService,
         private readonly staticService: StaticService,
-        private readonly notifier: Notifier
+        private readonly notifier: NotifierService
     ) { }
 
     async ngOnInit() {

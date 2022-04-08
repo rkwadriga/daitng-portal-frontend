@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { ApiService } from "../../services/api.service";
-import { Notifier } from "../../services/Notifier";
+import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
 import { genders } from "../../config/genders";
 import { Gender } from "../gender.enum";
@@ -30,7 +30,7 @@ export class UpdateComponent implements OnInit {
         private readonly userService: UserService,
         private readonly api: ApiService,
         private readonly router: Router,
-        private readonly notifier: Notifier,
+        private readonly notifier: NotifierService,
         private readonly logger: LoggerService
     ) { }
 
