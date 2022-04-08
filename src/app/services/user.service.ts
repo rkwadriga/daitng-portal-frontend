@@ -103,10 +103,7 @@ export class UserService {
             throw new Error(message);
         }
 
-        return this.setUser(Object.assign(new User('', ''), response.body));
-    }
-
-    public setUser(user: User): User {
+        const user = Object.assign(new User('', ''), response.body);
         this.user.next(user);
 
         return user;

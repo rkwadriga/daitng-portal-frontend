@@ -56,7 +56,7 @@ export class DatingService {
     }
 
     public async next(): Promise<Account> {
-        const nextAccount = new Account(await this.getNextAccount());
+        const nextAccount = await this.getNextAccount();
         this.account.next(nextAccount);
 
         return nextAccount;
@@ -67,6 +67,6 @@ export class DatingService {
         if (!resp.ok) {
             throw new Error(resp.error?.message ?? `Can not get the next account. Response code is ${resp.status}`);
         }
-        return resp.body;
+        return new Account(resp.body);
     }
 }

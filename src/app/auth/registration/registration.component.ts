@@ -1,19 +1,19 @@
-import {Component} from '@angular/core';
-import {ApiService} from "../../services/api.service";
-import {apiUrls} from "../../config/api";
-import {NotifierService} from "../../services/notifier.service";
-import {routes} from "../../config/routes";
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {environment} from "../../../environments/environment";
-import {dateFormatPattern, isDateValid, yearsFromDate} from "../../helpers/time.helper";
-import {Router} from "@angular/router";
-import {LoggerService} from "../../services/logger.service";
-import {genders} from "../../config/genders";
-import {orientations} from "../../config/orientations";
-import {userSettings} from "../../config/user.settings";
-import {enumsKeysToArray, inArray} from "../../helpers/array.helper";
-import {Orientation} from "../../profile/orientation.enum";
-import {Gender} from "../../profile/gender.enum";
+import { Component } from '@angular/core';
+import { ApiService } from "../../services/api.service";
+import { apiUrls } from "../../config/api";
+import { NotifierService } from "../../services/notifier.service";
+import { routes } from "../../config/routes";
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { environment } from "../../../environments/environment";
+import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import { Router } from "@angular/router";
+import { LoggerService } from "../../services/logger.service";
+import { genders } from "../../config/genders";
+import { orientations } from "../../config/orientations";
+import { userSettings } from "../../config/user.settings";
+import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
+import { Orientation } from "../../profile/orientation.enum";
+import { Gender } from "../../profile/gender.enum";
 
 @Component({
     selector: 'auth-registration',

@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { User, UserService } from "../services/user.service";
-import { routes } from "../config/routes";
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
@@ -9,17 +6,9 @@ import { Location } from '@angular/common';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-    user?: User;
-    routes = routes;
-    isProfilePage = true;
 
-    constructor(
-        private readonly userService: UserService,
-        private readonly location: Location
-    ) { }
+    constructor() { }
 
-    async ngOnInit() {
-        this.user = await this.userService.getUser();
-        this.isProfilePage = this.location.path() === routes.myProfile;
+    ngOnInit(): void {
     }
 }

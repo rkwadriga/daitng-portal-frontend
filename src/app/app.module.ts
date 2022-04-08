@@ -33,6 +33,7 @@ import { ChangePasswordComponent } from './profile/change-password/change-passwo
 import { ShortPipe } from './pipes/short.pipe';
 import { PersonComponent } from './dating/person/person.component';
 import { StoreModule } from '@ngrx/store';
+import { InfoComponent } from './profile/info/info.component';
 
 @NgModule({
     declarations: [
@@ -48,7 +49,8 @@ import { StoreModule } from '@ngrx/store';
         UpdateComponent,
         ChangePasswordComponent,
         ShortPipe,
-        PersonComponent
+        PersonComponent,
+        InfoComponent
     ],
     imports: [
         BrowserModule,

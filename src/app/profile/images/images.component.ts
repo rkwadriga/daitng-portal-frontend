@@ -9,6 +9,7 @@ import { StaticService } from "../../services/static.service";
 import { userSettings } from "../../config/user.settings";
 import {getBase64FromUrl} from "../../helpers/image.helper";
 import { routes } from "../../config/routes";
+import {Router} from "@angular/router";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -40,6 +41,7 @@ export class ImagesComponent implements OnInit {
     constructor(
         private readonly userService: UserService,
         private readonly api: ApiService,
+        private readonly router: Router,
         private readonly staticService: StaticService,
         private readonly notifier: NotifierService
     ) { }
@@ -163,5 +165,7 @@ export class ImagesComponent implements OnInit {
         if (this.avatarIsChanged) {
             await this.userService.refresh();
         }
+
+        await this.router.navigateByUrl(this.routes.myProfile);
     }
 }
