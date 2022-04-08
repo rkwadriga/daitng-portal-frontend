@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiClient } from "../../services/ApiClient";
 import { apiUrls } from "../../config/api";
-import { Account } from "./account.entity";
 import { Notifier } from "../../services/Notifier";
 import { routes } from "../../config/routes";
 import { UserService } from "../../services/UserService";
 import { User } from "../../auth/user.entity";
+import {Account, DatingService} from "../../services/dating.service";
 
 @Component({
     selector: 'app-accounts',
@@ -16,10 +16,10 @@ export class AccountsComponent implements OnInit {
     user?: User;
     account?: Account;
     routes = routes;
-    private skipUserId?: string;
 
     constructor(
         private readonly userService: UserService,
+        private readonly datingService: DatingService,
         private readonly api: ApiClient,
         private readonly notifier: Notifier
     ) { }
@@ -28,17 +28,11 @@ export class AccountsComponent implements OnInit {
         // Get current user
         this.user = await this.userService.getUser();
 
-        // Get current dating account
-        const resp = await this.api.call(apiUrls.datingCurrentProfile);
-        if (!resp.ok) {
-            this.notifier.error(resp);
-            return;
+        try {
+            this.account = await this.datingService.current();
+        } catch (e) {
+            this.notifier.error(e instanceof Error ? e.message : 'Can not get the nex account');
         }
-
-        this.account = new Account(resp.body);
-
-        // Remember the last user id
-        this.skipUserId = this.account.id;
     }
 
     async onLike() {
@@ -57,32 +51,14 @@ export class AccountsComponent implements OnInit {
             throw new Error(message);
         }
 
-        // Get the next dating profile
-        resp = await this.api.call(apiUrls.datingNextProfile);
-        if (!resp.ok) {
-            this.notifier.error(resp);
-            return;
-        }
-
-        this.account = new Account(resp.body);
+        await this.onNext();
     }
 
     async onNext() {
-        if (this.account === undefined) {
-            const message = 'Current user is not specified';
-            this.notifier.error(message);
-            throw new Error(message);
+        try {
+            this.account = await this.datingService.next();
+        } catch (e) {
+            this.notifier.error(e instanceof Error ? e.message : 'Can not get the nex account');
         }
-
-        // Get the next dating profile
-        apiUrls.datingNextProfile.params.id = this.skipUserId ?? '';
-        let resp = await this.api.call(apiUrls.datingNextProfile);
-        if (!resp.ok) {
-            this.notifier.error(resp);
-            return;
-        }
-
-        this.skipUserId = undefined;
-        this.account = new Account(resp.body);
     }
 }

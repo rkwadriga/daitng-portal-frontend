@@ -57,14 +57,9 @@ export const apiUrls = {
         method: RequestMethods.PATCH,
         path: '/profile/password',
     },
-    datingCurrentProfile: {
-        method: RequestMethods.GET,
-        path: '/dating/profiles/current'
-    },
     datingNextProfile: {
         method: RequestMethods.GET,
-        path: '/dating/profiles/next',
-        params: {id: ''}
+        path: '/dating/profiles/next'
     },
     datingLikeProfile: {
         method: RequestMethods.POST,

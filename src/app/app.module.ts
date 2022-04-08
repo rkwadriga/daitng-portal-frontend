@@ -32,6 +32,7 @@ import { UpdateComponent } from './profile/update/update.component';
 import { ChangePasswordComponent } from './profile/change-password/change-password.component';
 import { ShortPipe } from './pipes/short.pipe';
 import { PersonComponent } from './dating/person/person.component';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
     declarations: [
@@ -70,7 +71,8 @@ import { PersonComponent } from './dating/person/person.component';
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule
+        HttpClientModule,
+        StoreModule.forRoot({}, {}),
     ],
     providers: [],
     bootstrap: [AppComponent]

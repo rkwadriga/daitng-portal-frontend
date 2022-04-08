@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Account } from "../accounts/account.entity";
 import { ActivatedRoute } from "@angular/router";
 import { routes } from "../../config/routes";
 import { ApiClient } from "../../services/ApiClient";
 import { Notifier } from "../../services/Notifier";
 import { apiUrls } from "../../config/api";
-import {UserService} from "../../services/UserService";
-import {User} from "../../auth/user.entity";
+import { UserService } from "../../services/UserService";
+import { User } from "../../auth/user.entity";
+import { Account } from "../../services/dating.service";
 
 @Component({
   selector: 'app-person',
