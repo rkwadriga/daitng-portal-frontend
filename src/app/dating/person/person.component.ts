@@ -4,8 +4,7 @@ import { routes } from "../../config/routes";
 import { ApiClient } from "../../services/ApiClient";
 import { Notifier } from "../../services/Notifier";
 import { apiUrls } from "../../config/api";
-import { UserService } from "../../services/UserService";
-import { User } from "../../auth/user.entity";
+import { User, UserService } from "../../services/UserService";
 import { Account } from "../../services/dating.service";
 
 @Component({

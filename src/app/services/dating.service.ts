@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, BehaviorSubject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { KeyValueInterface } from "../interfaces/keyvalue.interface";
 import { ApiClient } from "./ApiClient";
 import { apiUrls } from "../config/api";

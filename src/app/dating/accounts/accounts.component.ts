@@ -3,9 +3,8 @@ import { ApiClient } from "../../services/ApiClient";
 import { apiUrls } from "../../config/api";
 import { Notifier } from "../../services/Notifier";
 import { routes } from "../../config/routes";
-import { UserService } from "../../services/UserService";
-import { User } from "../../auth/user.entity";
-import {Account, DatingService} from "../../services/dating.service";
+import { User, UserService } from "../../services/UserService";
+import { Account, DatingService } from "../../services/dating.service";
 
 @Component({
     selector: 'app-accounts',

@@ -6,10 +6,9 @@ import { Notifier } from "../../services/Notifier";
 import { Logger } from "../../services/Logger";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { apiUrls } from "../../config/api";
-import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
-import {UserService} from "../../services/UserService";
-import {User} from "../../auth/user.entity";
-import {userSettings} from "../../config/user.settings";
+import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
+import { User, UserService } from "../../services/UserService";
+import { userSettings } from "../../config/user.settings";
 
 let api: ApiClient | null = null;
 let checkedPasswords: KeyValueInterface = {};

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from "../services/UserService";
-import { User } from "../auth/user.entity";
+import { User, UserService } from "../services/UserService";
 import { routes } from "../config/routes";
 import { Location } from '@angular/common';
 

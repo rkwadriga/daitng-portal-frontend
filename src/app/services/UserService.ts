@@ -3,18 +3,57 @@ import { Logger } from "./Logger";
 import { ApiClient } from "./ApiClient";
 import { apiUrls } from "../config/api";
 import { KeyValueInterface } from "../interfaces/keyvalue.interface";
-import { User } from "../auth/user.entity";
+import { BehaviorSubject } from "rxjs";
 
 export interface LoginParams extends KeyValueInterface {
     username: string,
     password: string
 }
 
+export class User {
+    constructor(
+        public id: string,
+        public email: string,
+        public firstName?: string,
+        public lastName?: string,
+        public avatar?: string,
+        public gender?: string,
+        public orientation?: string,
+        public showGender?: string,
+        public birthday?: string,
+        public age?: number,
+        public about?: string,
+        public imagesLimit?: number,
+        public maximumImageSIze?: number
+    ) {}
+
+    get fullName(): string {
+        let name = '';
+
+        if (this.firstName !== undefined) {
+            name += this.firstName;
+        }
+        if (this.lastName !== undefined) {
+            if (this.firstName !== undefined) {
+                name += ' ';
+            }
+            name += this.lastName;
+        }
+
+        return name;
+    }
+
+    get fullNameAndEmail(): string {
+        const fullName = this.fullName;
+        return fullName.length > 0 ? `${fullName} (${this.email})` : this.email;
+    }
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-    private userEntity?: User;
+    private user = new BehaviorSubject<User|null>(null);
 
     constructor(
         private readonly api: ApiClient,
@@ -46,21 +85,15 @@ export class UserService {
     }
 
     logout(): void {
-        this.userEntity = undefined;
-        localStorage.removeItem('Current_user');
+        this.user.next(null);
         if (this.isLogged) {
             this.api.setToken(undefined);
         }
     }
 
     async getUser(): Promise<User> {
-        if (this.userEntity !== undefined) {
-            return this.userEntity;
-        }
-
-        const storageUser = localStorage.getItem('Current_user');
-        if (storageUser !== null) {
-            return this.userEntity = Object.assign(new User('', ''), JSON.parse(storageUser));
+        if (this.user.getValue() !== null) {
+            return this.user.getValue() ?? new User('', '');
         }
 
         const response = await this.api.call(apiUrls.userInfo);
@@ -74,14 +107,13 @@ export class UserService {
     }
 
     public setUser(user: User): User {
-        localStorage.setItem('Current_user', JSON.stringify(user));
-        return this.userEntity = user;
+        this.user.next(user);
+
+        return user;
     }
 
     public async refresh() {
-        this.userEntity = undefined;
-        localStorage.removeItem('Current_user');
+        this.user.next(null);
         await this.getUser();
-        window.location.reload();
     }
 }

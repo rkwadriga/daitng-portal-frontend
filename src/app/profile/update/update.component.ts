@@ -1,20 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {UserService} from "../../services/UserService";
-import {ApiClient} from "../../services/ApiClient";
-import {Notifier} from "../../services/Notifier";
-import {routes} from "../../config/routes";
-import {User} from "../../auth/user.entity";
-import {genders} from "../../config/genders";
-import {Gender} from "../gender.enum";
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, Validators} from "@angular/forms";
-import {dateFormatPattern, isDateValid, yearsFromDate} from "../../helpers/time.helper";
-import {environment} from "../../../environments/environment";
-import {apiUrls} from "../../config/api";
-import {Logger} from "../../services/Logger";
-import {Router} from "@angular/router";
-import {orientations} from "../../config/orientations";
-import {enumsKeysToArray, inArray} from "../../helpers/array.helper";
-import {Orientation} from "../orientation.enum";
+import { Component, OnInit } from '@angular/core';
+import { User, UserService } from "../../services/UserService";
+import { ApiClient } from "../../services/ApiClient";
+import { Notifier } from "../../services/Notifier";
+import { routes } from "../../config/routes";
+import { genders } from "../../config/genders";
+import { Gender } from "../gender.enum";
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
+import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import { environment } from "../../../environments/environment";
+import { apiUrls } from "../../config/api";
+import { Logger } from "../../services/Logger";
+import { Router } from "@angular/router";
+import { orientations } from "../../config/orientations";
+import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
 
 @Component({
   selector: 'app-update',

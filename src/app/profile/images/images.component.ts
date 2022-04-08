@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from "../../services/UserService";
+import { User, UserService } from "../../services/UserService";
 import { ApiClient } from "../../services/ApiClient";
 import { apiUrls } from "../../config/api";
-import { User } from "../../auth/user.entity";
 import { Notifier } from "../../services/Notifier";
 import { bytesToReadable } from "../../helpers/string.helper";
 import { Photo } from "../photo.entity";
