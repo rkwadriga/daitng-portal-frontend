@@ -74,7 +74,9 @@ export class UpdateComponent implements OnInit {
     }
 
     async emailValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
-        const email = group.parent?.get('email')?.value;
+        return null;
+
+        /*const email = group.parent?.get('email')?.value;
         if (apiService === null || !email === null) {
             return null;
         }
@@ -96,7 +98,7 @@ export class UpdateComponent implements OnInit {
             return null;
         }
 
-        return error;
+        return error;*/
     }
 
     retypePasswordValidator (group: AbstractControl): ValidationErrors | null {
