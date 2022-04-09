@@ -30,6 +30,10 @@ import { ProfileComponent } from './profile/profile.component';
 import { ImagesComponent } from './profile/images/images.component';
 import { UpdateComponent } from './profile/update/update.component';
 import { ChangePasswordComponent } from './profile/change-password/change-password.component';
+import { ShortPipe } from './pipes/short.pipe';
+import { PersonComponent } from './dating/person/person.component';
+import { StoreModule } from '@ngrx/store';
+import { InfoComponent } from './profile/info/info.component';
 
 @NgModule({
     declarations: [
@@ -43,7 +47,10 @@ import { ChangePasswordComponent } from './profile/change-password/change-passwo
         ProfileComponent,
         ImagesComponent,
         UpdateComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
+        ShortPipe,
+        PersonComponent,
+        InfoComponent
     ],
     imports: [
         BrowserModule,
@@ -66,7 +73,8 @@ import { ChangePasswordComponent } from './profile/change-password/change-passwo
         BrowserAnimationsModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule
+        HttpClientModule,
+        StoreModule.forRoot({}, {}),
     ],
     providers: [],
     bootstrap: [AppComponent]

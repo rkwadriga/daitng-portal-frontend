@@ -1,8 +1,3 @@
-<!--<nav class="nav grey lighten-4 py-4">
-    <a class="nav-link" routerLink="/" *ngIf="user">Home</a>
-    <a class="nav-link" href="javascript:;" rel="nofollow" *ngIf="user" (click)="logout()">Logout</a>
-</nav>-->
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <!-- Container wrapper -->
     <div class="container-fluid">
@@ -55,10 +50,10 @@
                     *ngIf="showUserLinks"
                 >
                     <li>
-                        <a class="dropdown-item" href="{{ routes.myProfile }}">My profile</a>
+                        <a class="dropdown-item" routerLink="{{ routes.myProfile }}">My profile</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#" (click)="logout()">Logout</a>
+                        <a class="dropdown-item" href="javascript:;" (click)="logout()">Logout</a>
                     </li>
                 </ul>
             </div>

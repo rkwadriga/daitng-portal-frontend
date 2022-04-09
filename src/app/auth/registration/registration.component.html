@@ -124,6 +124,40 @@
         </div>
     </div>
 
+    <!-- Orientation -->
+    <div class="md-form mb-4">
+        <label for="registration_form_orientation_input">Orientation</label>
+        <select
+            id="registration_form_orientation_input"
+            class="form-control"
+            formControlName="orientation"
+        >
+            <option *ngFor="let orientation of orientations" [value]="orientation.value">{{ orientation.name }}</option>
+        </select>
+        <div *ngIf="orientation?.invalid && (orientation?.dirty || orientation?.touched)">
+            <div *ngIf="orientation?.errors?.['orientationIsCorrect']" class="error-message-1">
+                Invalid orientation value
+            </div>
+        </div>
+    </div>
+
+    <!-- Show Gender -->
+    <div class="md-form mb-4">
+        <label for="registration_form_show_gender_input">Show Gender</label>
+        <select
+            id="registration_form_show_gender_input"
+            class="form-control"
+            formControlName="showGender"
+        >
+            <option *ngFor="let gender of genders" [value]="gender.value">{{ gender.name }}</option>
+        </select>
+        <div *ngIf="showGender?.invalid && (showGender?.dirty || showGender?.touched)">
+            <div *ngIf="showGender?.errors?.['showGenderIsCorrect']" class="error-message-1">
+                Invalid gender value
+            </div>
+        </div>
+    </div>
+
     <!-- Birthday -->
     <div class="md-form mb-4">
         <input

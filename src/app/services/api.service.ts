@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Logger } from "./Logger";
+import { LoggerService } from "./logger.service";
 import { firstValueFrom } from 'rxjs';
 import { KeyValueInterface } from '../interfaces/keyvalue.interface';
 import { environment } from '../../environments/environment';
@@ -31,13 +31,13 @@ export interface Token extends KeyValueInterface {
 @Injectable({
     providedIn: 'root'
 })
-export class ApiClient {
+export class ApiService {
     private baseUrl: string;
     public token?: Token;
 
     constructor(
         private readonly http: HttpClient,
-        private readonly logger: Logger
+        private readonly logger: LoggerService
     ) {
         this.baseUrl = environment.apiUrl;
         const token = localStorage.getItem('ApiClient.token');
@@ -65,7 +65,20 @@ export class ApiClient {
         // Add rul params to url
         if (apiUrl.params !== undefined) {
             Object.keys(apiUrl.params).forEach(key => {
-                url = url.replace(`:${key}`, apiUrl.params?.[key] ?? '');
+                const paramValue = apiUrl.params?.[key];
+                if (paramValue === '' || paramValue === undefined) {
+                    return;
+                }
+                if (url.includes(`:${key}`)) {
+                    url = url.replace(`:${key}`, paramValue);
+                } else {
+                    if (url.includes('?')) {
+                        url += '&';
+                    } else {
+                        url += '?';
+                    }
+                    url += `${key}=${paramValue}`;
+                }
             });
         }
 

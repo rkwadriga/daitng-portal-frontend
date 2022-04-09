@@ -40,6 +40,11 @@ export const apiUrls = {
         path: '/profile/:id/photos',
         params: {id: ''}
     },
+    getUserInfo: {
+        method: RequestMethods.GET,
+        path: '/dating/profiles/:id',
+        params: {id: ''}
+    },
     uploadPhotos: {
         method: RequestMethods.POST,
         path: '/profile/photos'
@@ -52,8 +57,17 @@ export const apiUrls = {
         method: RequestMethods.PATCH,
         path: '/profile/password',
     },
-    accountsList: {
+    datingNextProfile: {
         method: RequestMethods.GET,
-        path: '/profiles'
+        path: '/dating/profiles/next'
+    },
+    datingLikeProfile: {
+        method: RequestMethods.POST,
+        path: '/dating/profiles/:id/like',
+        params: {id: ''}
+    },
+    clearDatings: {
+        method: RequestMethods.DELETE,
+        path: '/dating/profiles'
     }
 };

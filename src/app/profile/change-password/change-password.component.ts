@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { routes } from "../../config/routes";
-import { ApiClient } from "../../services/ApiClient";
+import { ApiService } from "../../services/api.service";
 import { Router } from "@angular/router";
-import { Notifier } from "../../services/Notifier";
-import { Logger } from "../../services/Logger";
+import { NotifierService } from "../../services/notifier.service";
+import { LoggerService } from "../../services/logger.service";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { apiUrls } from "../../config/api";
-import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
-import {UserService} from "../../services/UserService";
-import {User} from "../../auth/user.entity";
-import {userSettings} from "../../config/user.settings";
+import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
+import { User, UserService } from "../../services/user.service";
+import { userSettings } from "../../config/user.settings";
 
-let api: ApiClient | null = null;
+let api: ApiService | null = null;
 let checkedPasswords: KeyValueInterface = {};
 
 @Component({
@@ -21,7 +20,7 @@ let checkedPasswords: KeyValueInterface = {};
 })
 export class ChangePasswordComponent implements OnInit {
     routes = routes;
-    user?: User;
+    user: User | null = null;
 
     validationForm = new FormGroup({
         oldPassword: new FormControl('', [
@@ -44,15 +43,17 @@ export class ChangePasswordComponent implements OnInit {
     });
 
     constructor(
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly userService: UserService,
         private readonly router: Router,
-        private readonly notifier: Notifier,
-        private readonly logger: Logger
+        private readonly notifier: NotifierService,
+        private readonly logger: LoggerService
     ) { }
 
-    async ngOnInit() {
-        this.user = await this.userService.getUser();
+    ngOnInit(): void {
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+        });
         api = this.api;
     }
 

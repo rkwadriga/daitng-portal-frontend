@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Response as HttpResponse } from './ApiClient';
+import { Response as HttpResponse } from './api.service';
 
 enum MessageType {
     Error,
@@ -10,7 +10,7 @@ enum MessageType {
 @Injectable({
     providedIn: 'root'
 })
-export class Notifier {
+export class NotifierService {
     error(message: HttpResponse | string): void {
         this.viewMsg(message, MessageType.Error);
     }

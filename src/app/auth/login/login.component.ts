@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { ApiClient } from "../../services/ApiClient";
-import { UserService } from "../../services/UserService";
+import { ApiService } from "../../services/api.service";
+import { UserService } from "../../services/user.service";
 import { Router } from '@angular/router';
 import { routes } from "../../config/routes";
 import {userSettings} from "../../config/user.settings";
@@ -27,7 +27,7 @@ export class LoginComponent {
     });
 
     constructor(
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly userService: UserService,
         private readonly router: Router
     ) { }

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {ApiClient} from "../../services/ApiClient";
-import {apiUrls} from "../../config/api";
-import {Account} from "./account.entity";
-import {Notifier} from "../../services/Notifier";
-import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
+import { ApiService } from "../../services/api.service";
+import { apiUrls } from "../../config/api";
+import { NotifierService } from "../../services/notifier.service";
+import { routes } from "../../config/routes";
+import { User, UserService } from "../../services/user.service";
+import { Account, DatingService } from "../../services/dating.service";
 
 @Component({
     selector: 'app-accounts',
@@ -11,22 +12,54 @@ import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
     styleUrls: ['./accounts.component.scss']
 })
 export class AccountsComponent implements OnInit {
-    accounts: Account[] = [];
+    user: User | null = null;
+    account?: Account;
+    routes = routes;
 
     constructor(
-        private readonly api: ApiClient,
-        private readonly notifier: Notifier
+        private readonly userService: UserService,
+        private readonly datingService: DatingService,
+        private readonly api: ApiService,
+        private readonly notifier: NotifierService
     ) { }
 
     async ngOnInit() {
-        const resp = await this.api.call(apiUrls.accountsList);
-        if (!resp.ok) {
-            this.notifier.error(resp);
-            return;
+        // Get current user
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+        });
+
+        try {
+            this.account = await this.datingService.current();
+        } catch (e) {
+            this.notifier.error(e instanceof Error ? e.message : 'Can not get the nex account');
         }
-        resp.body.forEach((params: KeyValueInterface) => {
-            this.accounts.push(new Account(params))
-        })
-        console.log(this.accounts);
+    }
+
+    async onLike() {
+        if (this.account === undefined) {
+            const message = 'The account for like is not specified';
+            this.notifier.error(message);
+            throw new Error(message);
+        }
+
+        // Like current profile
+        apiUrls.datingLikeProfile.params.id = this.account.id;
+        let resp = await this.api.call(apiUrls.datingLikeProfile);
+        if (!resp.ok) {
+            const message = resp.error?.message ?? `Can not like user ${this.account.id}`;
+            this.notifier.error(message);
+            throw new Error(message);
+        }
+
+        await this.onNext();
+    }
+
+    async onNext() {
+        try {
+            this.account = await this.datingService.next();
+        } catch (e) {
+            this.notifier.error(e instanceof Error ? e.message : 'Can not get the nex account');
+        }
     }
 }

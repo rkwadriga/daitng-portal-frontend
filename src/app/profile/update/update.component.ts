@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from "../../services/UserService";
-import { ApiClient } from "../../services/ApiClient";
-import { Notifier } from "../../services/Notifier";
+import { User, UserService } from "../../services/user.service";
+import { ApiService } from "../../services/api.service";
+import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
-import { User } from "../../auth/user.entity";
 import { genders } from "../../config/genders";
 import { Gender } from "../gender.enum";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
 import { environment } from "../../../environments/environment";
 import { apiUrls } from "../../config/api";
-import { Logger } from "../../services/Logger";
+import { LoggerService } from "../../services/logger.service";
 import { Router } from "@angular/router";
+import { orientations } from "../../config/orientations";
+import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
 
 @Component({
   selector: 'app-update',
@@ -19,46 +20,50 @@ import { Router } from "@angular/router";
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
-    user?: User;
+    user: User | null = null;
     routes = routes;
     genders = genders;
+    orientations = orientations;
     validationForm?: FormGroup;
 
     constructor(
         private readonly userService: UserService,
-        private readonly api: ApiClient,
+        private readonly api: ApiService,
         private readonly router: Router,
-        private readonly notifier: Notifier,
-        private readonly logger: Logger
+        private readonly notifier: NotifierService,
+        private readonly logger: LoggerService
     ) { }
 
-    async ngOnInit() {
-        this.user = await this.userService.getUser();
-
-        this.validationForm = new FormGroup({
-            email: new FormControl(this.user?.email, [
-                Validators.required,
-                Validators.email
-            ]),
-            firstName: new FormControl(this.user?.firstName, [
-                Validators.minLength(2),
-                Validators.maxLength(50),
-            ]),
-            lastName: new FormControl(this.user?.lastName, [
-                Validators.minLength(2),
-                Validators.maxLength(50),
-            ]),
-            gender: new FormControl(this.user?.gender, [this.genderValidator]),
-            birthday: new FormControl(this.user?.birthday, [
-                Validators.required,
-                Validators.pattern(dateFormatPattern),
-                this.dateValidator,
-                this.ageValidator
-            ]),
-            about: new FormControl(this.user?.about, [
-                Validators.minLength(2),
-                Validators.maxLength(5000),
-            ]),
+    ngOnInit(): void {
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+            this.validationForm = new FormGroup({
+                email: new FormControl(user?.email, [
+                    Validators.required,
+                    Validators.email
+                ]),
+                firstName: new FormControl(user?.firstName, [
+                    Validators.minLength(2),
+                    Validators.maxLength(50),
+                ]),
+                lastName: new FormControl(user?.lastName, [
+                    Validators.minLength(2),
+                    Validators.maxLength(50),
+                ]),
+                gender: new FormControl(user?.gender, [this.genderValidator]),
+                orientation: new FormControl(user?.orientation, [this.orientationValidator]),
+                showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
+                birthday: new FormControl(user?.birthday, [
+                    Validators.required,
+                    Validators.pattern(dateFormatPattern),
+                    this.dateValidator,
+                    this.ageValidator
+                ]),
+                about: new FormControl(user?.about, [
+                    Validators.minLength(2),
+                    Validators.maxLength(5000),
+                ]),
+            });
         });
     }
 
@@ -73,8 +78,26 @@ export class UpdateComponent implements OnInit {
     }
 
     genderValidator (group: AbstractControl): ValidationErrors | null {
-        const result = group.value === Gender.Male || group.value === Gender.Female || group.value === Gender.Other;
+        const result = inArray(group.value, enumsKeysToArray(genders));
+        const showGenderValue = group.parent?.get('showGender')?.value;
+        if (result && !showGenderValue) {
+            if (group.value === Gender.Male) {
+                group.parent?.get('showGender')?.setValue(Gender.Female);
+            } else if (group.value === Gender.Female) {
+                group.parent?.get('showGender')?.setValue(Gender.Male);
+            }
+        }
         return result ? null : {genderIsCorrect: true};
+    }
+
+    orientationValidator (group: AbstractControl): ValidationErrors | null {
+        const result = inArray(group.value, enumsKeysToArray(orientations));
+        return result ? null : {orientationIsCorrect: true};
+    }
+
+    showGenderValidator (group: AbstractControl): ValidationErrors | null {
+        const result = inArray(group.value, enumsKeysToArray(genders));
+        return result ? null : {showGenderIsCorrect: true};
     }
 
     dateValidator (group: AbstractControl): ValidationErrors | null {
@@ -105,6 +128,14 @@ export class UpdateComponent implements OnInit {
 
     get gender() {
         return this.validationForm?.get('gender');
+    }
+
+    get orientation() {
+        return this.validationForm?.get('orientation');
+    }
+
+    get showGender() {
+        return this.validationForm?.get('showGender');
     }
 
     get birthday() {

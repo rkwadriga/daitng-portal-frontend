@@ -1,13 +1,13 @@
 <a
     class="nav-link"
-    href="{{ routes.myProfile }}"
+    routerLink="{{ routes.myProfile }}"
 >
     My Profile
 </a>
 
 <a
     class="nav-link"
-    href="{{ routes.changePassword }}"
+    routerLink="{{ routes.changePassword }}"
 >
     Change password
 </a>
@@ -84,6 +84,40 @@
         </select>
         <div *ngIf="gender?.invalid && (gender?.dirty || gender?.touched)">
             <div *ngIf="gender?.errors?.['genderIsCorrect']" class="error-message-1">
+                Invalid gender value
+            </div>
+        </div>
+    </div>
+
+    <!-- Orientation -->
+    <div class="md-form mb-4">
+        <label for="registration_form_orientation_input">Orientation</label>
+        <select
+            id="registration_form_orientation_input"
+            class="form-control"
+            formControlName="orientation"
+        >
+            <option *ngFor="let orientation of orientations" [value]="orientation.value">{{ orientation.name }}</option>
+        </select>
+        <div *ngIf="gender?.invalid && (gender?.dirty || gender?.touched)">
+            <div *ngIf="gender?.errors?.['genderIsCorrect']" class="error-message-1">
+                Invalid gender value
+            </div>
+        </div>
+    </div>
+
+    <!-- Show Gender -->
+    <div class="md-form mb-4">
+        <label for="registration_form_show_gender_input">Show Gender</label>
+        <select
+            id="registration_form_show_gender_input"
+            class="form-control"
+            formControlName="showGender"
+        >
+            <option *ngFor="let gender of genders" [value]="gender.value">{{ gender.name }}</option>
+        </select>
+        <div *ngIf="showGender?.invalid && (showGender?.dirty || showGender?.touched)">
+            <div *ngIf="showGender?.errors?.['showGenderIsCorrect']" class="error-message-1">
                 Invalid gender value
             </div>
         </div>

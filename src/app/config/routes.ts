@@ -2,7 +2,7 @@ export const routes = {
     home: '/',
     authLogin: '/auth/login',
     authRegistration: '/auth/registration',
-    myProfile: '/profile',
+    myProfile: '/profile/info',
     myImages: '/profile/images',
     updateProfile: '/profile/update',
     changePassword: '/profile/change-password',
