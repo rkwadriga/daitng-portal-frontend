@@ -10,6 +10,8 @@ import { userSettings } from "../../config/user.settings";
 import {getBase64FromUrl} from "../../helpers/image.helper";
 import { routes } from "../../config/routes";
 import {Router} from "@angular/router";
+import {environment} from "../../../environments/environment";
+import {inArray} from "../../helpers/array.helper";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -37,6 +39,7 @@ export class ImagesComponent implements OnInit {
     private userMaximumImageSIze = 0;
     private currentAvatar: string | null = null;
     private avatarIsChanged = false;
+    private allowedFileExtensions: string[] = [];
 
     constructor(
         private readonly userService: UserService,
@@ -83,11 +86,24 @@ export class ImagesComponent implements OnInit {
             // If user has no avatar - that's mean than any new photo is an avatar and user's avatar is changed
             this.avatarIsChanged = this.currentAvatar === null;
         });
+        this.allowedFileExtensions = environment.allowedFilesExtensions.split(',');
     }
 
     onFileSelected(event: any) {
         // Get selected file
         const file = event.target.files[0];
+
+        // Check file name
+        const match = file.name.match(/^[\w\d-_]+\.(\w+)$/i);
+        if (match === null) {
+            this.notifier.error(`Invalid file name: "${file.name}". Missed extensions`);
+            return;
+        }
+        if (!inArray(match[1], this.allowedFileExtensions)) {
+            this.notifier.error(`Invalid file extension: "${match[1]}". Allowed extensions: ${this.allowedFileExtensions.join(', ')}`);
+            return;
+        }
+
         // Check uploading limits
         if (this.filesNames[file.name]) {
             this.notifier.alert(`File ${file.name} already loaded`);

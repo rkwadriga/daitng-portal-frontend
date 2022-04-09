@@ -60,7 +60,7 @@ export class ApiService {
         const apiRequest = `${apiUrl.method} ${url}`;
         const isAuthRequest = inArray(apiUrl.path, [apiUrls.login.path, apiUrls.registration.path, apiUrls.refreshToken.path]);
 
-        this.logger.log(`Send request ${apiRequest}`);
+        //this.logger.log(`Send request ${apiRequest}`);
 
         // Add rul params to url
         if (apiUrl.params !== undefined) {
@@ -111,7 +111,7 @@ export class ApiService {
             return response;
         });
 
-        this.logger.log(`Request ${apiRequest} successful`, response);
+        //this.logger.log(`Request ${apiRequest} successful`, response);
         if (response === null) {
             throw Error(`There is no response from request ${apiRequest} given`);
         }

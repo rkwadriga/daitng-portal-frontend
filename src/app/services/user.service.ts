@@ -79,8 +79,6 @@ export class UserService {
                 throw new Error(message);
             }
             const user = Object.assign(new User('', ''), resp.body);
-
-            console.log(user, "I'm here!");
             this.user.next(user);
         });
     }
