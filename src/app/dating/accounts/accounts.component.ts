@@ -12,7 +12,7 @@ import { Account, DatingService } from "../../services/dating.service";
     styleUrls: ['./accounts.component.scss']
 })
 export class AccountsComponent implements OnInit {
-    user?: User;
+    user: User | null = null;
     account?: Account;
     routes = routes;
 
@@ -25,7 +25,9 @@ export class AccountsComponent implements OnInit {
 
     async ngOnInit() {
         // Get current user
-        this.user = await this.userService.getUser();
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+        });
 
         try {
             this.account = await this.datingService.current();

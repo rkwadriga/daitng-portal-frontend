@@ -15,7 +15,7 @@ export class AppComponent implements OnInit{
 
     showUserLinks = false;
 
-    user?: User;
+    user: User|null = null;
 
     constructor(
         private readonly userService: UserService,
@@ -33,11 +33,13 @@ export class AppComponent implements OnInit{
             return;
         }
 
-        this.user = await this.userService.getUser();
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+        });
     }
 
     async logout() {
-        this.user = undefined;
+        this.user = null;
         this.userService.logout();
 
         return await this.router.navigate(['/auth', 'login']);

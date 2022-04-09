@@ -58,13 +58,38 @@ export class UserService {
     constructor(
         private readonly api: ApiService,
         private readonly logger: LoggerService
-    ) {}
+    ) {
+        this.init();
+    }
+
+    private init() {
+        // Forget old user's value
+        this.user.next(null);
+
+        // If we are not logged there is nothing to do here...
+        if (!this.isLogged) {
+            return;
+        }
+
+        // We are logged! Let's get a user's account info!
+        this.api.call(apiUrls.userInfo).then(resp => {
+            if (!resp.ok) {
+                const message = `Can not get user info: ${resp.error?.message}.`;
+                this.logger.log(message, resp.error);
+                throw new Error(message);
+            }
+            const user = Object.assign(new User('', ''), resp.body);
+
+            console.log(user, "I'm here!");
+            this.user.next(user);
+        });
+    }
 
     get isLogged(): boolean {
         return this.api.token !== undefined;
     }
 
-    async login(params: LoginParams): Promise<User> {
+    async login(params: LoginParams): Promise<BehaviorSubject<User|null>> {
         // Logout current user
         this.logout();
 
@@ -81,7 +106,8 @@ export class UserService {
         this.logger.log(`User ${params.username} successfully logged in.`, response.body.token);
 
         // Get user info
-        return await this.getUser();
+        this.init();
+        return this.getUser();
     }
 
     logout(): void {
@@ -91,26 +117,11 @@ export class UserService {
         }
     }
 
-    async getUser(): Promise<User> {
-        if (this.user.getValue() !== null) {
-            return this.user.getValue() ?? new User('', '');
-        }
-
-        const response = await this.api.call(apiUrls.userInfo);
-        if (!response.ok) {
-            const message = `Can not get user info: ${response.error?.message}.`;
-            this.logger.log(message, response.error);
-            throw new Error(message);
-        }
-
-        const user = Object.assign(new User('', ''), response.body);
-        this.user.next(user);
-
-        return user;
+    getUser(): BehaviorSubject<User|null> {
+        return this.user;
     }
 
-    public async refresh() {
-        this.user.next(null);
-        await this.getUser();
+    public refresh() {
+        this.init();
     }
 }

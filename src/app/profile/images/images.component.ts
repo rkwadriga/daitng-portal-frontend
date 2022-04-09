@@ -29,7 +29,7 @@ interface ImageFile {
   styleUrls: ['./images.component.scss']
 })
 export class ImagesComponent implements OnInit {
-    user?: User;
+    user: User | null = null;
     routes = routes;
     files: ImageFile[] = [];
     private filesNames: ControlFilesNamesInterface = {};
@@ -46,37 +46,43 @@ export class ImagesComponent implements OnInit {
         private readonly notifier: NotifierService
     ) { }
 
-    async ngOnInit() {
+    ngOnInit(): void {
         // Get current user and set user's photos limits
-        const user = this.user = await this.userService.getUser();
-        this.userImagesLimit = this.user.imagesLimit ?? userSettings.defaultUserImagesLimit;
-        this.userMaximumImageSIze = this.user.maximumImageSIze ?? userSettings.defaultUserMaximumImageSIze;
-
-        // Add user id to "GET /account/:id/photos" url and get user's photos
-        apiUrls.getUserPhotos.params.id = user.id;
-        const response = await this.api.call(apiUrls.getUserPhotos);
-        if (!response.ok) {
-            this.notifier.error(response);
-            throw new Error(`Can not get user's photos: ${response.error?.message}`);
-        }
-
-        // Add user's photos to page
-        response.body.forEach((photo: Photo) => {
-            this.filesNames[photo.name] = true;
-            this.files.push({
-                name: photo.name,
-                src: this.staticService.getImgUrl(user, photo.name),
-                size: photo.size,
-                isAvatar: photo.isAvatar,
-                isUrl: true
-            });
-            if (photo.isAvatar) {
-                this.currentAvatar = photo.name;
+        this.userService.getUser().subscribe(async (user) => {
+            if (user === null) {
+                return;
             }
-        });
 
-        // If user has no avatar - that's mean than any new photo is an avatar and user's avatar is changed
-        this.avatarIsChanged = this.currentAvatar === null;
+            this.user = user;
+            this.userImagesLimit = user.imagesLimit ?? userSettings.defaultUserImagesLimit;
+            this.userMaximumImageSIze = user.maximumImageSIze ?? userSettings.defaultUserMaximumImageSIze;
+
+            // Add user id to "GET /account/:id/photos" url and get user's photos
+            apiUrls.getUserPhotos.params.id = user.id;
+            const response = await this.api.call(apiUrls.getUserPhotos);
+            if (!response.ok) {
+                this.notifier.error(response);
+                throw new Error(`Can not get user's photos: ${response.error?.message}`);
+            }
+
+            // Add user's photos to page
+            response.body.forEach((photo: Photo) => {
+                this.filesNames[photo.name] = true;
+                this.files.push({
+                    name: photo.name,
+                    src: this.staticService.getImgUrl(user, photo.name),
+                    size: photo.size,
+                    isAvatar: photo.isAvatar,
+                    isUrl: true
+                });
+                if (photo.isAvatar) {
+                    this.currentAvatar = photo.name;
+                }
+            });
+
+            // If user has no avatar - that's mean than any new photo is an avatar and user's avatar is changed
+            this.avatarIsChanged = this.currentAvatar === null;
+        });
     }
 
     onFileSelected(event: any) {

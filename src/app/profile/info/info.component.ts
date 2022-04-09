@@ -8,14 +8,16 @@ import { routes } from "../../config/routes";
   styleUrls: ['./info.component.scss']
 })
 export class InfoComponent implements OnInit {
-    user?: User;
+    user: User | null = null;
     routes = routes;
 
     constructor(
         private readonly userService: UserService
     ) { }
 
-    async ngOnInit() {
-        this.user = await this.userService.getUser();
+    ngOnInit(): void {
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+        });
     }
 }

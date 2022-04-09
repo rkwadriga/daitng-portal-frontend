@@ -20,7 +20,7 @@ let checkedPasswords: KeyValueInterface = {};
 })
 export class ChangePasswordComponent implements OnInit {
     routes = routes;
-    user?: User;
+    user: User | null = null;
 
     validationForm = new FormGroup({
         oldPassword: new FormControl('', [
@@ -50,8 +50,10 @@ export class ChangePasswordComponent implements OnInit {
         private readonly logger: LoggerService
     ) { }
 
-    async ngOnInit() {
-        this.user = await this.userService.getUser();
+    ngOnInit(): void {
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+        });
         api = this.api;
     }
 

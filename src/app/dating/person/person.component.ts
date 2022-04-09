@@ -13,7 +13,7 @@ import { Account } from "../../services/dating.service";
   styleUrls: ['./person.component.scss']
 })
 export class PersonComponent implements OnInit {
-    user?: User;
+    user: User | null = null;
     account?: Account;
     routes = routes;
     photoIndex = 0;
@@ -28,15 +28,17 @@ export class PersonComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
+        // Get current user
+        await this.userService.getUser().subscribe(user => {
+            this.user = user;
+        })
+
         const userID = this.route.snapshot.paramMap.get('id');
         if (userID === null) {
             const error = 'Missed user ID';
             this.notifier.error(error);
             throw new Error(error);
         }
-
-        // Get current user
-        this.user = await this.userService.getUser();
 
         // Get dating account
         apiUrls.getUserInfo.params.id = userID;

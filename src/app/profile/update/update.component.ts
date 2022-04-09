@@ -20,7 +20,7 @@ import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
-    user?: User;
+    user: User | null = null;
     routes = routes;
     genders = genders;
     orientations = orientations;
@@ -34,35 +34,36 @@ export class UpdateComponent implements OnInit {
         private readonly logger: LoggerService
     ) { }
 
-    async ngOnInit() {
-        this.user = await this.userService.getUser();
-
-        this.validationForm = new FormGroup({
-            email: new FormControl(this.user?.email, [
-                Validators.required,
-                Validators.email
-            ]),
-            firstName: new FormControl(this.user?.firstName, [
-                Validators.minLength(2),
-                Validators.maxLength(50),
-            ]),
-            lastName: new FormControl(this.user?.lastName, [
-                Validators.minLength(2),
-                Validators.maxLength(50),
-            ]),
-            gender: new FormControl(this.user?.gender, [this.genderValidator]),
-            orientation: new FormControl(this.user?.orientation, [this.orientationValidator]),
-            showGender: new FormControl(this.user?.showGender, [this.showGenderValidator]),
-            birthday: new FormControl(this.user?.birthday, [
-                Validators.required,
-                Validators.pattern(dateFormatPattern),
-                this.dateValidator,
-                this.ageValidator
-            ]),
-            about: new FormControl(this.user?.about, [
-                Validators.minLength(2),
-                Validators.maxLength(5000),
-            ]),
+    ngOnInit(): void {
+        this.userService.getUser().subscribe(user => {
+            this.user = user;
+            this.validationForm = new FormGroup({
+                email: new FormControl(user?.email, [
+                    Validators.required,
+                    Validators.email
+                ]),
+                firstName: new FormControl(user?.firstName, [
+                    Validators.minLength(2),
+                    Validators.maxLength(50),
+                ]),
+                lastName: new FormControl(user?.lastName, [
+                    Validators.minLength(2),
+                    Validators.maxLength(50),
+                ]),
+                gender: new FormControl(user?.gender, [this.genderValidator]),
+                orientation: new FormControl(user?.orientation, [this.orientationValidator]),
+                showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
+                birthday: new FormControl(user?.birthday, [
+                    Validators.required,
+                    Validators.pattern(dateFormatPattern),
+                    this.dateValidator,
+                    this.ageValidator
+                ]),
+                about: new FormControl(user?.about, [
+                    Validators.minLength(2),
+                    Validators.maxLength(5000),
+                ]),
+            });
         });
     }
 
