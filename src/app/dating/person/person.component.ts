@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
@@ -24,6 +24,7 @@ export class PersonComponent implements OnInit {
         private readonly userService: UserService,
         private readonly route: ActivatedRoute,
         private readonly api: ApiService,
+        private readonly router: Router,
         private readonly notifier: NotifierService
     ) { }
 
@@ -68,6 +69,6 @@ export class PersonComponent implements OnInit {
             throw new Error(message);
         }
 
-        this.liked = true;
+        return await this.router.navigateByUrl(routes.datingAccounts);
     }
 }
