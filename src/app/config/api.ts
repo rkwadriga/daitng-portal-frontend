@@ -23,6 +23,11 @@ export const apiUrls = {
         method: RequestMethods.POST,
         path: '/auth/registration'
     },
+    checkUsername: {
+        method: RequestMethods.GET,
+        path: '/auth/check-username/:username',
+        params: {username: ''}
+    },
     refreshToken: {
         method: RequestMethods.PUT,
         path: '/auth/refresh'
