@@ -4,9 +4,10 @@ import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
 import { apiUrls } from "../../config/api";
 import { User, UserService } from "../../services/user.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Message } from "../dialog/dialog.component";
+import {LoggerService} from "../../services/logger.service";
 
 @Component({
     selector: 'app-list',
@@ -24,6 +25,7 @@ export class ListComponent implements OnInit {
         private readonly userService: UserService,
         private readonly api: ApiService,
         private readonly router: Router,
+        private readonly route: ActivatedRoute,
         private readonly notifier: NotifierService
     ) { }
 
@@ -42,9 +44,14 @@ export class ListComponent implements OnInit {
         resp.body.forEach((params: KeyValueInterface) => {
             this.pairs.push(new User(params));
         });
+
+        const pairID = this.route.snapshot.paramMap.get('id');
+        if (pairID !== null) {
+            await this.selectPair(pairID);
+        }
     }
 
-    async onSelect(id: string) {
+    async selectPair(id: string) {
         if (this.user === null) {
             const message = 'You are not logged in to start dialog';
             this.notifier.error(message);

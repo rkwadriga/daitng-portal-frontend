@@ -36,7 +36,6 @@ import { StoreModule } from '@ngrx/store';
 import { InfoComponent } from './profile/info/info.component';
 import { PairComponent } from './pair/pair.component';
 import { ListComponent } from './pair/list/list.component';
-import { DetailComponent } from './pair/detail/detail.component';
 import { DialogComponent } from './pair/dialog/dialog.component';
 
 @NgModule({
@@ -57,7 +56,6 @@ import { DialogComponent } from './pair/dialog/dialog.component';
         InfoComponent,
         PairComponent,
         ListComponent,
-        DetailComponent,
         DialogComponent
     ],
     imports: [

@@ -21,8 +21,9 @@ export class User {
     public orientation: string | null = null;
     public about: string | null = null;
     public photos: string[] = [];
-    public showGender: string | null = null;
     public birthday: string | null = null;
+    public isPair = true;
+    public showGender: string | null = null;
     public imagesLimit: number | null = null;
     public maximumImageSIze: number | null = null;
 

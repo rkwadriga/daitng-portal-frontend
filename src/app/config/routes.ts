@@ -8,5 +8,5 @@ export const routes = {
     changePassword: '/profile/change-password',
     datingAccounts: '/dating/accounts',
     pairsList: '/pair/list',
-    pairDetail: '/pair'
+    dialog: '/pair/:id/dialog'
 }
