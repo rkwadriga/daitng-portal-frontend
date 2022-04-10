@@ -7,4 +7,6 @@ export const routes = {
     updateProfile: '/profile/update',
     changePassword: '/profile/change-password',
     datingAccounts: '/dating/accounts',
+    pairsList: '/pair/list',
+    pairDetail: '/pair'
 }

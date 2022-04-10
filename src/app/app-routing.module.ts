@@ -11,6 +11,9 @@ import {UpdateComponent} from "./profile/update/update.component";
 import {ChangePasswordComponent} from "./profile/change-password/change-password.component";
 import {PersonComponent} from "./dating/person/person.component";
 import {InfoComponent} from "./profile/info/info.component";
+import {PairComponent} from "./pair/pair.component";
+import {ListComponent} from "./pair/list/list.component";
+import {DetailComponent} from "./pair/detail/detail.component";
 
 const routes: Routes = [
     {
@@ -60,6 +63,20 @@ const routes: Routes = [
             {
                 path: 'change-password',
                 component: ChangePasswordComponent
+            }
+        ]
+    },
+    {
+        path: 'pair',
+        component: PairComponent,
+        children: [
+            {
+                path: 'list',
+                component: ListComponent
+            },
+            {
+                path: ':id',
+                component: DetailComponent
             }
         ]
     },

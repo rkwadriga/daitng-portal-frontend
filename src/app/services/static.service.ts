@@ -12,7 +12,7 @@ export class StaticService {
         this.baseUrl = environment.staticUrl;
     }
 
-    public getImgUrl(user: AccountInterface, path?: string): string {
-        return path !== undefined ? `${this.baseUrl}/img/${user.id}/${path}` : '';
+    public getImgUrl(user: AccountInterface, path: string | null): string {
+        return path !== null ? `${this.baseUrl}/img/${user.id}/${path}` : '';
     }
 }

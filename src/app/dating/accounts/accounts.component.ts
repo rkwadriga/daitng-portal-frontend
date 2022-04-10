@@ -4,7 +4,7 @@ import { apiUrls } from "../../config/api";
 import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
 import { User, UserService } from "../../services/user.service";
-import { Account, DatingService } from "../../services/dating.service";
+import { DatingService } from "../../services/dating.service";
 
 @Component({
     selector: 'app-accounts',
@@ -13,7 +13,7 @@ import { Account, DatingService } from "../../services/dating.service";
 })
 export class AccountsComponent implements OnInit {
     user: User | null = null;
-    account?: Account;
+    account: User | null = null;
     routes = routes;
 
     constructor(
@@ -37,7 +37,7 @@ export class AccountsComponent implements OnInit {
     }
 
     async onLike() {
-        if (this.account === undefined) {
+        if (this.account === null) {
             const message = 'The account for like is not specified';
             this.notifier.error(message);
             throw new Error(message);

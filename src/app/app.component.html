@@ -18,6 +18,9 @@
                 <li class="nav-item" *ngIf="user">
                     <a class="nav-link" routerLink="{{ routes.home }}">Home</a>
                 </li>
+                <li class="nav-item" *ngIf="user">
+                    <a class="nav-link" routerLink="{{ routes.pairsList }}">Pairs</a>
+                </li>
             </ul>
             <!-- Left links -->
         </div>
@@ -36,7 +39,7 @@
                     aria-expanded="false"
                     (click)="toggleUserLinks()"
                 >
-                    <span class="fs-6">{{ user.fullName }}</span>
+                    <span class="fs-6">{{ user.name }}</span>
                     <img
                         [src]="user | img:user.avatar"
                         class="rounded-circle"

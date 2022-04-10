@@ -5,7 +5,6 @@ import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
 import { apiUrls } from "../../config/api";
 import { User, UserService } from "../../services/user.service";
-import { Account } from "../../services/dating.service";
 
 @Component({
   selector: 'app-person',
@@ -14,7 +13,7 @@ import { Account } from "../../services/dating.service";
 })
 export class PersonComponent implements OnInit {
     user: User | null = null;
-    account?: Account;
+    account: User | null = null;
     routes = routes;
     photoIndex = 0;
     photosCount = 0;
@@ -48,14 +47,14 @@ export class PersonComponent implements OnInit {
             this.notifier.error(resp);
             return;
         }
-        this.account = new Account(resp.body);
+        this.account = new User(resp.body);
 
         // Remember photos count
         this.photosCount = this.account.photos.length;
     }
 
     async onLike() {
-        if (this.account === undefined) {
+        if (this.account === null) {
             const message = 'The account for like is not specified';
             this.notifier.error(message);
             throw new Error(message);

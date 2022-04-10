@@ -74,5 +74,9 @@ export const apiUrls = {
     clearDatings: {
         method: RequestMethods.DELETE,
         path: '/dating/profiles'
+    },
+    pairsList: {
+        method: RequestMethods.GET,
+        path: '/pairs/list'
     }
 };

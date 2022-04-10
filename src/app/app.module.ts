@@ -34,6 +34,10 @@ import { ShortPipe } from './pipes/short.pipe';
 import { PersonComponent } from './dating/person/person.component';
 import { StoreModule } from '@ngrx/store';
 import { InfoComponent } from './profile/info/info.component';
+import { PairComponent } from './pair/pair.component';
+import { ListComponent } from './pair/list/list.component';
+import { DetailComponent } from './pair/detail/detail.component';
+import { DialogComponent } from './pair/dialog/dialog.component';
 
 @NgModule({
     declarations: [
@@ -50,7 +54,11 @@ import { InfoComponent } from './profile/info/info.component';
         ChangePasswordComponent,
         ShortPipe,
         PersonComponent,
-        InfoComponent
+        InfoComponent,
+        PairComponent,
+        ListComponent,
+        DetailComponent,
+        DialogComponent
     ],
     imports: [
         BrowserModule,
