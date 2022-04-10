@@ -17,6 +17,7 @@ import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
 
 let apiService: ApiService | null = null;
 let checkedEmails: KeyValueInterface = {};
+let oldEmail: string | null = null;
 
 @Component({
   selector: 'app-update',
@@ -43,6 +44,8 @@ export class UpdateComponent implements OnInit {
 
         this.userService.getUser().subscribe(user => {
             this.user = user;
+            oldEmail = user?.email ?? null;
+
             this.validationForm = new FormGroup({
                 email: new FormControl(user?.email, [
                     Validators.required,
@@ -74,14 +77,12 @@ export class UpdateComponent implements OnInit {
     }
 
     async emailValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
-        return null;
-
-        /*const email = group.parent?.get('email')?.value;
-        if (apiService === null || !email === null) {
+        const email = group.parent?.get('email')?.value;
+        if (apiService === null || !email || email === oldEmail) {
             return null;
         }
 
-        const error = {emailNotUnique: true};;
+        const error = {emailNotUnique: true};
         if (checkedEmails[email] !== undefined) {
             return checkedEmails[email] ? null : error;
         }
@@ -98,7 +99,7 @@ export class UpdateComponent implements OnInit {
             return null;
         }
 
-        return error;*/
+        return error;
     }
 
     retypePasswordValidator (group: AbstractControl): ValidationErrors | null {
