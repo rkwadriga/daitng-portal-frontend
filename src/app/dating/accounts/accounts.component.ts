@@ -15,6 +15,7 @@ export class AccountsComponent implements OnInit {
     user: User | null = null;
     account: User | null = null;
     routes = routes;
+    isMatch = false;
 
     constructor(
         private readonly userService: UserService,
@@ -52,7 +53,12 @@ export class AccountsComponent implements OnInit {
             throw new Error(message);
         }
 
-        await this.onNext();
+        if (resp.body.isPair) {
+            // View "it's match!" pop-up
+            this.isMatch = true;
+        } else {
+            await this.onNext();
+        }
     }
 
     async onNext() {

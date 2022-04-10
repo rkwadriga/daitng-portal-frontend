@@ -18,6 +18,7 @@ export class PersonComponent implements OnInit {
     photoIndex = 0;
     photosCount = 0;
     liked = false;
+    isMatch = false;
 
     constructor(
         private readonly userService: UserService,
@@ -68,6 +69,14 @@ export class PersonComponent implements OnInit {
             throw new Error(message);
         }
 
-        return await this.router.navigateByUrl(routes.datingAccounts);
+        // Mark the account as liked to disable "like" button
+        this.liked = true;
+
+        if (resp.body.isPair) {
+            // View "it's match!" pop-up
+            this.isMatch = true;
+        } else {
+            await this.router.navigateByUrl(routes.datingAccounts);
+        }
     }
 }

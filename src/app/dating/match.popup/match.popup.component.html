@@ -1,0 +1,42 @@
+<div
+    class="modal fade show"
+    tabindex="-1"
+    aria-labelledby="exampleModalLiveLabel"
+    aria-modal="true"
+    role="dialog"
+    style="display: block;"
+    *ngIf="opened && account"
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">It's match!</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                    (click)="close()"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <p>User {{ account.name }} likes you to. You can start the dialog</p>
+            </div>
+            <div class="modal-footer">
+                <a
+                    class="nav-link btn btn-secondary"
+                    (click)="close()"
+                    [href]="routes.datingAccounts"
+                >
+                    Continue watching
+                </a>
+                <a
+                    class="nav-link btn btn-primary"
+                    [routerLink]="routes.dialog.replace(':id', account.id)"
+                >
+                    Write a message
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

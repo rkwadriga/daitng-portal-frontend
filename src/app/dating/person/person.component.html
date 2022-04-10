@@ -8,7 +8,9 @@
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
             <p class="card-text">Gender: {{ account.gender }} ({{ account.orientation }})</p>
             <p class="card-text">{{ account.about }}</p>
-            <p *ngIf="account.isPair"><a routerLink="{{ routes.dialog.replace(':id', account.id) }}" class="nav-link">Dialog</a></p>
+            <p *ngIf="account.isPair">
+                <a routerLink="{{ routes.dialog.replace(':id', account.id) }}" class="nav-link">Dialog</a>
+            </p>
             <div class="row">
                 <div class="col-sm-4">
                     <button
@@ -45,3 +47,5 @@
     </div>
     <div class="col-sm-4"></div>
 </div>
+
+<app-match-popup [opened]="isMatch" [account]="account"></app-match-popup>
