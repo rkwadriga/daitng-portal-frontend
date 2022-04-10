@@ -50,10 +50,22 @@
                     *ngIf="showUserLinks"
                 >
                     <li>
-                        <a class="dropdown-item" routerLink="{{ routes.myProfile }}">My profile</a>
+                        <a
+                            class="dropdown-item"
+                            routerLink="{{ routes.myProfile }}"
+                            (click)="toggleUserLinks()"
+                        >
+                            My profile
+                        </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="javascript:;" (click)="logout()">Logout</a>
+                        <a
+                            class="dropdown-item"
+                            href="javascript:;"
+                            (click)="logout()"
+                        >
+                            Logout
+                        </a>
                     </li>
                 </ul>
             </div>
