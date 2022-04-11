@@ -74,13 +74,13 @@ export class ListComponent implements OnInit {
             {
                 from: this.user,
                 to: this.selectedPair,
-                time: new Date(),
+                time: new Date('2022-04-11 13:05:30'),
                 text: 'Hello how are you?'
             },
             {
                 from: this.selectedPair,
                 to: this.user,
-                time: new Date(),
+                time: new Date('2022-04-11 13:55:30'),
                 text: "I'm fine. And you?"
             }
         ];
