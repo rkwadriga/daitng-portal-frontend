@@ -12,7 +12,10 @@ export class TimePipe implements PipeTransform {
             }
             value = new Date(value);
         }
-        const diffInSeconds = Math.ceil(getDatesDiff(value) / 1000);
+        const diffInSeconds = Math.ceil(getDatesDiff(value) / 1000)  - 1;
+        if (diffInSeconds < 0) {
+            return formatDate(value, 'Y-m-d H:i:s');
+        }
 
         if (diffInSeconds <= 10) {
             return 'just';
