@@ -5,10 +5,14 @@
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
             <p class="card-text">{{ account.about | short }}</p>
-
             <div class="row">
                 <div class="col-sm-4">
-                    <button (click)="onLike()" class="btn btn-success" title="Like">
+                    <button
+                        class="btn btn-success"
+                        title="Like"
+                        (click)="onLike()"
+                        [disabled]="isMatch"
+                    >
                         <i class="bi bi-heart-fill"></i>
                     </button>
                 </div>
@@ -31,3 +35,8 @@
     </div>
     <div class="col-sm-4"></div>
 </div>
+<app-match-popup
+    [opened]="isMatch"
+    [account]="account"
+    (returnToDating)="onCloseMatchPopup()"
+></app-match-popup>

@@ -4,7 +4,7 @@ import { apiUrls } from "../../config/api";
 import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
 import { User, UserService } from "../../services/user.service";
-import { Account, DatingService } from "../../services/dating.service";
+import { DatingService } from "../../services/dating.service";
 
 @Component({
     selector: 'app-accounts',
@@ -13,8 +13,9 @@ import { Account, DatingService } from "../../services/dating.service";
 })
 export class AccountsComponent implements OnInit {
     user: User | null = null;
-    account?: Account;
+    account: User | null = null;
     routes = routes;
+    isMatch = false;
 
     constructor(
         private readonly userService: UserService,
@@ -37,7 +38,7 @@ export class AccountsComponent implements OnInit {
     }
 
     async onLike() {
-        if (this.account === undefined) {
+        if (this.account === null) {
             const message = 'The account for like is not specified';
             this.notifier.error(message);
             throw new Error(message);
@@ -52,7 +53,12 @@ export class AccountsComponent implements OnInit {
             throw new Error(message);
         }
 
-        await this.onNext();
+        if (resp.body.isPair) {
+            // View "it's match!" pop-up
+            this.isMatch = true;
+        } else {
+            await this.onNext();
+        }
     }
 
     async onNext() {
@@ -61,5 +67,10 @@ export class AccountsComponent implements OnInit {
         } catch (e) {
             this.notifier.error(e instanceof Error ? e.message : 'Can not get the nex account');
         }
+    }
+
+    async onCloseMatchPopup() {
+        this.isMatch = false;
+        await this.onNext();
     }
 }

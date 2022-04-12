@@ -12,9 +12,7 @@ styleUrls: ['./app.component.scss']
 export class AppComponent implements OnInit{
     title = 'daitng-portal-frontend';
     routes = routes;
-
     showUserLinks = false;
-
     user: User|null = null;
 
     constructor(
@@ -32,16 +30,15 @@ export class AppComponent implements OnInit{
             }
             return;
         }
-
         this.userService.getUser().subscribe(user => {
             this.user = user;
         });
     }
 
     async logout() {
+        this.toggleUserLinks();
         this.user = null;
         this.userService.logout();
-
         return await this.router.navigate(['/auth', 'login']);
     }
 

@@ -11,23 +11,27 @@ export interface LoginParams extends KeyValueInterface {
 }
 
 export class User {
-    constructor(
-        public id: string,
-        public email: string,
-        public firstName?: string,
-        public lastName?: string,
-        public avatar?: string,
-        public gender?: string,
-        public orientation?: string,
-        public showGender?: string,
-        public birthday?: string,
-        public age?: number,
-        public about?: string,
-        public imagesLimit?: number,
-        public maximumImageSIze?: number
-    ) {}
+    public id = '';
+    public email: string | null = null;
+    public firstName: string | null = null;
+    public lastName: string | null = null;
+    public avatar: string | null = null;
+    public gender: string | null = null;
+    public age: number | null = null;
+    public orientation: string | null = null;
+    public about: string | null = null;
+    public photos: string[] = [];
+    public birthday: string | null = null;
+    public isPair = false;
+    public showGender: string | null = null;
+    public imagesLimit: number | null = null;
+    public maximumImageSIze: number | null = null;
 
-    get fullName(): string {
+    constructor(params: KeyValueInterface) {
+        Object.assign(this, params);
+    }
+
+    get name(): string {
         let name = '';
 
         if (this.firstName !== undefined) {
@@ -41,11 +45,6 @@ export class User {
         }
 
         return name;
-    }
-
-    get fullNameAndEmail(): string {
-        const fullName = this.fullName;
-        return fullName.length > 0 ? `${fullName} (${this.email})` : this.email;
     }
 }
 
@@ -78,10 +77,7 @@ export class UserService {
                 this.logger.log(message, resp.error);
                 throw new Error(message);
             }
-            const user = Object.assign(new User('', ''), resp.body);
-
-            console.log(user, "I'm here!");
-            this.user.next(user);
+            this.user.next(new User(resp.body));
         });
     }
 

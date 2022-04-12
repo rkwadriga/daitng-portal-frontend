@@ -1,0 +1,21 @@
+<div class="row">
+    <div class="col-sm-4">
+        <p *ngFor="let pair of pairs">
+            <a
+                routerLink="{{ routes.dialog.replace(':id', pair.id) }}"
+                class="nav-link"
+                (click)="selectPair(pair.id)"
+            >
+                <img [src]="pair | img:pair.avatar" alt="{{ pair.name }} avatar" height="50">
+                {{ pair.name }} ({{ pair.age }})
+            </a>
+        </p>
+    </div>
+    <div class="col-sm-8">
+        <app-dialog
+            *ngIf="selectedPair"
+            [pair]="selectedPair"
+            [messages]="dialogs[selectedPair.id]"
+        ></app-dialog>
+    </div>
+</div>

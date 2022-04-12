@@ -4,7 +4,10 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'short'
 })
 export class ShortPipe implements PipeTransform {
-    transform(text: string, length = 125): unknown {
+    transform(text: string | null, length = 125): string {
+        if (text === null) {
+            return '';
+        }
         return text.length <= length ? text : text.substring(0, length);
     }
 }

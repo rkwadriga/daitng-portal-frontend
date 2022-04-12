@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
 import { apiUrls } from "../../config/api";
 import { User, UserService } from "../../services/user.service";
-import { Account } from "../../services/dating.service";
 
 @Component({
   selector: 'app-person',
@@ -14,16 +13,18 @@ import { Account } from "../../services/dating.service";
 })
 export class PersonComponent implements OnInit {
     user: User | null = null;
-    account?: Account;
+    account: User | null = null;
     routes = routes;
     photoIndex = 0;
     photosCount = 0;
     liked = false;
+    isMatch = false;
 
     constructor(
         private readonly userService: UserService,
         private readonly route: ActivatedRoute,
         private readonly api: ApiService,
+        private readonly router: Router,
         private readonly notifier: NotifierService
     ) { }
 
@@ -47,14 +48,14 @@ export class PersonComponent implements OnInit {
             this.notifier.error(resp);
             return;
         }
-        this.account = new Account(resp.body);
+        this.account = new User(resp.body);
 
         // Remember photos count
         this.photosCount = this.account.photos.length;
     }
 
     async onLike() {
-        if (this.account === undefined) {
+        if (this.account === null) {
             const message = 'The account for like is not specified';
             this.notifier.error(message);
             throw new Error(message);
@@ -68,6 +69,19 @@ export class PersonComponent implements OnInit {
             throw new Error(message);
         }
 
+        // Mark the account as liked to disable "like" button
         this.liked = true;
+
+        if (resp.body.isPair) {
+            // View "it's match!" pop-up
+            this.isMatch = true;
+        } else {
+            await this.router.navigateByUrl(routes.datingAccounts);
+        }
+    }
+
+    async onCloseMatchPopup() {
+        this.isMatch = false;
+        await this.router.navigateByUrl(routes.datingAccounts);
     }
 }

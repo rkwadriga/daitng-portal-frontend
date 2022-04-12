@@ -18,6 +18,9 @@
                 <li class="nav-item" *ngIf="user">
                     <a class="nav-link" routerLink="{{ routes.home }}">Home</a>
                 </li>
+                <li class="nav-item" *ngIf="user">
+                    <a class="nav-link" routerLink="{{ routes.pairsList }}">Pairs</a>
+                </li>
             </ul>
             <!-- Left links -->
         </div>
@@ -36,7 +39,7 @@
                     aria-expanded="false"
                     (click)="toggleUserLinks()"
                 >
-                    <span class="fs-6">{{ user.fullName }}</span>
+                    <span class="fs-6">{{ user.name }}</span>
                     <img
                         [src]="user | img:user.avatar"
                         class="rounded-circle"
@@ -50,10 +53,22 @@
                     *ngIf="showUserLinks"
                 >
                     <li>
-                        <a class="dropdown-item" routerLink="{{ routes.myProfile }}">My profile</a>
+                        <a
+                            class="dropdown-item"
+                            routerLink="{{ routes.myProfile }}"
+                            (click)="toggleUserLinks()"
+                        >
+                            My profile
+                        </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="javascript:;" (click)="logout()">Logout</a>
+                        <a
+                            class="dropdown-item"
+                            href="javascript:;"
+                            (click)="logout()"
+                        >
+                            Logout
+                        </a>
                     </li>
                 </ul>
             </div>

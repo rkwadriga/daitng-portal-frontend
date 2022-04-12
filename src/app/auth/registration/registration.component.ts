@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { ApiService } from "../../services/api.service";
 import { apiUrls } from "../../config/api";
 import { NotifierService } from "../../services/notifier.service";
@@ -14,13 +14,17 @@ import { userSettings } from "../../config/user.settings";
 import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
 import { Orientation } from "../../profile/orientation.enum";
 import { Gender } from "../../profile/gender.enum";
+import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
+
+let apiService: ApiService | null = null;
+let checkedEmails: KeyValueInterface = {};
 
 @Component({
     selector: 'auth-registration',
     templateUrl: './registration.component.html',
     styleUrls: ['./registration.component.scss']
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnInit {
     routes = routes;
     genders = genders;
     orientations = orientations;
@@ -29,7 +33,7 @@ export class RegistrationComponent {
         email: new FormControl('', [
             Validators.required,
             Validators.email
-        ]),
+        ], this.emailValidatorAsync),
         password: new FormControl('', [
             Validators.required,
             Validators.minLength(userSettings.minPasswordLength),
@@ -70,6 +74,36 @@ export class RegistrationComponent {
         private readonly notifier: NotifierService,
         private readonly logger: LoggerService
     ) { }
+
+    ngOnInit(): void {
+        apiService = this.api;
+    }
+
+    async emailValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
+        const email = group.parent?.get('email')?.value;
+        if (apiService === null || !email === null) {
+            return null;
+        }
+
+        const error = {emailNotUnique: true};;
+        if (checkedEmails[email] !== undefined) {
+            return checkedEmails[email] ? null : error;
+        }
+
+        apiUrls.checkUsername.params.username = email;
+        const resp = await apiService.call(apiUrls.checkUsername);
+        if (!resp.ok) {
+            this.logger.log('Can not check the user password: ' + (resp.error?.message ?? `Status code: ${resp.status}`));
+            return null;
+        }
+
+        checkedEmails[email] = resp.body.result;
+        if (resp.body.result === true) {
+            return null;
+        }
+
+        return error;
+    }
 
     retypePasswordValidator (group: AbstractControl): ValidationErrors | null {
         const password = group.parent?.get('password')?.value;

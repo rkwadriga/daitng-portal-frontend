@@ -1,3 +1,3 @@
 export interface AccountInterface {
-    id: string
+    id: string | null
 }

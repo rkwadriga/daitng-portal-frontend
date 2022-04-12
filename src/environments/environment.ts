@@ -8,7 +8,8 @@ export const environment = {
     staticUrl: 'http://localhost:3000/public',
     minAge: 18,
     defaultUserImagesLimit: 10,
-    defaultUserMaximumImageSIze: 15728640 // 15 Mb
+    defaultUserMaximumImageSIze: 15728640, // 15 Mb
+    allowedFilesExtensions: 'jpg,jpeg,png'
 };
 
 /*

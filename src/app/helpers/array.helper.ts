@@ -1,5 +1,4 @@
-import {KeyValueInterface} from "../interfaces/keyvalue.interface";
-import {EnumInterface} from "../interfaces/enum.interface";
+import { EnumInterface } from "../interfaces/enum.interface";
 
 export const inArray = (elem: any, arr: any[]): boolean => {
     return arr.indexOf(elem) !== -1;

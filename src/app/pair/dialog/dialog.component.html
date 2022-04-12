@@ -1,0 +1,52 @@
+<div class="row d-flex justify-content-center" *ngIf="user && pair">
+    <!-- Header -->
+    <div class="headings d-flex justify-content-between align-items-center mb-3">
+        <a
+            [routerLink]="[routes.datingAccounts, pair.id]"
+            class="nav-link"
+            title="Info"
+        >
+            <img [src]="pair | img:pair.avatar" alt="{{ pair.name }} avatar" height="100px">
+        </a>
+        <h5>
+            <a
+                [routerLink]="[routes.datingAccounts, pair.id]"
+                class="nav-link"
+                title="Info"
+            >
+                {{ pair.name }} ({{ pair.age }})
+            </a>
+        </h5>
+    </div>
+    <!-- Messages -->
+    <div class="card p-3" *ngFor="let msg of messages">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="user d-flex flex-row align-items-center">
+                <img [src]="msg.from | img:msg.from.avatar" width="30" class="user-img rounded-circle mr-2">
+                <span>
+                    <small class="font-weight-bold text-primary">{{ msg.from.name }}</small>
+                </span>
+            </div>
+            <small>{{ msg.time | time }}</small>
+        </div>
+        <div class="action d-flex justify-content-between mt-2 align-items-center">
+            <div class="reply px-4">
+                <small>{{ msg.text }}</small>
+            </div>
+        </div>
+    </div>
+    <!-- New message field -->
+    <div class="card-footer text-muted d-flex justify-content-start align-items-center">
+        <textarea
+            type="text"
+            class="form-control form-control-lg"
+            id="exampleFormControlInput1"
+            placeholder="Type message"
+            [(ngModel)]="msg"
+            (keydown.enter)="onSend()"
+        ></textarea>
+        <a class="ms-3" href="javascipt:;" (click)="onSend()">
+            <i class="fas fa-paper-plane"></i>
+        </a>
+    </div>
+</div>
