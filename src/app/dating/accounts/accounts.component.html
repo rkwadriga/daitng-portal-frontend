@@ -35,4 +35,8 @@
     </div>
     <div class="col-sm-4"></div>
 </div>
-<app-match-popup [opened]="isMatch" [account]="account"></app-match-popup>
+<app-match-popup
+    [opened]="isMatch"
+    [account]="account"
+    (returnToDating)="onCloseMatchPopup()"
+></app-match-popup>

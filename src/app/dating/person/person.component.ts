@@ -79,4 +79,9 @@ export class PersonComponent implements OnInit {
             await this.router.navigateByUrl(routes.datingAccounts);
         }
     }
+
+    async onCloseMatchPopup() {
+        this.isMatch = false;
+        await this.router.navigateByUrl(routes.datingAccounts);
+    }
 }

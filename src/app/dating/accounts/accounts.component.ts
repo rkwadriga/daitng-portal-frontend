@@ -68,4 +68,9 @@ export class AccountsComponent implements OnInit {
             this.notifier.error(e instanceof Error ? e.message : 'Can not get the nex account');
         }
     }
+
+    async onCloseMatchPopup() {
+        this.isMatch = false;
+        await this.onNext();
+    }
 }
