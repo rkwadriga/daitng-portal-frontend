@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { routes } from "../../config/routes";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { ChatService, Message as WsMessage } from "../../services/chat.service";
+import { NotifierService } from "../../services/notifier.service";
 
 export interface Message {
     from: User,
@@ -23,16 +24,40 @@ export class DialogComponent implements OnInit {
     msg = '';
 
     constructor(
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly chat: ChatService,
+        private readonly notifier: NotifierService
     ) { }
 
     ngOnInit(): void {
         this.userService.getUser().subscribe(user => {
             this.user = user;
+            this.chat.onMessage().subscribe((message: WsMessage) => {
+                if (this.pair === null || user === null) {
+                    const message = 'Its impossible to get message before select the pair';
+                    this.notifier.error(message);
+                    throw new Error(message);
+                }
+
+                console.log(message);
+
+                this.messages.push({
+                    from: this.pair,
+                    to: user,
+                    time: message.time ?? new Date(),
+                    text: message.msg
+                });
+            })
         });
     }
 
     onSend() {
-        console.log(this.msg);
+        if (this.pair === null) {
+            const message = 'You cannot send the message to nowhere';
+            this.notifier.error(message);
+            throw new Error(message);
+        }
+        this.chat.send({to: this.pair.id, msg: this.msg});
+        this.msg = '';
     }
 }

@@ -72,19 +72,8 @@ export class ListComponent implements OnInit {
             this.notifier.error(`Selected user id "${id}" is not one of your pairs ids`);
             return;
         }
-        this.dialogs[id] = [
-            {
-                from: this.user,
-                to: this.selectedPair,
-                time: new Date('2022-04-10 13:05:30'),
-                text: 'Hello how are you?'
-            },
-            {
-                from: this.selectedPair,
-                to: this.user,
-                time: new Date('2022-04-11 13:55:30'),
-                text: "I'm fine. And you?"
-            }
-        ];
+        if (this.dialogs[id] === undefined) {
+            this.dialogs[id] = [];
+        }
     }
 }
