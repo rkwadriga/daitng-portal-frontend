@@ -51,18 +51,19 @@ export class TimePipe implements PipeTransform {
         const monthSeconds = daySeconds * 30;
         if (diffInSeconds <= monthSeconds) {
             const days = Math.ceil(diffInSeconds / daySeconds) - 1;
-            if (days <= 1) {
+            if (days === 0) {
                 return 'yesterday at ' + formatDate(value, 'h');
             }
             if (days < 7) {
+                const periodWord = days === 1 ? 'day' : 'days';
                 if (diffInSeconds % daySeconds === 0) {
-                    return days + ' days ago';
+                    return `${days} ${periodWord} ago`;
                 } else {
                     const hours = Math.ceil((diffInSeconds - days * daySeconds) / hourSeconds) - 1;
                     if (hours <= 1) {
-                        return days + ' days ago';
+                        return `${days} ${periodWord} ago`;
                     }
-                    return days + ' days and ' + Math.ceil(hours) + ' hours ago';
+                    return `${days} ${periodWord} and ` + Math.ceil(hours) + ' hours ago';
                 }
             }
             if (days === 7) {
@@ -81,20 +82,18 @@ export class TimePipe implements PipeTransform {
         if (diffInSeconds <= yearSeconds) {
             const months = Math.ceil(diffInSeconds / monthSeconds) - 1;
             const days = Math.ceil((diffInSeconds - months * monthSeconds) / daySeconds) - 1;
-            if (months <= 1) {
-                if (days <= 1) {
-                    return 'a month ago';
-                }
-                return 'a month and ' + days + ' days ago';
+            if (months === 0) {
+                return days + ' days ago';
             }
+            const periodWord = months === 1 ? 'month' : 'months';
             if (months < 6) {
                 if (days <= 1) {
-                    return months + ' months aho';
+                    return `${months} ${periodWord} ago`;
                 }
-                return months + ' months and ' + days + ' days ago';
+                return `${months} ${periodWord} and` + days + ' days ago';
             }
             if (months < 12) {
-                return months  + ' months aho';
+                return `${months} ${periodWord} ago`;
             }
 
             return 'a year ago';
