@@ -30,10 +30,6 @@ export class ListComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-        // Get current user
-        await this.userService.getUser().subscribe(user => {
-            this.user = user;
-        })
         // Get pairs list
         const resp = await this.api.call(apiUrls.pairsList);
         if (!resp.ok) {
@@ -45,10 +41,16 @@ export class ListComponent implements OnInit {
             this.pairs.push(new User(params));
         });
 
+        // If this is a "/pair/:id/dialog" page - need to get the account info by ID
         const pairID = this.route.snapshot.paramMap.get('id');
-        if (pairID !== null) {
-            await this.selectPair(pairID);
-        }
+
+        // Get current user
+        await this.userService.getUser().subscribe(user => {
+            this.user = user;
+            if (pairID !== null) {
+                this.selectPair(pairID);
+            }
+        })
     }
 
     async selectPair(id: string) {
