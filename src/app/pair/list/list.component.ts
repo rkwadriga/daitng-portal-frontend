@@ -8,6 +8,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Message } from "../dialog/dialog.component";
 import {LoggerService} from "../../services/logger.service";
+import {WsMessage} from "../../services/chat.service";
+import {DialogMessageInterface} from "../../interfaces/dialog.message.interface";
 
 @Component({
     selector: 'app-list',
@@ -73,7 +75,38 @@ export class ListComponent implements OnInit {
             return;
         }
         if (this.dialogs[id] === undefined) {
-            this.dialogs[id] = [];
+            this.dialogs[id] = await this.getDialog();
         }
+    }
+
+    private async getDialog(): Promise<Message[]> {
+        if (this.user === null || this.selectedPair === null) {
+            return [];
+        }
+
+        // Get the dialog from backend
+        apiUrls.dialog.params.id = this.selectedPair.id;
+        const resp = await this.api.call(apiUrls.dialog);
+        if (!resp.ok) {
+            const message = `Can not get the dialog for pair ${this.selectedPair.id}: ` + resp.error?.message ?? `Response status is ${resp.status}`;
+            this.notifier.error(message);
+            throw new Error(message);
+        }
+
+        // Convert messages to Message format
+        let result: Message[] = [];
+        resp.body.forEach((msg: DialogMessageInterface) => {
+            if (this.user === null || this.selectedPair === null) {
+                return;
+            }
+            result.push({
+                from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
+                to: msg.to === this.user.id ? this.user : this.selectedPair,
+                time: new Date(msg.time),
+                text: msg.text
+            })
+        });
+
+        return result;
     }
 }

@@ -38,6 +38,9 @@ export class DialogComponent implements OnInit {
                     return;
                 }
 
+                if (typeof message.time === 'string') {
+                    message.time = new Date(message.time);
+                }
                 this.messages.push({
                     from: this.pair,
                     to: user,
@@ -49,11 +52,17 @@ export class DialogComponent implements OnInit {
     }
 
     onSend() {
-        if (this.pair === null) {
+        if (this.pair === null || this.user === null) {
             this.logger.log('You cannot send the message to nowhere');
             return;
         }
         this.chat.send({to: this.pair.id, msg: this.msg});
+        this.messages.push({
+            from: this.user,
+            to: this.pair,
+            time: new Date(),
+            text: this.msg
+        });
         this.msg = '';
     }
 }

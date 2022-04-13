@@ -7,7 +7,7 @@ import { UserService } from "./user.service";
 export interface WsMessage {
     to: string,
     msg: string,
-    time?: Date
+    time?: Date | string
 }
 
 @Injectable({
@@ -32,11 +32,11 @@ export class ChatService {
         });
     }
 
-    send(data: WsMessage) {
+    send(message: WsMessage) {
         this.socket.emit('message', {
-            client: data.to,
-            msg: data.msg,
-            time: data.time ?? new Date()
+            client: message.to,
+            msg: message.msg,
+            time: message.time ?? new Date()
         });
     }
 }
