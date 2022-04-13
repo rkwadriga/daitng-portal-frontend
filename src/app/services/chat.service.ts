@@ -5,9 +5,10 @@ import { environment } from "../../environments/environment";
 import { UserService } from "./user.service";
 
 export interface WsMessage {
-    to: string,
-    msg: string,
-    time?: Date | string
+    id: string;
+    to: string;
+    msg: string;
+    time?: Date | string;
 }
 
 @Injectable({

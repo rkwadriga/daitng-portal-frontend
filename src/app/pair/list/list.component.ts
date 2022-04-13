@@ -100,11 +100,12 @@ export class ListComponent implements OnInit {
                 return;
             }
             result.push({
+                id: msg.id,
                 from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
                 to: msg.to === this.user.id ? this.user : this.selectedPair,
                 time: new Date(msg.time),
                 text: msg.text
-            })
+            });
         });
 
         return result;

@@ -5,10 +5,11 @@ import { ChatService, WsMessage } from "../../services/chat.service";
 import { LoggerService } from "../../services/logger.service";
 
 export interface Message {
-    from: User,
-    to: User,
-    time: Date,
-    text: string
+    id: string;
+    from: User;
+    to: User;
+    time: Date;
+    text: string;
 }
 
 @Component({
@@ -41,12 +42,26 @@ export class DialogComponent implements OnInit {
                 if (typeof message.time === 'string') {
                     message.time = new Date(message.time);
                 }
-                this.messages.push({
-                    from: this.pair,
-                    to: user,
-                    time: message.time ?? new Date(),
-                    text: message.msg
+
+                // Chek if this message already given
+                let inArray = false;
+                this.messages.some(msg => {
+                    if (msg.id === message.id) {
+                        return inArray = true;
+                    } else {
+                        return false;
+                    }
                 });
+
+                if (!inArray) {
+                    this.messages.push({
+                        id: message.id,
+                        from: this.pair,
+                        to: user,
+                        time: message.time ?? new Date(),
+                        text: message.msg
+                    });
+                }
             })
         });
     }
@@ -56,8 +71,14 @@ export class DialogComponent implements OnInit {
             this.logger.log('You cannot send the message to nowhere');
             return;
         }
-        this.chat.send({to: this.pair.id, msg: this.msg});
+        const newMessage  = {
+            id: Math.random().toString(),
+            to: this.pair.id,
+            msg: this.msg
+        };
+        this.chat.send(newMessage);
         this.messages.push({
+            id: newMessage.id,
             from: this.user,
             to: this.pair,
             time: new Date(),
