@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import { environment } from "../../environments/environment";
 import { UserService } from "./user.service";
 
-export interface Message {
+export interface WsMessage {
     to: string,
     msg: string,
     time?: Date
@@ -25,14 +25,14 @@ export class ChatService {
     }
 
     onMessage() {
-        return new Observable<Message>((subscriber) => {
-            this.socket.on('message', (message: Message) => {
+        return new Observable<WsMessage>((subscriber) => {
+            this.socket.on('message', (message: WsMessage) => {
                 subscriber.next(message);
             })
         });
     }
 
-    send(data: Message) {
+    send(data: WsMessage) {
         this.socket.emit('message', {
             client: data.to,
             msg: data.msg,

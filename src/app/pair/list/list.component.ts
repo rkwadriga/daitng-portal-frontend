@@ -26,7 +26,8 @@ export class ListComponent implements OnInit {
         private readonly api: ApiService,
         private readonly router: Router,
         private readonly route: ActivatedRoute,
-        private readonly notifier: NotifierService
+        private readonly notifier: NotifierService,
+        private readonly logger: LoggerService
     ) { }
 
     async ngOnInit() {
@@ -55,9 +56,8 @@ export class ListComponent implements OnInit {
 
     async selectPair(id: string) {
         if (this.user === null) {
-            const message = 'You are not logged in to start dialog';
-            this.notifier.error(message);
-            throw new Error(message);
+            this.logger.error('You are not logged in to start dialog');
+            return;
         }
 
         this.selectedPair = null;
@@ -69,7 +69,7 @@ export class ListComponent implements OnInit {
             return false;
         });
         if (this.selectedPair === null) {
-            this.notifier.error(`Selected user id "${id}" is not one of your pairs ids`);
+            this.logger.error(`Selected user id "${id}" is not one of your pairs ids`);
             return;
         }
         if (this.dialogs[id] === undefined) {
