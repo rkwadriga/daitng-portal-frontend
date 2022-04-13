@@ -52,7 +52,7 @@ export class DialogComponent implements OnInit {
                         return false;
                     }
                 });
-
+                // And if not - add it to page
                 if (!inArray) {
                     this.messages.push({
                         id: message.id,
