@@ -6,8 +6,9 @@ import { UserService } from "./user.service";
 
 export interface WsMessage {
     id: string;
+    from: string;
     to: string;
-    msg: string;
+    text: string;
     time?: Date | string;
 }
 
@@ -34,10 +35,6 @@ export class ChatService {
     }
 
     send(message: WsMessage) {
-        this.socket.emit('message', {
-            client: message.to,
-            msg: message.msg,
-            time: message.time ?? new Date()
-        });
+        this.socket.emit('message', message);
     }
 }

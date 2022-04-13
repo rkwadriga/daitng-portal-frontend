@@ -7,9 +7,8 @@ import { User, UserService } from "../../services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Message } from "../dialog/dialog.component";
-import {LoggerService} from "../../services/logger.service";
-import {WsMessage} from "../../services/chat.service";
-import {DialogMessageInterface} from "../../interfaces/dialog.message.interface";
+import { LoggerService } from "../../services/logger.service";
+import { WsMessage } from "../../services/chat.service";
 
 @Component({
     selector: 'app-list',
@@ -95,17 +94,18 @@ export class ListComponent implements OnInit {
 
         // Convert messages to Message format
         let result: Message[] = [];
-        resp.body.forEach((msg: DialogMessageInterface) => {
+        resp.body.forEach((msg: WsMessage) => {
             if (this.user === null || this.selectedPair === null) {
                 return;
             }
-            result.push({
-                id: msg.id,
+            if (typeof msg.time === 'string') {
+                msg.time = new Date(msg.time);
+            }
+            result.push(Object.assign(msg, {
                 from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
                 to: msg.to === this.user.id ? this.user : this.selectedPair,
-                time: new Date(msg.time),
-                text: msg.text
-            });
+                time: msg.time ?? new Date(),
+            }));
         });
 
         return result;

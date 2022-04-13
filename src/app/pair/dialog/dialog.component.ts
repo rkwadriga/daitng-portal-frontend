@@ -39,10 +39,6 @@ export class DialogComponent implements OnInit {
                     return;
                 }
 
-                if (typeof message.time === 'string') {
-                    message.time = new Date(message.time);
-                }
-
                 // Chek if this message already given
                 let inArray = false;
                 this.messages.some(msg => {
@@ -54,12 +50,15 @@ export class DialogComponent implements OnInit {
                 });
                 // And if not - add it to page
                 if (!inArray) {
+                    if (typeof message.time === 'string') {
+                        message.time = new Date(message.time);
+                    }
                     this.messages.push({
                         id: message.id,
                         from: this.pair,
                         to: user,
                         time: message.time ?? new Date(),
-                        text: message.msg
+                        text: message.text
                     });
                 }
             })
@@ -73,17 +72,13 @@ export class DialogComponent implements OnInit {
         }
         const newMessage  = {
             id: Math.random().toString(),
+            from: this.user.id,
             to: this.pair.id,
-            msg: this.msg
+            text: this.msg,
+            time: new Date()
         };
         this.chat.send(newMessage);
-        this.messages.push({
-            id: newMessage.id,
-            from: this.user,
-            to: this.pair,
-            time: new Date(),
-            text: this.msg
-        });
+        this.messages.push(Object.assign(newMessage, {from: this.user, to: this.pair}));
         this.msg = '';
     }
 }
