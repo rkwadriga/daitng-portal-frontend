@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { io } from 'socket.io-client';
-import { environment } from "../../environments/environment";
 import { UserService } from "./user.service";
+import {SocketService} from "./socket.service";
 
 export interface WsMessage {
     id: string;
@@ -16,25 +15,26 @@ export interface WsMessage {
     providedIn: 'root',
 })
 export class ChatService {
-    socket: any;
-
     constructor(
+        private readonly socketService: SocketService,
         private readonly userService: UserService
     ) {
         this.userService.getUser().subscribe(user => {
-            this.socket = io(environment.socketUrl + `?client=${user?.id}`);
+            if (user !== null) {
+                this.socketService.init(user.id);
+            }
         });
     }
 
-    onMessage() {
+    onMessage(): Observable<WsMessage> {
         return new Observable<WsMessage>((subscriber) => {
-            this.socket.on('message', (message: WsMessage) => {
-                subscriber.next(message);
-            })
+            this.socketService.onMessage().subscribe(message => {
+                subscriber.next(JSON.parse(message.data));
+            });
         });
     }
 
     send(message: WsMessage) {
-        this.socket.emit('message', message);
+        this.socketService.send(JSON.stringify(message));
     }
 }

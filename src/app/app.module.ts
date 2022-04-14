@@ -39,6 +39,7 @@ import { ListComponent } from './pair/list/list.component';
 import { DialogComponent } from './pair/dialog/dialog.component';
 import { MatchPopupComponent } from './dating/match.popup/match.popup.component';
 import { TimePipe } from './pipes/time.pipe';
+import { SocketService } from "./services/socket.service";
 
 @NgModule({
     declarations: [
@@ -86,7 +87,7 @@ import { TimePipe } from './pipes/time.pipe';
         HttpClientModule,
         StoreModule.forRoot({}, {}),
     ],
-    providers: [],
+    providers: [SocketService],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -38,6 +38,7 @@ export class DialogComponent implements OnInit {
                     this.logger.log('Its impossible to get message before select the pair');
                     return;
                 }
+                console.log(message);
 
                 // Chek if this message already given
                 let inArray = false;
