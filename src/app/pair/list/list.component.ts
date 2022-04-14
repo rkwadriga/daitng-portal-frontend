@@ -7,7 +7,8 @@ import { User, UserService } from "../../services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Message } from "../dialog/dialog.component";
-import {LoggerService} from "../../services/logger.service";
+import { LoggerService } from "../../services/logger.service";
+import { WsMessage } from "../../services/chat.service";
 
 @Component({
     selector: 'app-list',
@@ -26,7 +27,8 @@ export class ListComponent implements OnInit {
         private readonly api: ApiService,
         private readonly router: Router,
         private readonly route: ActivatedRoute,
-        private readonly notifier: NotifierService
+        private readonly notifier: NotifierService,
+        private readonly logger: LoggerService
     ) { }
 
     async ngOnInit() {
@@ -55,9 +57,8 @@ export class ListComponent implements OnInit {
 
     async selectPair(id: string) {
         if (this.user === null) {
-            const message = 'You are not logged in to start dialog';
-            this.notifier.error(message);
-            throw new Error(message);
+            this.logger.error('You are not logged in to start dialog');
+            return;
         }
 
         this.selectedPair = null;
@@ -69,22 +70,44 @@ export class ListComponent implements OnInit {
             return false;
         });
         if (this.selectedPair === null) {
-            this.notifier.error(`Selected user id "${id}" is not one of your pairs ids`);
+            this.logger.error(`Selected user id "${id}" is not one of your pairs ids`);
             return;
         }
-        this.dialogs[id] = [
-            {
-                from: this.user,
-                to: this.selectedPair,
-                time: new Date('2022-04-10 13:05:30'),
-                text: 'Hello how are you?'
-            },
-            {
-                from: this.selectedPair,
-                to: this.user,
-                time: new Date('2022-04-11 13:55:30'),
-                text: "I'm fine. And you?"
+        if (this.dialogs[id] === undefined) {
+            this.dialogs[id] = await this.getDialog();
+        }
+    }
+
+    private async getDialog(): Promise<Message[]> {
+        if (this.user === null || this.selectedPair === null) {
+            return [];
+        }
+
+        // Get the dialog from backend
+        apiUrls.dialog.params.id = this.selectedPair.id;
+        const resp = await this.api.call(apiUrls.dialog);
+        if (!resp.ok) {
+            const message = `Can not get the dialog for pair ${this.selectedPair.id}: ` + resp.error?.message ?? `Response status is ${resp.status}`;
+            this.notifier.error(message);
+            throw new Error(message);
+        }
+
+        // Convert messages to Message format
+        let result: Message[] = [];
+        resp.body.forEach((msg: WsMessage) => {
+            if (this.user === null || this.selectedPair === null) {
+                return;
             }
-        ];
+            if (typeof msg.time === 'string') {
+                msg.time = new Date(msg.time);
+            }
+            result.push(Object.assign(msg, {
+                from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
+                to: msg.to === this.user.id ? this.user : this.selectedPair,
+                time: msg.time ?? new Date(),
+            }));
+        });
+
+        return result;
     }
 }

@@ -44,6 +44,7 @@
             placeholder="Type message"
             [(ngModel)]="msg"
             (keydown.enter)="onSend()"
+            (keyup.enter)="msg = ''"
         ></textarea>
         <a class="ms-3" href="javascipt:;" (click)="onSend()">
             <i class="fas fa-paper-plane"></i>

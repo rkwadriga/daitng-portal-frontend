@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { KeyValueInterface } from '../interfaces/keyvalue.interface';
 import { environment } from '../../environments/environment';
 import { ApiUrl, apiUrls } from "../config/api";
-import {inArray} from "../helpers/array.helper";
+import { inArray } from "../helpers/array.helper";
 
 interface ErrorResponse {
     statusCode: number,

@@ -78,5 +78,10 @@ export const apiUrls = {
     pairsList: {
         method: RequestMethods.GET,
         path: '/pairs/list'
+    },
+    dialog: {
+        method: RequestMethods.GET,
+        path: '/dialog/:id',
+        params: {id: ''}
     }
 };

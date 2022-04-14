@@ -6,6 +6,8 @@ export const environment = {
     production: false,
     apiUrl: 'http://localhost:3000/api',
     staticUrl: 'http://localhost:3000/public',
+    //socketUrl: 'http://localhost:3001',
+    socketUrl: 'ws://localhost:9111',
     minAge: 18,
     defaultUserImagesLimit: 10,
     defaultUserMaximumImageSIze: 15728640, // 15 Mb
