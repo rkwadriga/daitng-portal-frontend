@@ -9,6 +9,12 @@ import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Message } from "../dialog/dialog.component";
 import { LoggerService } from "../../services/logger.service";
 import { WsMessage } from "../../services/chat.service";
+import { chatSettings } from "../../config/chat.setings";
+
+interface Dialog {
+    count: number,
+    messages: Message[]
+}
 
 @Component({
     selector: 'app-list',
@@ -19,7 +25,7 @@ export class ListComponent implements OnInit {
     user: User | null = null;
     pairs: User[] = [];
     routes = routes;
-    dialogs: {[key: string]: Message[]} = {};
+    dialogs: {[key: string]: Dialog} = {};
     selectedPair: User | null = null;
 
     constructor(
@@ -78,13 +84,17 @@ export class ListComponent implements OnInit {
         }
     }
 
-    private async getDialog(): Promise<Message[]> {
+    private async getDialog(): Promise<Dialog> {
         if (this.user === null || this.selectedPair === null) {
-            return [];
+            return {count: 0, messages: []};
         }
 
         // Get the dialog from backend
-        apiUrls.dialog.params.id = this.selectedPair.id;
+        apiUrls.dialog.params = {
+            id: this.selectedPair.id,
+            limit: chatSettings.chatMessagesLimit,
+            offset: 0
+        };
         const resp = await this.api.call(apiUrls.dialog);
         if (!resp.ok) {
             const message = `Can not get the dialog for pair ${this.selectedPair.id}: ` + resp.error?.message ?? `Response status is ${resp.status}`;
@@ -93,21 +103,21 @@ export class ListComponent implements OnInit {
         }
 
         // Convert messages to Message format
-        let result: Message[] = [];
-        resp.body.forEach((msg: WsMessage) => {
+        let messages: Message[] = [];
+        resp.body.messages.forEach((msg: WsMessage) => {
             if (this.user === null || this.selectedPair === null) {
                 return;
             }
             if (typeof msg.time === 'string') {
                 msg.time = new Date(msg.time);
             }
-            result.push(Object.assign(msg, {
+            messages.push(Object.assign(msg, {
                 from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
                 to: msg.to === this.user.id ? this.user : this.selectedPair,
-                time: msg.time ?? new Date(),
+                time: msg.time ?? new Date()
             }));
         });
 
-        return result;
+        return {count: resp.body.count, messages};
     }
 }

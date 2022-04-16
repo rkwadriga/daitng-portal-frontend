@@ -11,11 +11,11 @@
             </a>
         </p>
     </div>
-    <div class="col-sm-8">
+    <div class="col-sm-8" *ngIf="selectedPair && dialogs[selectedPair.id]">
         <app-dialog
-            *ngIf="selectedPair"
             [pair]="selectedPair"
-            [messages]="dialogs[selectedPair.id]"
+            [messagesCount]="dialogs[selectedPair.id].count"
+            [messages]="dialogs[selectedPair.id].messages"
         ></app-dialog>
     </div>
 </div>

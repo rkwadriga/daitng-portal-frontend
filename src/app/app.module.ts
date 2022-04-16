@@ -38,8 +38,8 @@ import { PairComponent } from './pair/pair.component';
 import { ListComponent } from './pair/list/list.component';
 import { DialogComponent } from './pair/dialog/dialog.component';
 import { MatchPopupComponent } from './dating/match.popup/match.popup.component';
-import { TimePipe } from './pipes/time.pipe';
 import { SocketService } from "./services/socket.service";
+import { SpendPipe } from './pipes/spend.pipe';
 
 @NgModule({
     declarations: [
@@ -61,7 +61,7 @@ import { SocketService } from "./services/socket.service";
         ListComponent,
         DialogComponent,
         MatchPopupComponent,
-        TimePipe
+        SpendPipe
     ],
     imports: [
         BrowserModule,
