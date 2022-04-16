@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="headings d-flex justify-content-between align-items-center mb-3">
         <a
-            [routerLink]="[routes.datingAccounts, pair.id]"
+            [routerLink]="routes.datingAccount.replace(':id', pair.id)"
             class="nav-link"
             title="Info"
         >
@@ -10,7 +10,7 @@
         </a>
         <h5>
             <a
-                [routerLink]="[routes.datingAccounts, pair.id]"
+                [routerLink]="routes.datingAccount.replace(':id', pair.id)"
                 class="nav-link"
                 title="Info"
             >
@@ -19,19 +19,21 @@
         </h5>
     </div>
     <!-- Messages -->
-    <div class="card p-3" *ngFor="let msg of messages">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="user d-flex flex-row align-items-center">
-                <img [src]="msg.from | img:msg.from.avatar" width="30" class="user-img rounded-circle mr-2">
-                <span>
+    <div class="row" (scroll)="onScroll()">
+        <div class="card p-3" *ngFor="let msg of messages">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="user d-flex flex-row align-items-center">
+                    <img [src]="msg.from | img:msg.from.avatar" width="30" class="user-img rounded-circle mr-2">
+                    <span>
                     <small class="font-weight-bold text-primary">{{ msg.from.name }}</small>
                 </span>
+                </div>
+                <small>{{ msg.transformedTime ?? (msg.time | spend) }}</small>
             </div>
-            <small>{{ msg.transformedTime ?? (msg.time | spend) }}</small>
-        </div>
-        <div class="action d-flex justify-content-between mt-2 align-items-center">
-            <div class="reply px-4">
-                <small>{{ msg.text }}</small>
+            <div class="action d-flex justify-content-between mt-2 align-items-center">
+                <div class="reply px-4">
+                    <small>{{ msg.text }}</small>
+                </div>
             </div>
         </div>
     </div>

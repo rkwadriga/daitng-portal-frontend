@@ -38,7 +38,7 @@ const routes: Routes = [
                 component: AccountsComponent
             },
             {
-                path: 'accounts/:id',
+                path: 'account/:id',
                 component: PersonComponent
             }
         ]
