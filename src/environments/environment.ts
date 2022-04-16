@@ -12,7 +12,7 @@ export const environment = {
     defaultUserImagesLimit: 10,
     defaultUserMaximumImageSIze: 15728640, // 15 Mb
     allowedFilesExtensions: 'jpg,jpeg,png',
-    defaultChatMessagesLimit: 5
+    chatMessagesLimit: 10
 };
 
 /*

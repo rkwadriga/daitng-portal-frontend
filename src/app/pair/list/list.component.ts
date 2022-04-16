@@ -92,7 +92,7 @@ export class ListComponent implements OnInit {
         // Get the dialog from backend
         apiUrls.dialog.params = {
             id: this.selectedPair.id,
-            limit: chatSettings.defaultChatMessagesLimit,
+            limit: chatSettings.chatMessagesLimit,
             offset: 0
         };
         const resp = await this.api.call(apiUrls.dialog);

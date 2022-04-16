@@ -19,8 +19,12 @@
         </h5>
     </div>
     <!-- Messages -->
-    <div class="row" (scroll)="onScroll()">
-        <div class="card p-3" *ngFor="let msg of messages">
+    <div
+        #messagesContainer
+        class="row"
+        style="overflow-y:scroll; max-height: 350px;"
+    >
+        <div class="card p-3 message-element" *ngFor="let msg of messages">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="user d-flex flex-row align-items-center">
                     <img [src]="msg.from | img:msg.from.avatar" width="30" class="user-img rounded-circle mr-2">
