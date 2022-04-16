@@ -4,6 +4,7 @@ import { routes } from "../../config/routes";
 import { ChatService, WsMessage } from "../../services/chat.service";
 import { LoggerService } from "../../services/logger.service";
 import {transformToSpend} from "../../helpers/time.helper";
+import {NotifierService} from "../../services/notifier.service";
 
 export interface Message {
     id: string;
@@ -30,6 +31,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
     constructor(
         private readonly userService: UserService,
         private readonly chat: ChatService,
+        private readonly notifier: NotifierService,
         private readonly logger: LoggerService
     ) { }
 
@@ -81,16 +83,23 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             this.logger.log('You cannot send the message to nowhere');
             return;
         }
-        const newWsMessage  = {
+        const newMessage  = {
             id: Math.random().toString(),
-            from: this.user.id,
-            to: this.pair.id,
+            from: this.user,
+            to: this.pair,
             text: this.msg,
             time: new Date()
         };
-        const newChatMessage = Object.assign({...newWsMessage}, {from: this.user, to: this.pair});
-        this.chat.send(newWsMessage);
-        this.addMessage(newChatMessage);
+        const newWsMessage = Object.assign({...newMessage}, {from: this.user.id, to: this.pair.id});
+        try {
+            this.chat.send(newWsMessage);
+        } catch (e) {
+            const message = 'Can not send the message';
+            this.notifier.error(message);
+            this.logger.error(message, e);
+            return;
+        }
+        this.addMessage(newMessage);
         this.msg = '';
     }
 
@@ -117,13 +126,12 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         if (typeof message.time === 'string') {
             message.time = new Date(message.time);
         }
-        const newMessage = {
+        this.addMessage({
             id: message.id,
             from: this.pair,
             to: this.user,
             time: message.time ?? new Date(),
             text: message.text
-        };
-        this.addMessage(newMessage);
+        });
     }
 }
