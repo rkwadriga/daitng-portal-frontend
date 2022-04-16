@@ -11,7 +11,8 @@ export const environment = {
     minAge: 18,
     defaultUserImagesLimit: 10,
     defaultUserMaximumImageSIze: 15728640, // 15 Mb
-    allowedFilesExtensions: 'jpg,jpeg,png'
+    allowedFilesExtensions: 'jpg,jpeg,png',
+    defaultChatMessagesLimit: 5
 };
 
 /*

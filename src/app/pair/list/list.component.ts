@@ -9,6 +9,7 @@ import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Message } from "../dialog/dialog.component";
 import { LoggerService } from "../../services/logger.service";
 import { WsMessage } from "../../services/chat.service";
+import { chatSettings } from "../../config/chat.setings";
 
 @Component({
     selector: 'app-list',
@@ -84,7 +85,11 @@ export class ListComponent implements OnInit {
         }
 
         // Get the dialog from backend
-        apiUrls.dialog.params.id = this.selectedPair.id;
+        apiUrls.dialog.params = {
+            id: this.selectedPair.id,
+            limit: chatSettings.defaultChatMessagesLimit,
+            offset: 0
+        };
         const resp = await this.api.call(apiUrls.dialog);
         if (!resp.ok) {
             const message = `Can not get the dialog for pair ${this.selectedPair.id}: ` + resp.error?.message ?? `Response status is ${resp.status}`;
@@ -104,7 +109,7 @@ export class ListComponent implements OnInit {
             result.push(Object.assign(msg, {
                 from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
                 to: msg.to === this.user.id ? this.user : this.selectedPair,
-                time: msg.time ?? new Date(),
+                time: msg.time ?? new Date()
             }));
         });
 

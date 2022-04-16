@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterContentChecked } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { routes } from "../../config/routes";
 import { ChatService, WsMessage } from "../../services/chat.service";
 import { LoggerService } from "../../services/logger.service";
+import {transformToSpend} from "../../helpers/time.helper";
 
 export interface Message {
     id: string;
@@ -10,6 +11,7 @@ export interface Message {
     to: User;
     time: Date;
     text: string;
+    transformedTime?: string
 }
 
 @Component({
@@ -17,10 +19,11 @@ export interface Message {
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss']
 })
-export class DialogComponent implements OnInit {
+export class DialogComponent implements OnInit, AfterContentChecked {
     user: User | null = null;
     @Input() pair: User | null = null;
     @Input() messages: Message[] = [];
+    messagesPrepared = false;
     routes = routes;
     msg = '';
 
@@ -33,53 +36,94 @@ export class DialogComponent implements OnInit {
     ngOnInit(): void {
         this.userService.getUser().subscribe(user => {
             this.user = user;
-            this.chat.onMessage().subscribe((message: WsMessage) => {
-                if (this.pair === null || user === null) {
-                    this.logger.log('Its impossible to get message before select the pair');
-                    return;
-                }
-                console.log(message);
-
-                // Chek if this message already given
-                let inArray = false;
-                this.messages.some(msg => {
-                    if (msg.id === message.id) {
-                        return inArray = true;
-                    } else {
-                        return false;
-                    }
-                });
-                // And if not - add it to page
-                if (!inArray) {
-                    if (typeof message.time === 'string') {
-                        message.time = new Date(message.time);
-                    }
-                    this.messages.push({
-                        id: message.id,
-                        from: this.pair,
-                        to: user,
-                        time: message.time ?? new Date(),
-                        text: message.text
-                    });
-                }
-            })
         });
+        this.chat.onMessage().subscribe((message: WsMessage) => {
+            this.getMessage(message);
+        });
+        this.messagesPrepared = false;
+        console.log(this.messagesPrepared);
+    }
+
+    ngAfterContentChecked(): void {
+        if (this.messagesPrepared || this.messages === undefined) {
+            return;
+        }
+        // Sort messages
+        this.messages.sort((msg1, msg2) => {
+            return msg1.time > msg2.time ? 1 : -1;
+        });
+        // Prepare messages (set time persistent transformation)
+        this.messages.forEach(msg => {
+            this.prepareMessage(msg);
+        });
+        this.messagesPrepared = true;
     }
 
     onSend() {
+        this.sendMessage();
+    }
+
+    private addMessage(msg: Message): void {
+        this.messages.splice(0, 1);
+        this.messages.push(msg);
+        // Prepare message (set time persistent transformation)
+        this.prepareMessage(msg);
+    }
+
+    private prepareMessage(msg: Message): void {
+        setInterval(() => {
+            msg.transformedTime = transformToSpend(msg.time);
+        }, 10000);
+    }
+
+    private sendMessage(): void {
         if (this.pair === null || this.user === null) {
             this.logger.log('You cannot send the message to nowhere');
             return;
         }
-        const newMessage  = {
+        const newWsMessage  = {
             id: Math.random().toString(),
             from: this.user.id,
             to: this.pair.id,
             text: this.msg,
             time: new Date()
         };
-        this.chat.send(newMessage);
-        this.messages.push(Object.assign(newMessage, {from: this.user, to: this.pair}));
+        const newChatMessage = Object.assign({...newWsMessage}, {from: this.user, to: this.pair});
+        this.chat.send(newWsMessage);
+        this.addMessage(newChatMessage);
         this.msg = '';
+    }
+
+    private getMessage(message: WsMessage): void {
+        if (this.pair === null || this.user === null) {
+            this.logger.log('Its impossible to get message before select the pair');
+            return;
+        }
+
+        // Chek if this message already given
+        let inArray = false;
+        this.messages.some(msg => {
+            if (msg.id === message.id) {
+                return inArray = true;
+            } else {
+                return false;
+            }
+        });
+        if (inArray) {
+            return;
+        }
+
+        // And if not - add it to page
+        if (typeof message.time === 'string') {
+            message.time = new Date(message.time);
+        }
+        const newMessage = {
+            id: message.id,
+            from: this.pair,
+            to: this.user,
+            time: message.time ?? new Date(),
+            text: message.text
+        };
+        this.addMessage(newMessage);
     }
 }

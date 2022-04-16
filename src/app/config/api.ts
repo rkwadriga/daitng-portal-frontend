@@ -82,6 +82,6 @@ export const apiUrls = {
     dialog: {
         method: RequestMethods.GET,
         path: '/dialog/:id',
-        params: {id: ''}
+        params: {id: '', limit: 0, offset: 0}
     }
 };

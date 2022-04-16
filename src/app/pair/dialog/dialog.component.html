@@ -27,7 +27,7 @@
                     <small class="font-weight-bold text-primary">{{ msg.from.name }}</small>
                 </span>
             </div>
-            <small>{{ msg.time | time }}</small>
+            <small>{{ msg.transformedTime ?? (msg.time | time) }}</small>
         </div>
         <div class="action d-flex justify-content-between mt-2 align-items-center">
             <div class="reply px-4">
