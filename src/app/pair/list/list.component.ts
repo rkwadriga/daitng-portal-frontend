@@ -11,6 +11,11 @@ import { LoggerService } from "../../services/logger.service";
 import { WsMessage } from "../../services/chat.service";
 import { chatSettings } from "../../config/chat.setings";
 
+interface MessagesList {
+    count: number,
+    messages: Message[]
+}
+
 @Component({
     selector: 'app-list',
     templateUrl: './list.component.html',
@@ -20,7 +25,7 @@ export class ListComponent implements OnInit {
     user: User | null = null;
     pairs: User[] = [];
     routes = routes;
-    dialogs: {[key: string]: Message[]} = {};
+    dialogs: {[key: string]: MessagesList} = {};
     selectedPair: User | null = null;
 
     constructor(
@@ -79,9 +84,9 @@ export class ListComponent implements OnInit {
         }
     }
 
-    private async getDialog(): Promise<Message[]> {
+    private async getDialog(): Promise<MessagesList> {
         if (this.user === null || this.selectedPair === null) {
-            return [];
+            return {count: 0, messages: []};
         }
 
         // Get the dialog from backend
@@ -98,21 +103,21 @@ export class ListComponent implements OnInit {
         }
 
         // Convert messages to Message format
-        let result: Message[] = [];
-        resp.body.forEach((msg: WsMessage) => {
+        let messages: Message[] = [];
+        resp.body.messages.forEach((msg: WsMessage) => {
             if (this.user === null || this.selectedPair === null) {
                 return;
             }
             if (typeof msg.time === 'string') {
                 msg.time = new Date(msg.time);
             }
-            result.push(Object.assign(msg, {
+            messages.push(Object.assign(msg, {
                 from: msg.from === this.selectedPair.id ? this.selectedPair : this.user,
                 to: msg.to === this.user.id ? this.user : this.selectedPair,
                 time: msg.time ?? new Date()
             }));
         });
 
-        return result;
+        return {count: resp.body.count, messages};
     }
 }

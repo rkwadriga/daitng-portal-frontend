@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { routes } from "../../config/routes";
 import { ChatService, WsMessage } from "../../services/chat.service";
@@ -20,11 +20,11 @@ export interface Message {
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss']
 })
-export class DialogComponent implements OnInit, AfterContentChecked {
+export class DialogComponent implements OnInit {
     user: User | null = null;
     @Input() pair: User | null = null;
+    @Input() messagesCount = 0;
     @Input() messages: Message[] = [];
-    messagesPrepared = false;
     routes = routes;
     msg = '';
 
@@ -42,14 +42,6 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.chat.onMessage().subscribe((message: WsMessage) => {
             this.getMessage(message);
         });
-        this.messagesPrepared = false;
-        console.log(this.messagesPrepared);
-    }
-
-    ngAfterContentChecked(): void {
-        if (this.messagesPrepared || this.messages === undefined) {
-            return;
-        }
         // Sort messages
         this.messages.sort((msg1, msg2) => {
             return msg1.time > msg2.time ? 1 : -1;
@@ -58,11 +50,15 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.messages.forEach(msg => {
             this.prepareMessage(msg);
         });
-        this.messagesPrepared = true;
+        console.log(this.messagesCount);
     }
 
-    onSend() {
+    onSend(): void {
         this.sendMessage();
+    }
+
+    onScroll(): void {
+        console.log('Scroll!');
     }
 
     private addMessage(msg: Message): void {
