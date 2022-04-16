@@ -11,7 +11,7 @@ import { LoggerService } from "../../services/logger.service";
 import { WsMessage } from "../../services/chat.service";
 import { chatSettings } from "../../config/chat.setings";
 
-interface MessagesList {
+interface Dialog {
     count: number,
     messages: Message[]
 }
@@ -25,7 +25,7 @@ export class ListComponent implements OnInit {
     user: User | null = null;
     pairs: User[] = [];
     routes = routes;
-    dialogs: {[key: string]: MessagesList} = {};
+    dialogs: {[key: string]: Dialog} = {};
     selectedPair: User | null = null;
 
     constructor(
@@ -84,7 +84,7 @@ export class ListComponent implements OnInit {
         }
     }
 
-    private async getDialog(): Promise<MessagesList> {
+    private async getDialog(): Promise<Dialog> {
         if (this.user === null || this.selectedPair === null) {
             return {count: 0, messages: []};
         }
