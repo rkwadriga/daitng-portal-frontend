@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { transformToSpend } from "../helpers/time.helper";
+import {transformToSpend} from "../helpers/time.helper";
 
 @Pipe({
-  name: 'time'
+  name: 'spend'
 })
-export class TimePipe implements PipeTransform {
+export class SpendPipe implements PipeTransform {
     transform(value: Date | string): string {
         return transformToSpend(value);
     }
