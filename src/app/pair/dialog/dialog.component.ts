@@ -10,11 +10,12 @@ import { User, UserService } from "../../services/user.service";
 import { routes } from "../../config/routes";
 import { ChatService, WsMessage } from "../../services/chat.service";
 import { LoggerService } from "../../services/logger.service";
-import {getDatesDiff, transformToSpend} from "../../helpers/time.helper";
+import { transformToSpend } from "../../helpers/time.helper";
 import { NotifierService } from "../../services/notifier.service";
 import { chatSettings } from "../../config/chat.setings";
-import {apiUrls} from "../../config/api";
-import {ApiService} from "../../services/api.service";
+import { apiUrls } from "../../config/api";
+import { ApiService } from "../../services/api.service";
+import { fromEvent, debounceTime } from 'rxjs';
 
 export interface Message {
     id: string;
@@ -42,8 +43,6 @@ export class DialogComponent implements OnInit, AfterContentChecked {
     messageScrolled = false;
     scrollPos = 0;
     messagesOffset = 0;
-    lastLoadingTime: Date;
-    loadingInProcess = false;
 
     constructor(
         private readonly userService: UserService,
@@ -51,9 +50,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         private readonly api: ApiService,
         private readonly notifier: NotifierService,
         private readonly logger: LoggerService
-    ) {
-        this.lastLoadingTime = new Date();
-    }
+    ) { }
 
     ngOnInit(): void {
         this.userService.getUser().subscribe(user => {
@@ -68,6 +65,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.messages.forEach(msg => {
             this.prepareMessage(msg);
         });
+        this.messagesOffset = this.messages.length;
         this.messageScrolled = false;
     }
 
@@ -77,25 +75,24 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         }
         // Scroll down
         this.scrollDownTo();
-        // Add scroll listener
-        this.messagesContainer.nativeElement.addEventListener('scroll', async (event: Event) => {
-            await this.onScroll(event);
-        });
-        // Remember that container is already scrolled to down
         this.messageScrolled = true;
+
+        // Add scrolls listener with timeout
+        const scrolls = fromEvent(this.messagesContainer.nativeElement, 'scroll');
+        scrolls.pipe(debounceTime(100)).subscribe(() => this.onScroll());
     }
 
     onSend(): void {
         this.sendMessage();
     }
 
-    async onScroll(event: Event) {
+    onScroll() {
         // If the page is no loaded - do nothing
         if (this.messagesContainer === undefined || this.user === null || this.pair === null) {
             return;
         }
         // If there is no messages left on server or the loading already in process, do nothing
-        if (this.loadingInProcess || this.messages.length >= this.messagesCount) {
+        if (this.messages.length >= this.messagesCount) {
             return;
         }
 
@@ -114,20 +111,26 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             return;
         }
 
-        // If scrolling height grater that (height of last message) * 1.5
+        // If scrolling height grater that (height of last message) * 2.5
         // and load more elements only if there is only one message left
-        if (scrollEl.scrollTop > messageEl.offsetHeight * 1.5) {
+        if (scrollEl.scrollTop > messageEl.offsetHeight * 2.5) {
             return;
         }
 
-        // If there is less than second left from the last loading, do not load new messages for now
-        if (getDatesDiff(this.lastLoadingTime) < 1000) {
-            return;
+        this.loadMessages().then(messages => {
+            // Add messages to array
+            messages.forEach(msg => this.addMessage(msg, false));
+            // Scroll down
+            scrollEl.scrollTo(0, 1);
+        });
+    }
+
+    private async loadMessages(): Promise<Message[]> {
+        if (this.pair === null) {
+            return [];
         }
 
-        // Do not load the next pack of messages before current not loaded
-        this.loadingInProcess = true;
-
+        let messages: Message[] = [];
         // Load more messages from top
         apiUrls.dialog.params = {
             id: this.pair.id,
@@ -149,11 +152,11 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             if (typeof msg.time === 'string') {
                 msg.time = new Date(msg.time);
             }
-            this.addMessage(Object.assign(msg, {
+            messages.push(Object.assign(msg, {
                 from: msg.from === this.pair.id ? this.pair : this.user,
                 to: msg.to === this.user.id ? this.user : this.pair,
                 time: msg.time ?? new Date()
-            }), false);
+            }));
         });
 
         // Update messages count
@@ -162,9 +165,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         // Add pagination step
         this.messagesOffset += chatSettings.paginationLimit;
 
-        // Remember the loading time and set loading status to false
-        this.lastLoadingTime = new Date();
-        this.loadingInProcess = false;
+        return messages;
     }
 
     private scrollDownTo(): void {
@@ -184,19 +185,6 @@ export class DialogComponent implements OnInit, AfterContentChecked {
     }
 
     private addMessage(msg: Message, toTheEnd = true): void {
-        // Check if message not already in list
-        let inList = false;
-        this.messages.some(message => {
-            if (msg.id === message.id) {
-                inList = true;
-                return true;
-            }
-            return false;
-        });
-        if (inList) {
-            return;
-        }
-
         if (toTheEnd) {
             this.messages.splice(0, 1);
             this.messages.push(msg);
