@@ -53,18 +53,21 @@ export class DialogComponent implements OnInit, AfterContentChecked {
     ) { }
 
     ngOnInit(): void {
-        this.userService.getUser().subscribe(user => {
-            this.user = user;
-        });
-        this.chat.onMessage().subscribe((message: WsMessage) => {
-            this.getMessage(message);
-        });
+        // Subscribe to getting current user info
+        this.userService.getUser().subscribe(user => this.user = user);
+
+        // Subscribe to the input messages (when selected pair sending the massage)
+        this.chat.onMessage().subscribe(msg => this.addInputMessage(msg));
+
         // Sort messages
         this.sortMessages();
+
         // Prepare messages (set time persistent transformation)
         this.messages.forEach(msg => {
             this.prepareMessage(msg);
         });
+
+        // Set start messages loading offset and set "messageScrolled" to false for "ngAfterContentChecked" functions
         this.messagesOffset = this.messages.length;
         this.messageScrolled = false;
     }
@@ -77,22 +80,44 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.scrollDownTo();
         this.messageScrolled = true;
 
-        // Add scrolls listener with timeout
+        // Add scrolling listener with timeout (0.1 s)
         const scrolls = fromEvent(this.messagesContainer.nativeElement, 'scroll');
         scrolls.pipe(debounceTime(100)).subscribe(() => this.onScroll());
     }
 
     onSend(): void {
-        this.sendMessage();
-    }
-
-    onScroll() {
-        // If the page is no loaded - do nothing
-        if (this.messagesContainer === undefined || this.user === null || this.pair === null) {
+        if (this.pair === null || this.user === null) {
+            this.logger.log('You cannot send the message to nowhere');
             return;
         }
-        // If there is no messages left on server or the loading already in process, do nothing
-        if (this.messages.length >= this.messagesCount) {
+        const newMessage  = {
+            id: Math.random().toString(),
+            from: this.user,
+            to: this.pair,
+            text: this.msg,
+            time: new Date()
+        };
+        const newWsMessage = Object.assign({...newMessage}, {from: this.user.id, to: this.pair.id});
+        try {
+            this.chat.send(newWsMessage);
+        } catch (e) {
+            const message = 'Can not send the message';
+            this.notifier.error(message);
+            this.logger.error(message, e);
+            return;
+        }
+        this.addMessage(newMessage);
+        this.msg = '';
+    }
+
+    onScroll(): void {
+        // If the page is not loaded of if there is no messages left on server, do nothing - do nothing
+        if (
+            this.messagesContainer === undefined ||
+            this.user === null ||
+            this.pair === null ||
+            this.messages.length >= this.messagesCount
+        ) {
             return;
         }
 
@@ -101,7 +126,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         // Check the scroll direction adn do not process the scrolling to down
         const scrollDelta = scrollEl.scrollTop - this.scrollPos;
         this.scrollPos = scrollEl.scrollTop;
-        if (scrollDelta > 0) {
+        if (scrollDelta >= 0) {
             return;
         }
 
@@ -111,9 +136,8 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             return;
         }
 
-        // If scrolling height grater that (height of last message) * 2.5
-        // and load more elements only if there is only one message left
-        if (scrollEl.scrollTop > messageEl.offsetHeight * 2.5) {
+        // Load more elements only if scrolling height grater that (height of last message) * 2
+        if (scrollEl.scrollTop > messageEl.offsetHeight * 2) {
             return;
         }
 
@@ -159,13 +183,29 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             }));
         });
 
-        // Update messages count
+        // Update messages count and add pagination step
         this.messagesCount = resp.body.count;
-
-        // Add pagination step
-        this.messagesOffset += chatSettings.paginationLimit;
+        this.messagesOffset += messages.length;
 
         return messages;
+    }
+
+    private addInputMessage(msg: WsMessage): void {
+        if (this.pair === null || this.user === null) {
+            return;
+        }
+        // Convert message datetime from string to Date object
+        if (typeof msg.time === 'string') {
+            msg.time = new Date(msg.time);
+        }
+        // And given from the socket-server message to the page
+        this.addMessage({
+            id: msg.id,
+            from: this.pair,
+            to: this.user,
+            time: msg.time ?? new Date(),
+            text: msg.text
+        });
     }
 
     private scrollDownTo(): void {
@@ -186,8 +226,11 @@ export class DialogComponent implements OnInit, AfterContentChecked {
 
     private addMessage(msg: Message, toTheEnd = true): void {
         if (toTheEnd) {
+            // Remove the message from the start of array
             this.messages.splice(0, 1);
+            // ...and add the new one to the end
             this.messages.push(msg);
+
             // Scroll down - if scrolling pos less than the (height of the last message) * 1.5
             if (this.messagesContainer !== undefined) {
                 const scrollEl = this.messagesContainer.nativeElement;
@@ -198,6 +241,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
                 }
             }
         } else {
+            // Add message to the start of the messages array
             this.messages.unshift(msg);
         }
 
@@ -211,67 +255,10 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         }, 10000);
     }
 
-    private sendMessage(): void {
-        if (this.pair === null || this.user === null) {
-            this.logger.log('You cannot send the message to nowhere');
-            return;
-        }
-        const newMessage  = {
-            id: Math.random().toString(),
-            from: this.user,
-            to: this.pair,
-            text: this.msg,
-            time: new Date()
-        };
-        const newWsMessage = Object.assign({...newMessage}, {from: this.user.id, to: this.pair.id});
-        try {
-            this.chat.send(newWsMessage);
-        } catch (e) {
-            const message = 'Can not send the message';
-            this.notifier.error(message);
-            this.logger.error(message, e);
-            return;
-        }
-        this.addMessage(newMessage);
-        this.msg = '';
-    }
-
     private getMessageContainer(index: number) {
         if (this.messagesContainer === undefined) {
             return undefined;
         }
         return this.messagesContainer.nativeElement.getElementsByClassName(this.messageContainerClass)[index]
-    }
-
-    private getMessage(message: WsMessage): void {
-        if (this.pair === null || this.user === null) {
-            this.logger.log('Its impossible to get message before select the pair');
-            return;
-        }
-
-        // Chek if this message already given
-        let inArray = false;
-        this.messages.some(msg => {
-            if (msg.id === message.id) {
-                return inArray = true;
-            } else {
-                return false;
-            }
-        });
-        if (inArray) {
-            return;
-        }
-
-        // And if not - add it to page
-        if (typeof message.time === 'string') {
-            message.time = new Date(message.time);
-        }
-        this.addMessage({
-            id: message.id,
-            from: this.pair,
-            to: this.user,
-            time: message.time ?? new Date(),
-            text: message.text
-        });
     }
 }
