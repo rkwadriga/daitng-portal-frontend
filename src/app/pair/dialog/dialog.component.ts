@@ -183,11 +183,6 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             this.scrollOffset++;
         } else {
             const nextMessageIndex = this.messagesCache.length - this.scrollOffset;
-            if (nextMessageIndex < 0 || this.messagesCache[nextMessageIndex] === undefined) {
-                console.log(nextMessageIndex);
-                return;
-            }
-
             // Remove the first message and add the new one to the start
             const newMessage = {...this.messagesCache[nextMessageIndex]};
             this.prepareMessage(newMessage);
@@ -289,12 +284,14 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.messages.push(msg);
         // Add the copy of message to the messages runtime cache (for virtual scroll)
         this.messagesCache.push({...msg});
-
         // If the scrolling position is on the bottom - scroll down
         if (this.scrollOffset <= 1) {
-            setTimeout(() => { this.scrollDownTo() }, 100);
-            this.scrollOffset = 0;
+            setTimeout(() => {
+                this.scrollDownTo();
+            }, 100);
         }
+        // Increment the offset for loading messages from backend
+        this.messagesOffset++;
     }
 
     private prepareMessage(msg: Message): void {
