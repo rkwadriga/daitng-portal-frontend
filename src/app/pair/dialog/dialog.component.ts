@@ -26,6 +26,11 @@ export interface Message {
     transformedTime?: string
 }
 
+enum ScrollingDirection {
+    UP,
+    DOWN
+}
+
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
@@ -35,6 +40,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
     user: User | null = null;
     @Input() pair: User | null = null;
     @Input() messagesCount = 0;
+    @Input() chatMessagesLimit = 0;
     @Input() messages: Message[] = [];
     @ViewChild('messagesContainer') messagesContainer: ElementRef | undefined;
     messagesCache: Message[] = [];
@@ -42,7 +48,9 @@ export class DialogComponent implements OnInit, AfterContentChecked {
     msg = '';
     messageContainerClass = 'message-element';
     messageScrolled = false;
+    paginationLimit = chatSettings.paginationLimit;
     scrollPos = 0;
+    scrollOffset = 0;
     messagesOffset = 0;
 
     constructor(
@@ -64,10 +72,12 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.sortMessages();
 
         // Prepare messages (set time persistent transformation)
+        // ...and add the messages copies to the cache
+        this.messagesCache = [];
         this.messages.forEach(msg => {
             this.prepareMessage(msg);
             // Add message to the messages runtime cache (for virtual scroll)
-            this.messagesCache.push(msg);
+            this.messagesCache.push({...msg});
         });
 
         // Set start messages loading offset and set "messageScrolled" to false for "ngAfterContentChecked" functions
@@ -86,6 +96,10 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         // Add scrolling listener with timeout (0.1 s)
         const scrolls = fromEvent(this.messagesContainer.nativeElement, 'scroll');
         scrolls.pipe(debounceTime(100)).subscribe(() => this.onScroll());
+
+        if (this.user === null || this.pair === null) {
+            return;
+        }
     }
 
     onSend(): void {
@@ -113,31 +127,76 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.msg = '';
     }
 
-    onScroll(): void {
+    async onScroll(): Promise<void> {
         // If the page is not loaded of if there is no messages left on server, do nothing - do nothing
         if (this.messagesContainer === undefined || this.user === null || this.pair === null) {
             return;
         }
 
-        // Get massages container DOM element
+        // Get massages container DOM element, get the scrolling direction and remember current scrolling pos
         const scrollEl = this.messagesContainer.nativeElement;
-        // Check the scroll direction adn do not process the scrolling to down
-        const scrollDelta = scrollEl.scrollTop - this.scrollPos;
+        const scrollDir = this.scrollPos > scrollEl.scrollTop ? ScrollingDirection.UP : ScrollingDirection.DOWN;
         this.scrollPos = scrollEl.scrollTop;
-        if (scrollDelta >= 0) {
+
+        // Calculate extra elements count
+        let i = 0, messageEl, extraElementsCount = 0;
+        while (messageEl = this.getMessageContainer(i++)) {
+            if (
+                // elements above the window on scroll top
+                (scrollDir === ScrollingDirection.UP && messageEl.getBoundingClientRect().bottom < scrollEl.getBoundingClientRect().top) ||
+                // elements under the window on scroll down
+                (scrollDir === ScrollingDirection.DOWN && messageEl.getBoundingClientRect().top > scrollEl.getBoundingClientRect().bottom)
+            ) {
+                extraElementsCount++;
+            }
+        }
+
+        // If more then one element left for scrolling
+        // or if this is the scrolling down and there is no messages under the scrolling window
+        // do nothing
+        if (extraElementsCount > 1 || (this.scrollOffset === 0 && scrollDir === ScrollingDirection.DOWN)) {
             return;
         }
 
-        // Load more elements only if scrolling height grater that (height of last message) * 2
-        if (scrollEl.scrollTop > (this.getMessageContainer(0)?.offsetHeight ?? 0) * 2) {
-            return;
-        }
+        if (scrollDir === ScrollingDirection.UP) {
+            let nextMessageIndex = this.messagesCache.length - (this.messages.length + this.scrollOffset + 1);
+            if (nextMessageIndex < 0 && this.messagesCache.length === this.messagesCount) {
+                return;
+            }
 
-        // Download messages form API
-        this.downloadMessages().then(() => {
-            // Scroll down
-            scrollEl.scrollTo(0, 1);
-        });
+            if (this.messagesCache[nextMessageIndex] === undefined) {
+                // If this is scrolling to top and there is no message in cache - download messages pack form API
+                await this.downloadMessages();
+                nextMessageIndex = this.messagesCache.length - (this.messages.length + this.scrollOffset + 1);
+            }
+
+            // Remove the last message and add the new one to the start
+            const newMessage = {...this.messagesCache[nextMessageIndex]};
+            this.prepareMessage(newMessage);
+            this.messages.splice(this.messages.length - 1, 1);
+            this.messages.unshift(newMessage);
+
+            const newMessageHeight = this.getMessageContainer(0)?.getBoundingClientRect()?.height;
+            if (newMessageHeight) {
+                scrollEl.scrollTo(0, newMessageHeight);
+            }
+            this.scrollOffset++;
+        } else {
+            const nextMessageIndex = this.messagesCache.length - this.scrollOffset;
+            if (nextMessageIndex < 0 || this.messagesCache[nextMessageIndex] === undefined) {
+                console.log(nextMessageIndex);
+                return;
+            }
+
+            // Remove the first message and add the new one to the start
+            const newMessage = {...this.messagesCache[nextMessageIndex]};
+            this.prepareMessage(newMessage);
+            if (this.messages.length === this.chatMessagesLimit) {
+                this.messages.splice(0, 1);
+            }
+            this.messages.push(newMessage);
+            this.scrollOffset--;
+        }
     }
 
     private async downloadMessages(): Promise<void> {
@@ -149,7 +208,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         // Load more messages from top
         apiUrls.dialog.params = {
             id: this.pair.id,
-            limit: chatSettings.paginationLimit,
+            limit: this.paginationLimit,
             offset: this.messagesOffset
         };
         const resp = await this.api.call(apiUrls.dialog);
@@ -159,7 +218,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             throw new Error(message);
         }
 
-        // Add messages
+        // Add messages to the cache
         resp.body.messages.forEach((msg: WsMessage) => {
             if (this.user === null || this.pair === null) {
                 return;
@@ -167,11 +226,11 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             if (typeof msg.time === 'string') {
                 msg.time = new Date(msg.time);
             }
-            this.addMessage(Object.assign(msg, {
+            this.messagesCache.unshift(Object.assign(msg, {
                 from: msg.from === this.pair.id ? this.pair : this.user,
                 to: msg.to === this.user.id ? this.user : this.pair,
                 time: msg.time ?? new Date()
-            }), false);
+            }));
 
             // Increment the downloading offset
             this.messagesOffset++;
@@ -215,36 +274,27 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         });
     }
 
-    private addMessage(msg: Message, toTheEnd = true): void {
-        if (toTheEnd) {
-            // Remove the message from the start of array
-            this.messages.splice(0, 1);
-            // ...and add the new one to the end
-            this.messages.push(msg);
-            // Add message to the messages runtime cache (for virtual scroll)
-            this.messagesCache.push(msg);
-
-            // Scroll down - if scrolling pos less than the (height of the last message) * 1.5
-            if (this.messagesContainer !== undefined) {
-                const scrollEl = this.messagesContainer.nativeElement;
-                const lastEl = this.getMessageContainer(this.messages.length - 1);
-                if (lastEl === null) {
-                    return;
-                }
-                if (scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.offsetHeight < lastEl.offsetHeight * 1.5) {
-                    // Scroll to down after 0.1 second
-                    setTimeout(() => { this.scrollDownTo() }, 100);
-                }
-            }
-        } else {
-            // Add message to the start of the messages array
-            this.messages.unshift(msg);
-            // Add message to the messages runtime cache (for virtual scroll)
-            this.messagesCache.unshift(msg);
-        }
+    private addMessage(msg: Message): void {
+        // Increment messages count
+        this.messagesCount++;
 
         // Prepare message (set time persistent transformation)
         this.prepareMessage(msg);
+
+        // Remove the message from the start of array
+        if (this.messages.length === this.chatMessagesLimit) {
+            this.messages.splice(0, 1);
+        }
+        // ...and add the new one to the end
+        this.messages.push(msg);
+        // Add the copy of message to the messages runtime cache (for virtual scroll)
+        this.messagesCache.push({...msg});
+
+        // If the scrolling position is on the bottom - scroll down
+        if (this.scrollOffset <= 1) {
+            setTimeout(() => { this.scrollDownTo() }, 100);
+            this.scrollOffset = 0;
+        }
     }
 
     private prepareMessage(msg: Message): void {

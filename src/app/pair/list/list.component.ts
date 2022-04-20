@@ -27,6 +27,7 @@ export class ListComponent implements OnInit {
     routes = routes;
     dialogs: {[key: string]: Dialog} = {};
     selectedPair: User | null = null;
+    chatMessagesLimit = chatSettings.chatMessagesLimit;
 
     constructor(
         private readonly userService: UserService,
@@ -92,7 +93,7 @@ export class ListComponent implements OnInit {
         // Get the dialog from backend
         apiUrls.dialog.params = {
             id: this.selectedPair.id,
-            limit: chatSettings.chatMessagesLimit,
+            limit: this.chatMessagesLimit,
             offset: 0
         };
         const resp = await this.api.call(apiUrls.dialog);
