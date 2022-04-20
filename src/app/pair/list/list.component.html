@@ -11,11 +11,16 @@
             </a>
         </p>
     </div>
-    <div class="col-sm-8" *ngIf="selectedPair && dialogs[selectedPair.id]">
-        <app-dialog
-            [pair]="selectedPair"
-            [messagesCount]="dialogs[selectedPair.id].count"
-            [messages]="dialogs[selectedPair.id].messages"
-        ></app-dialog>
+    <div class="col-sm-8">
+        <div *ngFor="let dialog of dialogs | keyvalue">
+            <div *ngIf="selectedPair && selectedPair.id === dialog.key">
+                <app-dialog
+                    [pair]="selectedPair"
+                    [messagesCount]="dialog.value.count"
+                    [chatMessagesLimit]="chatMessagesLimit"
+                    [messages]="dialog.value.messages"
+                ></app-dialog>
+            </div>
+        </div>
     </div>
 </div>

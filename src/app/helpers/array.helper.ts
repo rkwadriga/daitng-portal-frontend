@@ -13,7 +13,7 @@ export const removeElement = (element: any, arr: any[]): number => {
 }
 
 export const removeByIndex = (index: number, arr: any[]): void => {
-    arr.splice(index, 1);
+    arr.splice(index + 1, 1);
 }
 
 export const enumsValuesToArray = (values: EnumInterface[]): any[] => {
