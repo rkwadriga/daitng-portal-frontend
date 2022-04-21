@@ -20,27 +20,27 @@
     </div>
     <!-- Messages -->
     <div
-        #messagesContainer
+        [id]="getScrollContainerID()"
         class="row"
         style="overflow-y:scroll; max-height: 350px;"
     >
         <div
-            *ngFor="let msg of messages; let i = index"
+            *ngFor="let item of scrollItems"
             class="card p-3"
-            [id]="createMessageID(i)"
+            [id]="item.htmlID"
         >
             <div class="d-flex justify-content-between align-items-center">
                 <div class="user d-flex flex-row align-items-center">
-                    <img [src]="msg.from | img:msg.from.avatar" width="30" class="user-img rounded-circle mr-2">
+                    <img [src]="item.data.from | img:item.data.from.avatar" width="30" class="user-img rounded-circle mr-2">
                     <span>
-                    <small class="font-weight-bold text-primary">{{ msg.from.name }}</small>
-                </span>
+                        <small class="font-weight-bold text-primary">{{ item.data.from.name }}</small>
+                    </span>
                 </div>
-                <small>{{ msg.transformedTime ?? (msg.time | spend) }}</small>
+                <small>{{ item.data.transformedTime ?? (item.data.time | spend) }}</small>
             </div>
             <div class="action d-flex justify-content-between mt-2 align-items-center">
                 <div class="reply px-4">
-                    <small>{{ msg.text }}</small>
+                    <small>{{ item.data.text }}</small>
                 </div>
             </div>
         </div>
