@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { ApiService } from "../../services/api.service";
 import { apiUrls } from "../../config/api";
@@ -7,11 +7,12 @@ import { bytesToReadable } from "../../helpers/string.helper";
 import { Photo } from "../photo.entity";
 import { StaticService } from "../../services/static.service";
 import { userSettings } from "../../config/user.settings";
-import {getBase64FromUrl} from "../../helpers/image.helper";
+import { getBase64FromUrl } from "../../helpers/image.helper";
 import { routes } from "../../config/routes";
-import {Router} from "@angular/router";
-import {environment} from "../../../environments/environment";
-import {inArray} from "../../helpers/array.helper";
+import { Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
+import { inArray } from "../../helpers/array.helper";
+import { Subscription } from "rxjs";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -30,7 +31,8 @@ interface ImageFile {
   templateUrl: './images.component.html',
   styleUrls: ['./images.component.scss']
 })
-export class ImagesComponent implements OnInit {
+export class ImagesComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
     routes = routes;
     files: ImageFile[] = [];
@@ -87,6 +89,10 @@ export class ImagesComponent implements OnInit {
             this.avatarIsChanged = this.currentAvatar === null;
         });
         this.allowedFileExtensions = environment.allowedFilesExtensions.split(',');
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 
     onFileSelected(event: any) {

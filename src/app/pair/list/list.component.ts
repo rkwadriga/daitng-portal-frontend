@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
@@ -10,6 +10,7 @@ import { Message } from "../dialog/dialog.component";
 import { LoggerService } from "../../services/logger.service";
 import { WsMessage } from "../../services/chat.service";
 import { chatSettings } from "../../config/chat.setings";
+import { Subscription } from "rxjs";
 
 interface Dialog {
     count: number,
@@ -21,7 +22,8 @@ interface Dialog {
     templateUrl: './list.component.html',
     styleUrls: ['./list.component.scss']
 })
-export class ListComponent implements OnInit {
+export class ListComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
     pairs: User[] = [];
     routes = routes;
@@ -54,12 +56,18 @@ export class ListComponent implements OnInit {
         const pairID = this.route.snapshot.paramMap.get('id');
 
         // Get current user
-        await this.userService.getUser().subscribe(user => {
-            this.user = user;
-            if (pairID !== null) {
-                this.selectPair(pairID);
-            }
-        })
+        this.subscriptions.add(
+            this.userService.getUser().subscribe(user => {
+                this.user = user;
+                if (pairID !== null) {
+                    this.selectPair(pairID);
+                }
+            })
+        );
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 
     async selectPair(id: string) {

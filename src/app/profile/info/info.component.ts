@@ -1,13 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { routes } from "../../config/routes";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-info',
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.scss']
 })
-export class InfoComponent implements OnInit {
+export class InfoComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
     routes = routes;
 
@@ -16,8 +18,10 @@ export class InfoComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.userService.getUser().subscribe(user => {
-            this.user = user;
-        });
+        this.subscriptions.add(this.userService.getUser().subscribe(user => this.user = user));
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 }

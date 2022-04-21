@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
 import { apiUrls } from "../../config/api";
 import { User, UserService } from "../../services/user.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'app-person',
   templateUrl: './person.component.html',
   styleUrls: ['./person.component.scss']
 })
-export class PersonComponent implements OnInit {
+export class PersonComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
     account: User | null = null;
     routes = routes;
@@ -30,9 +32,7 @@ export class PersonComponent implements OnInit {
 
     async ngOnInit() {
         // Get current user
-        await this.userService.getUser().subscribe(user => {
-            this.user = user;
-        })
+        this.subscriptions.add(await this.userService.getUser().subscribe(user => this.user = user));
 
         const userID = this.route.snapshot.paramMap.get('id');
         if (userID === null) {
@@ -52,6 +52,10 @@ export class PersonComponent implements OnInit {
 
         // Remember photos count
         this.photosCount = this.account.photos.length;
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 
     async onLike() {

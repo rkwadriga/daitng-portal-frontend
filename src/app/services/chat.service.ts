@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UserService } from "./user.service";
-import {SocketService} from "./socket.service";
+import { SocketService } from "./socket.service";
 
 export interface WsMessage {
     id: string;
@@ -15,15 +15,23 @@ export interface WsMessage {
     providedIn: 'root',
 })
 export class ChatService {
+    private subscriptions = new Subscription();
+
     constructor(
         private readonly socketService: SocketService,
         private readonly userService: UserService
     ) {
-        this.userService.getUser().subscribe(user => {
-            if (user !== null) {
-                this.socketService.init(user.id);
-            }
-        });
+        this.subscriptions.add(
+            this.userService.getUser().subscribe(user => {
+                if (user !== null) {
+                    this.socketService.init(user.id);
+                }
+            })
+        );
+    }
+
+    destroy(): void {
+        this.subscriptions.unsubscribe();
     }
 
     onMessage(): Observable<WsMessage> {
