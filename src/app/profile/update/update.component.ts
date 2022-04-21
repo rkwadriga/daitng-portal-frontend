@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { ApiService } from "../../services/api.service";
 import { NotifierService } from "../../services/notifier.service";
@@ -13,7 +13,8 @@ import { LoggerService } from "../../services/logger.service";
 import { Router } from "@angular/router";
 import { orientations } from "../../config/orientations";
 import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
-import {KeyValueInterface} from "../../interfaces/keyvalue.interface";
+import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
+import { Subscription } from "rxjs";
 
 let apiService: ApiService | null = null;
 let checkedEmails: KeyValueInterface = {};
@@ -24,7 +25,8 @@ let oldEmail: string | null = null;
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.scss']
 })
-export class UpdateComponent implements OnInit {
+export class UpdateComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
     routes = routes;
     genders = genders;
@@ -42,37 +44,47 @@ export class UpdateComponent implements OnInit {
     ngOnInit(): void {
         apiService = this.api;
 
-        this.userService.getUser().subscribe(user => {
-            this.user = user;
-            oldEmail = user?.email ?? null;
+        this.subscriptions.add(
+            this.userService.getUser().subscribe(user => {
+                this.user = user;
+                this.initForm(user);
+            })
+        );
+    }
 
-            this.validationForm = new FormGroup({
-                email: new FormControl(user?.email, [
-                    Validators.required,
-                    Validators.email
-                ], this.emailValidatorAsync),
-                firstName: new FormControl(user?.firstName, [
-                    Validators.minLength(2),
-                    Validators.maxLength(50),
-                ]),
-                lastName: new FormControl(user?.lastName, [
-                    Validators.minLength(2),
-                    Validators.maxLength(50),
-                ]),
-                gender: new FormControl(user?.gender, [this.genderValidator]),
-                orientation: new FormControl(user?.orientation, [this.orientationValidator]),
-                showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
-                birthday: new FormControl(user?.birthday, [
-                    Validators.required,
-                    Validators.pattern(dateFormatPattern),
-                    this.dateValidator,
-                    this.ageValidator
-                ]),
-                about: new FormControl(user?.about, [
-                    Validators.minLength(2),
-                    Validators.maxLength(5000),
-                ]),
-            });
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
+
+    initForm(user: User | null): void {
+        oldEmail = user?.email ?? null;
+
+        this.validationForm = new FormGroup({
+            email: new FormControl(user?.email, [
+                Validators.required,
+                Validators.email
+            ], this.emailValidatorAsync),
+            firstName: new FormControl(user?.firstName, [
+                Validators.minLength(2),
+                Validators.maxLength(50),
+            ]),
+            lastName: new FormControl(user?.lastName, [
+                Validators.minLength(2),
+                Validators.maxLength(50),
+            ]),
+            gender: new FormControl(user?.gender, [this.genderValidator]),
+            orientation: new FormControl(user?.orientation, [this.orientationValidator]),
+            showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
+            birthday: new FormControl(user?.birthday, [
+                Validators.required,
+                Validators.pattern(dateFormatPattern),
+                this.dateValidator,
+                this.ageValidator
+            ]),
+            about: new FormControl(user?.about, [
+                Validators.minLength(2),
+                Validators.maxLength(5000),
+            ]),
         });
     }
 

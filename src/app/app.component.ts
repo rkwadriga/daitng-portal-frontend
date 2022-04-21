@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User, UserService } from "./services/user.service";
 import { Router } from "@angular/router";
 import { Location } from '@angular/common';
 import { routes } from "./config/routes";
+import { Subscription } from "rxjs";
 
 @Component({
-selector: 'app-root',
-templateUrl: './app.component.html',
-styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     title = 'daitng-portal-frontend';
     routes = routes;
     showUserLinks = false;
@@ -30,9 +32,12 @@ export class AppComponent implements OnInit{
             }
             return;
         }
-        this.userService.getUser().subscribe(user => {
-            this.user = user;
-        });
+
+        this.subscriptions.add(this.userService.getUser().subscribe(user => this.user = user));
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 
     async logout() {

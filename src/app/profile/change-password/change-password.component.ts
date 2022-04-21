@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
 import { Router } from "@angular/router";
@@ -9,6 +9,7 @@ import { apiUrls } from "../../config/api";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { User, UserService } from "../../services/user.service";
 import { userSettings } from "../../config/user.settings";
+import { Subscription } from "rxjs";
 
 let api: ApiService | null = null;
 let checkedPasswords: KeyValueInterface = {};
@@ -18,9 +19,10 @@ let checkedPasswords: KeyValueInterface = {};
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss']
 })
-export class ChangePasswordComponent implements OnInit {
-    routes = routes;
+export class ChangePasswordComponent implements OnInit, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
+    routes = routes;
 
     validationForm = new FormGroup({
         oldPassword: new FormControl('', [
@@ -51,10 +53,12 @@ export class ChangePasswordComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.userService.getUser().subscribe(user => {
-            this.user = user;
-        });
+        this.subscriptions.add(this.userService.getUser().subscribe(user => this.user = user));
         api = this.api;
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 
     async oldPasswordValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {

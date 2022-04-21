@@ -2,6 +2,7 @@ import {
     Component,
     OnInit,
     AfterContentChecked,
+    OnDestroy,
     Input,
     ViewChild,
     ElementRef
@@ -15,7 +16,7 @@ import { NotifierService } from "../../services/notifier.service";
 import { chatSettings } from "../../config/chat.setings";
 import { apiUrls } from "../../config/api";
 import { ApiService } from "../../services/api.service";
-import { fromEvent, debounceTime } from 'rxjs';
+import { fromEvent, debounceTime, Subscription } from 'rxjs';
 
 export interface Message {
     id: string;
@@ -23,7 +24,8 @@ export interface Message {
     to: User;
     time: Date;
     text: string;
-    transformedTime?: string
+    transformedTime?: string;
+    element?: HTMLElement
 }
 
 enum ScrollingDirection {
@@ -36,17 +38,18 @@ enum ScrollingDirection {
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss']
 })
-export class DialogComponent implements OnInit, AfterContentChecked {
+export class DialogComponent implements OnInit, AfterContentChecked, OnDestroy {
+    private subscriptions = new Subscription();
     user: User | null = null;
     @Input() pair: User | null = null;
     @Input() messagesCount = 0;
     @Input() chatMessagesLimit = 0;
     @Input() messages: Message[] = [];
     @ViewChild('messagesContainer') messagesContainer: ElementRef | undefined;
+    messageIndex = 0;
     messagesCache: Message[] = [];
     routes = routes;
     msg = '';
-    messageContainerClass = 'message-element';
     messageScrolled = false;
     paginationLimit = chatSettings.paginationLimit;
     scrollPos = 0;
@@ -63,10 +66,10 @@ export class DialogComponent implements OnInit, AfterContentChecked {
 
     ngOnInit(): void {
         // Subscribe to getting current user info
-        this.userService.getUser().subscribe(user => this.user = user);
+        this.subscriptions.add(this.userService.getUser().subscribe(user => this.user = user));
 
         // Subscribe to the input messages (when selected pair sending the massage)
-        this.chat.onMessage().subscribe(msg => this.addInputMessage(msg));
+        this.subscriptions.add(this.chat.onMessage().subscribe(msg => this.addMessage(this.createMessageObject(msg))));
 
         // Sort messages
         this.sortMessages();
@@ -95,11 +98,24 @@ export class DialogComponent implements OnInit, AfterContentChecked {
 
         // Add scrolling listener with timeout (0.1 s)
         const scrolls = fromEvent(this.messagesContainer.nativeElement, 'scroll');
-        scrolls.pipe(debounceTime(100)).subscribe(() => this.onScroll());
+        this.subscriptions.add(scrolls.pipe(debounceTime(100)).subscribe(() => this.onScroll()));
 
         if (this.user === null || this.pair === null) {
             return;
         }
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+        this.chat.destroy();
+        // Kill links to the old page elements
+        this.messages.forEach(msg => {
+            msg.element = undefined;
+        });
+    }
+
+    public createMessageID(index: number): string {
+        return `chat_message_${index}`;
     }
 
     onSend(): void {
@@ -107,14 +123,14 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             this.logger.log('You cannot send the message to nowhere');
             return;
         }
-        const newMessage  = {
+        // Create new web-socket message
+        const newWsMessage = {
             id: Math.random().toString(),
-            from: this.user,
-            to: this.pair,
+            from: this.user.id,
+            to: this.pair.id,
             text: this.msg,
             time: new Date()
         };
-        const newWsMessage = Object.assign({...newMessage}, {from: this.user.id, to: this.pair.id});
         try {
             this.chat.send(newWsMessage);
         } catch (e) {
@@ -123,12 +139,13 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             this.logger.error(message, e);
             return;
         }
-        this.addMessage(newMessage);
+
+        this.addMessage(this.createMessageObject(newWsMessage));
         this.msg = '';
     }
 
     async onScroll(): Promise<void> {
-        // If the page is not loaded of if there is no messages left on server, do nothing - do nothing
+        // If the page is not loaded or if there is no messages left on server - do nothing
         if (this.messagesContainer === undefined || this.user === null || this.pair === null) {
             return;
         }
@@ -139,13 +156,13 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         this.scrollPos = scrollEl.scrollTop;
 
         // Calculate extra elements count
-        let i = 0, messageEl, extraElementsCount = 0;
-        while (messageEl = this.getMessageContainer(i++)) {
+        let i = 0, elem, extraElementsCount = 0;
+        while (elem = this.getMessageElement(i++)) {
             if (
                 // elements above the window on scroll top
-                (scrollDir === ScrollingDirection.UP && messageEl.getBoundingClientRect().bottom < scrollEl.getBoundingClientRect().top) ||
+                (scrollDir === ScrollingDirection.UP && elem.getBoundingClientRect().bottom < scrollEl.getBoundingClientRect().top) ||
                 // elements under the window on scroll down
-                (scrollDir === ScrollingDirection.DOWN && messageEl.getBoundingClientRect().top > scrollEl.getBoundingClientRect().bottom)
+                (scrollDir === ScrollingDirection.DOWN && elem.getBoundingClientRect().top > scrollEl.getBoundingClientRect().bottom)
             ) {
                 extraElementsCount++;
             }
@@ -176,7 +193,7 @@ export class DialogComponent implements OnInit, AfterContentChecked {
             this.messages.splice(this.messages.length - 1, 1);
             this.messages.unshift(newMessage);
 
-            const newMessageHeight = this.getMessageContainer(0)?.getBoundingClientRect()?.height;
+            const newMessageHeight = this.getMessageElement(0)?.getBoundingClientRect()?.height;
             if (newMessageHeight) {
                 scrollEl.scrollTo(0, newMessageHeight);
             }
@@ -215,42 +232,15 @@ export class DialogComponent implements OnInit, AfterContentChecked {
 
         // Add messages to the cache
         resp.body.messages.forEach((msg: WsMessage) => {
-            if (this.user === null || this.pair === null) {
-                return;
+            const newMessage = this.createMessageObject(msg);
+            if (newMessage !== null) {
+                this.messagesCache.unshift(newMessage);
+                // Increment the downloading offset
+                this.messagesOffset++;
             }
-            if (typeof msg.time === 'string') {
-                msg.time = new Date(msg.time);
-            }
-            this.messagesCache.unshift(Object.assign(msg, {
-                from: msg.from === this.pair.id ? this.pair : this.user,
-                to: msg.to === this.user.id ? this.user : this.pair,
-                time: msg.time ?? new Date()
-            }));
-
-            // Increment the downloading offset
-            this.messagesOffset++;
         });
-
         // Update messages count
         this.messagesCount = resp.body.count;
-    }
-
-    private addInputMessage(msg: WsMessage): void {
-        if (this.pair === null || this.user === null) {
-            return;
-        }
-        // Convert message datetime from string to Date object
-        if (typeof msg.time === 'string') {
-            msg.time = new Date(msg.time);
-        }
-        // And given from the socket-server message to the page
-        this.addMessage({
-            id: msg.id,
-            from: this.pair,
-            to: this.user,
-            time: msg.time ?? new Date(),
-            text: msg.text
-        });
     }
 
     private scrollDownTo(): void {
@@ -269,7 +259,11 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         });
     }
 
-    private addMessage(msg: Message): void {
+    private addMessage(msg: Message | null): void {
+        if (msg === null) {
+            return;
+        }
+
         // Increment messages count
         this.messagesCount++;
 
@@ -300,10 +294,36 @@ export class DialogComponent implements OnInit, AfterContentChecked {
         }, 10000);
     }
 
-    private getMessageContainer(index: number): HTMLElement | null {
-        if (this.messagesContainer === undefined) {
+    private getMessageElement(index: number): HTMLElement | null {
+        const msg = this.messages[index];
+        if (msg === undefined) {
             return null;
         }
-        return this.messagesContainer.nativeElement.getElementsByClassName(this.messageContainerClass)[index] ?? null;
+        if (msg.element !== undefined) {
+            return msg.element;
+        }
+
+        const elem = document.getElementById(this.createMessageID(index)) ?? null;
+        if (elem !== null) {
+            msg.element = elem;
+        }
+
+        return elem;
+    }
+
+    private createMessageObject(msg: WsMessage): Message | null {
+        if (this.pair === null || this.user === null) {
+            return null;
+        }
+        if (typeof msg.time === 'string') {
+            msg.time = new Date(msg.time);
+        }
+        return {
+            id: msg.id,
+            from: msg.from === this.user.id ? this.user : this.pair,
+            to: msg.to === this.pair.id ? this.pair : this.user,
+            time: msg.time ?? new Date(),
+            text: msg.text
+        };
     }
 }
