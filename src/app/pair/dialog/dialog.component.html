@@ -6,7 +6,7 @@
             class="nav-link"
             title="Info"
         >
-            <img [src]="pair | img:pair.avatar" alt="{{ pair.name }} avatar" height="100px">
+            <img [src]="pair | img:pair.avatar:pairPhotoSize" alt="{{ pair.name }} avatar">
         </a>
         <h5>
             <a
@@ -22,7 +22,7 @@
     <div
         [id]="getScrollContainerID()"
         class="row"
-        style="overflow-y:scroll; max-height: 350px;"
+        style="overflow-y:scroll; max-height: 400px;"
     >
         <div
             *ngFor="let item of scrollItems"
@@ -31,7 +31,7 @@
         >
             <div class="d-flex justify-content-between align-items-center">
                 <div class="user d-flex flex-row align-items-center">
-                    <img [src]="item.data.from | img:item.data.from.avatar" width="30" class="user-img rounded-circle mr-2">
+                    <img [src]="item.data.from | img:item.data.from.avatar:msgPhotoSize" width="30" class="user-img rounded-circle mr-2">
                     <span>
                         <small class="font-weight-bold text-primary">{{ item.data.from.name }}</small>
                     </span>

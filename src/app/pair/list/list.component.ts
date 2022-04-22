@@ -11,6 +11,7 @@ import { LoggerService } from "../../services/logger.service";
 import { WsMessage } from "../../services/chat.service";
 import { chatSettings } from "../../config/chat.setings";
 import { Subscription } from "rxjs";
+import { photoSettings } from "../../config/photo.settings";
 
 interface Dialog {
     count: number,
@@ -30,6 +31,7 @@ export class ListComponent implements OnInit, OnDestroy {
     dialogs: {[key: string]: Dialog} = {};
     selectedPair: User | null = null;
     chatMessagesLimit = chatSettings.chatMessagesLimit;
+    pairPhotoSize = photoSettings.pairsListSize;
 
     constructor(
         private readonly userService: UserService,

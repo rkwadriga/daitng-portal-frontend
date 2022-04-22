@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { User, UserService } from "../../services/user.service";
 import { routes } from "../../config/routes";
 import { Subscription } from "rxjs";
+import { photoSettings } from "../../config/photo.settings";
 
 @Component({
   selector: 'app-info',
@@ -12,6 +13,7 @@ export class InfoComponent implements OnInit, OnDestroy {
     private subscriptions = new Subscription();
     user: User | null = null;
     routes = routes;
+    profilePhotoSize = photoSettings.profileSize;
 
     constructor(
         private readonly userService: UserService

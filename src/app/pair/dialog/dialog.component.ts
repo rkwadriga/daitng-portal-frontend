@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
 import { VSItem, VirtualScrollService } from "../../services/virtual.scroll.service";
 import { chatSettings } from "../../config/chat.setings";
 import { getRandomNumber } from "../../helpers/random.helper";
+import { photoSettings } from "../../config/photo.settings";
 
 export interface Message {
     id: string;
@@ -42,6 +43,8 @@ export class DialogComponent implements OnInit, AfterViewInit, OnDestroy {
     paginationLimit = chatSettings.paginationLimit;
     scrollItems: VSItem<Message>[] = [];
     scrollContainerID: string | null = null;
+    pairPhotoSize = photoSettings.dialogViewSize;
+    msgPhotoSize = photoSettings.dialogMsgSize;
 
     private virtualScroll = new VirtualScrollService<Message>({
         scrollSelector: this.getScrollContainerID(),
