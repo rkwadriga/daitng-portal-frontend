@@ -95,13 +95,13 @@ export class VirtualScrollService<T> {
     }
 
     private async scroll(): Promise<void> {
-        // Get massages container DOM element, get the scrolling direction and remember current scrolling pos
+        // Get items container DOM element, get the scrolling direction and remember current scrolling pos
         const scrollEl = this.getScrollElement();
         const scrollDir = this.scrollPos > scrollEl.scrollTop ? ScrollingDirection.UP : ScrollingDirection.DOWN;
         this.scrollPos = scrollEl.scrollTop;
 
         // Calculate extra elements count
-        let i = 0, elem, extraElementsCount = 0;
+        let i = 0, elem, extraItemsCount = 0;
         for (i; i < this.items.length; i++) {
             elem = this.getItemElement(i);
             if (
@@ -110,49 +110,49 @@ export class VirtualScrollService<T> {
                 // elements under the window on scroll down
                 (scrollDir === ScrollingDirection.DOWN && elem.getBoundingClientRect().top > scrollEl.getBoundingClientRect().bottom)
             ) {
-                extraElementsCount++;
+                extraItemsCount++;
             }
         }
 
         // If more then one element left for scrolling
-        // or if this is the scrolling down and there is no messages under the scrolling window
+        // or if this is the scrolling down and there is no elements under the scrolling window
         // do nothing
-        if (extraElementsCount > 1 || (this.scrollOffset === 0 && scrollDir === ScrollingDirection.DOWN)) {
+        if (extraItemsCount > 1 || (this.scrollOffset === 0 && scrollDir === ScrollingDirection.DOWN)) {
             return;
         }
 
         if (scrollDir === ScrollingDirection.UP) {
-            let nextMessageIndex = this.itemsCache.length - (this.items.length + this.scrollOffset + 1);
-            if (this.itemsCache[nextMessageIndex] === undefined) {
-                // If this is scrolling to top and there is no message in cache - download messages pack form API
-                const newMessages = await this.onscrollTopCallback();
-                if (newMessages.length === 0) {
+            let nextItemIndex = this.itemsCache.length - (this.items.length + this.scrollOffset + 1);
+            if (this.itemsCache[nextItemIndex] === undefined) {
+                // If this is scrolling to top and there is no items in cache - download messages pack form API
+                const newItems = await this.onscrollTopCallback();
+                if (newItems.length === 0) {
                     return;
                 }
-                newMessages.forEach(item => {
+                newItems.forEach(item => {
                     this.itemsCache.unshift({data: item, htmlID: ''});
                     this.itemsCount++;
                 });
-                nextMessageIndex = this.itemsCache.length - (this.items.length + this.scrollOffset + 1);
+                nextItemIndex = this.itemsCache.length - (this.items.length + this.scrollOffset + 1);
             }
 
             // Remove the last message and add the new one to the start
             this.items.splice(this.items.length - 1, 1);
-            this.items.unshift({...this.itemsCache[nextMessageIndex]});
+            this.items.unshift({...this.itemsCache[nextItemIndex]});
             this.reindexItems();
 
-            const newMessageHeight = this.getItemElement(0)?.getBoundingClientRect()?.height;
-            if (newMessageHeight) {
-                scrollEl.scrollTo(0, newMessageHeight);
+            const newItemHeight = this.getItemElement(0)?.getBoundingClientRect()?.height;
+            if (newItemHeight) {
+                scrollEl.scrollTo(0, newItemHeight);
             }
             this.scrollOffset++;
         } else {
-            const nextMessageIndex = this.itemsCache.length - this.scrollOffset;
+            const nextItemIndex = this.itemsCache.length - this.scrollOffset;
             // Remove the first message and add the new one to the start
             if (this.items.length === this.itemsLimit) {
                 this.items.splice(0, 1);
             }
-            this.items.push({...this.itemsCache[nextMessageIndex]});
+            this.items.push({...this.itemsCache[nextItemIndex]});
             this.reindexItems();
 
             this.scrollOffset--;

@@ -200,5 +200,4 @@ export class DialogComponent implements OnInit, AfterViewInit, OnDestroy {
             text: msg.text
         };
     }
-
 }
