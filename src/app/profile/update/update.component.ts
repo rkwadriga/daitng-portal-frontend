@@ -6,7 +6,7 @@ import { routes } from "../../config/routes";
 import { genders } from "../../config/genders";
 import { Gender } from "../gender.enum";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
-import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import { DATETIME_FORMAT_PATTERN, isDateValid, yearsFromDate } from "../../helpers/time.helper";
 import { environment } from "../../../environments/environment";
 import { apiUrls } from "../../config/api";
 import { LoggerService } from "../../services/logger.service";
@@ -77,7 +77,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
             birthday: new FormControl(user?.birthday, [
                 Validators.required,
-                Validators.pattern(dateFormatPattern),
+                Validators.pattern(DATETIME_FORMAT_PATTERN),
                 this.dateValidator,
                 this.ageValidator
             ]),

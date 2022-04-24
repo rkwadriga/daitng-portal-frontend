@@ -5,7 +5,7 @@ import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
 import { environment } from "../../../environments/environment";
-import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import { DATETIME_FORMAT_PATTERN, isDateValid, yearsFromDate } from "../../helpers/time.helper";
 import { Router } from "@angular/router";
 import { LoggerService } from "../../services/logger.service";
 import { genders } from "../../config/genders";
@@ -58,7 +58,7 @@ export class RegistrationComponent implements OnInit {
         showGender: new FormControl('', [this.showGenderValidator]),
         birthday: new FormControl('', [
             Validators.required,
-            Validators.pattern(dateFormatPattern),
+            Validators.pattern(DATETIME_FORMAT_PATTERN),
             this.dateValidator,
             this.ageValidator
         ]),
