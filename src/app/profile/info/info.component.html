@@ -7,7 +7,7 @@
 <div class="card" *ngIf="user">
     <div class="row g-0">
         <div class="col-md-5">
-            <img [src]="user | img:user.avatar" class="img-fluid rounded-start" alt="Avatar">
+            <img [src]="user | img:user.avatar:profilePhotoSize" class="img-fluid rounded-start" alt="Avatar">
         </div>
         <div class="col-md-7">
             <div class="card-body">

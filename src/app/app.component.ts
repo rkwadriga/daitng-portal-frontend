@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { Location } from '@angular/common';
 import { routes } from "./config/routes";
 import { Subscription } from "rxjs";
+import { photoSettings } from "./config/photo.settings";
 
 @Component({
     selector: 'app-root',
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
     routes = routes;
     showUserLinks = false;
     user: User|null = null;
+    avatarSize = photoSettings.avatarSize;
 
     constructor(
         private readonly userService: UserService,

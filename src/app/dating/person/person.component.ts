@@ -6,6 +6,7 @@ import { NotifierService } from "../../services/notifier.service";
 import { apiUrls } from "../../config/api";
 import { User, UserService } from "../../services/user.service";
 import { Subscription } from "rxjs";
+import { photoSettings } from "../../config/photo.settings";
 
 @Component({
   selector: 'app-person',
@@ -21,6 +22,7 @@ export class PersonComponent implements OnInit, OnDestroy {
     photosCount = 0;
     liked = false;
     isMatch = false;
+    viewPhotoSize = photoSettings.viewSIze;
 
     constructor(
         private readonly userService: UserService,

@@ -5,6 +5,7 @@ import { NotifierService } from "../../services/notifier.service";
 import { routes } from "../../config/routes";
 import { User, UserService } from "../../services/user.service";
 import { DatingService } from "../../services/dating.service";
+import { photoSettings } from "../../config/photo.settings";
 
 @Component({
     selector: 'app-accounts',
@@ -16,6 +17,7 @@ export class AccountsComponent implements OnInit {
     account: User | null = null;
     routes = routes;
     isMatch = false;
+    viewPhotoSize = photoSettings.viewSIze;
 
     constructor(
         private readonly userService: UserService,

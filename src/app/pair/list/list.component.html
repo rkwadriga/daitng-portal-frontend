@@ -6,7 +6,7 @@
                 class="nav-link"
                 (click)="selectPair(pair.id)"
             >
-                <img [src]="pair | img:pair.avatar" alt="{{ pair.name }} avatar" height="50">
+                <img [src]="pair | img:pair.avatar:pairPhotoSize" alt="{{ pair.name }} avatar">
                 {{ pair.name }} ({{ pair.age }})
             </a>
         </p>

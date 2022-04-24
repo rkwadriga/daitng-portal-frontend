@@ -41,7 +41,7 @@
                 >
                     <span class="fs-6">{{ user.name }}</span>
                     <img
-                        [src]="user | img:user.avatar"
+                        [src]="user | img:user.avatar:avatarSize"
                         class="rounded-circle"
                         height="55"
                         loading="lazy"

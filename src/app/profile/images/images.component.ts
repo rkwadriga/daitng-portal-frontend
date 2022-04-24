@@ -13,6 +13,7 @@ import { Router } from "@angular/router";
 import { environment } from "../../../environments/environment";
 import { inArray } from "../../helpers/array.helper";
 import { Subscription } from "rxjs";
+import { photoSettings } from "../../config/photo.settings";
 
 interface ControlFilesNamesInterface {
     [key: string]: boolean
@@ -42,6 +43,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
     private currentAvatar: string | null = null;
     private avatarIsChanged = false;
     private allowedFileExtensions: string[] = [];
+    private photoListSize = photoSettings.listSize;
 
     constructor(
         private readonly userService: UserService,
@@ -75,7 +77,7 @@ export class ImagesComponent implements OnInit, OnDestroy {
                 this.filesNames[photo.name] = true;
                 this.files.push({
                     name: photo.name,
-                    src: this.staticService.getImgUrl(user, photo.name),
+                    src: this.staticService.getImgUrl(user, photo.name, this.photoListSize),
                     size: photo.size,
                     isAvatar: photo.isAvatar,
                     isUrl: true
