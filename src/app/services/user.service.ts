@@ -26,6 +26,8 @@ export class User {
     public showGender: string | null = null;
     public imagesLimit: number | null = null;
     public maximumImageSIze: number | null = null;
+    public showAgeFrom: number | null = null;
+    public showAgeTo: number | null = null;
 
     constructor(params: KeyValueInterface) {
         Object.assign(this, params);

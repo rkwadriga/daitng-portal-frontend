@@ -15,6 +15,7 @@ import { orientations } from "../../config/orientations";
 import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Subscription } from "rxjs";
+import {userSettings} from "../../config/user.settings";
 
 let apiService: ApiService | null = null;
 let checkedEmails: KeyValueInterface = {};
@@ -75,6 +76,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
             gender: new FormControl(user?.gender, [this.genderValidator]),
             orientation: new FormControl(user?.orientation, [this.orientationValidator]),
             showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
+            showAgeFrom: new FormControl(user?.showAgeFrom, [
+                Validators.min(userSettings.minSearchingAge),
+                Validators.max(userSettings.maxSearchingAge)
+            ]),
+            showAgeTo: new FormControl(user?.showAgeTo, [
+                Validators.min(userSettings.minSearchingAge),
+                Validators.max(userSettings.maxSearchingAge)
+            ]),
             birthday: new FormControl(user?.birthday, [
                 Validators.required,
                 Validators.pattern(DATETIME_FORMAT_PATTERN),
@@ -183,6 +192,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     get showGender() {
         return this.validationForm?.get('showGender');
+    }
+
+    get showAgeFrom() {
+        return this.validationForm?.get('showAgeFrom');
+    }
+
+    get showAgeTo() {
+        return this.validationForm?.get('showAgeTo');
     }
 
     get birthday() {

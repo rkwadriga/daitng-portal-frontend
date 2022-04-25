@@ -17,6 +17,8 @@
                 <p class="card-text">Gender: <small class="text-muted">{{ user.gender }}</small></p>
                 <p class="card-text">Orientation: <small class="text-muted">{{ user.orientation }}</small></p>
                 <p class="card-text">I'm looking for: {{ user.showGender ? user.showGender : 'Undefined' }}</p>
+                <p class="card-text" *ngIf="user.showAgeFrom">Min searching age: {{ user.showAgeFrom }}</p>
+                <p class="card-text" *ngIf="user.showAgeTo">Max searching age: {{ user.showAgeTo }}</p>
                 <p class="card-text">Birthday: {{ user.birthday }} ({{ user.age }})</p>
             </div>
         </div>
