@@ -11,7 +11,7 @@
                         class="btn btn-success"
                         title="Like"
                         (click)="onLike()"
-                        [disabled]="isMatch"
+                        [disabled]="isMatch || account.isPair"
                     >
                         <i class="bi bi-heart-fill"></i>
                     </button>

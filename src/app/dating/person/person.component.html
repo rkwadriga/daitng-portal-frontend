@@ -31,7 +31,7 @@
                         (click)="onLike()"
                         class="btn btn-success"
                         title="Like"
-                        [disabled]="liked"
+                        [disabled]="liked || account.isPair"
                     >
                         <i class="bi bi-heart-fill"></i>
                     </button>
