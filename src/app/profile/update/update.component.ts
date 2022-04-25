@@ -6,7 +6,7 @@ import { routes } from "../../config/routes";
 import { genders } from "../../config/genders";
 import { Gender } from "../gender.enum";
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from "@angular/forms";
-import { dateFormatPattern, isDateValid, yearsFromDate } from "../../helpers/time.helper";
+import { DATETIME_FORMAT_PATTERN, isDateValid, yearsFromDate } from "../../helpers/time.helper";
 import { environment } from "../../../environments/environment";
 import { apiUrls } from "../../config/api";
 import { LoggerService } from "../../services/logger.service";
@@ -15,10 +15,7 @@ import { orientations } from "../../config/orientations";
 import { enumsKeysToArray, inArray } from "../../helpers/array.helper";
 import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Subscription } from "rxjs";
-
-let apiService: ApiService | null = null;
-let checkedEmails: KeyValueInterface = {};
-let oldEmail: string | null = null;
+import {userSettings} from "../../config/user.settings";
 
 @Component({
   selector: 'app-update',
@@ -32,6 +29,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     genders = genders;
     orientations = orientations;
     validationForm?: FormGroup;
+    oldEmail: string | null = null;
+    checkedEmails: KeyValueInterface = {};
 
     constructor(
         private readonly userService: UserService,
@@ -42,8 +41,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        apiService = this.api;
-
         this.subscriptions.add(
             this.userService.getUser().subscribe(user => {
                 this.user = user;
@@ -57,13 +54,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
 
     initForm(user: User | null): void {
-        oldEmail = user?.email ?? null;
+        this.oldEmail = user?.email ?? null;
 
         this.validationForm = new FormGroup({
             email: new FormControl(user?.email, [
                 Validators.required,
                 Validators.email
-            ], this.emailValidatorAsync),
+            ], (group) => this.emailValidatorAsync(group)),
             firstName: new FormControl(user?.firstName, [
                 Validators.minLength(2),
                 Validators.maxLength(50),
@@ -75,9 +72,17 @@ export class UpdateComponent implements OnInit, OnDestroy {
             gender: new FormControl(user?.gender, [this.genderValidator]),
             orientation: new FormControl(user?.orientation, [this.orientationValidator]),
             showGender: new FormControl(user?.showGender, [this.showGenderValidator]),
+            showAgeFrom: new FormControl(user?.showAgeFrom, [
+                Validators.min(userSettings.minSearchingAge),
+                Validators.max(userSettings.maxSearchingAge)
+            ]),
+            showAgeTo: new FormControl(user?.showAgeTo, [
+                Validators.min(userSettings.minSearchingAge),
+                Validators.max(userSettings.maxSearchingAge)
+            ]),
             birthday: new FormControl(user?.birthday, [
                 Validators.required,
-                Validators.pattern(dateFormatPattern),
+                Validators.pattern(DATETIME_FORMAT_PATTERN),
                 this.dateValidator,
                 this.ageValidator
             ]),
@@ -90,23 +95,23 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     async emailValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
         const email = group.parent?.get('email')?.value;
-        if (apiService === null || !email || email === oldEmail) {
+        if (this.api === null || !email || email === this.oldEmail) {
             return null;
         }
 
         const error = {emailNotUnique: true};
-        if (checkedEmails[email] !== undefined) {
-            return checkedEmails[email] ? null : error;
+        if (this.checkedEmails[email] !== undefined) {
+            return this.checkedEmails[email] ? null : error;
         }
 
         apiUrls.checkUsername.params.username = email;
-        const resp = await apiService.call(apiUrls.checkUsername);
+        const resp = await this.api.call(apiUrls.checkUsername);
         if (!resp.ok) {
             this.logger.log('Can not check the user password: ' + (resp.error?.message ?? `Status code: ${resp.status}`));
             return null;
         }
 
-        checkedEmails[email] = resp.body.result;
+        this.checkedEmails[email] = resp.body.result;
         if (resp.body.result === true) {
             return null;
         }
@@ -183,6 +188,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     get showGender() {
         return this.validationForm?.get('showGender');
+    }
+
+    get showAgeFrom() {
+        return this.validationForm?.get('showAgeFrom');
+    }
+
+    get showAgeTo() {
+        return this.validationForm?.get('showAgeTo');
     }
 
     get birthday() {

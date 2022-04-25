@@ -34,7 +34,7 @@
                 {{ email?.errors?.['required'] ? 'Email is required' : 'Invalid email' }}
             </div>
             <div class="error-message-1" *ngIf="email?.errors?.['emailNotUnique']">
-                This username is already user, please select another one.
+                This email is already used, please select another one.
             </div>
         </div>
     </div>
@@ -122,6 +122,42 @@
         <div *ngIf="showGender?.invalid && (showGender?.dirty || showGender?.touched)">
             <div *ngIf="showGender?.errors?.['showGenderIsCorrect']" class="error-message-1">
                 Invalid gender value
+            </div>
+        </div>
+    </div>
+
+    <!-- Min searching age -->
+    <div class="md-form mb-4">
+        <input
+            type="number"
+            class="form-control"
+            placeholder="Min searching age"
+            formControlName="showAgeFrom"
+        />
+        <div *ngIf="showAgeFrom?.invalid && (showAgeFrom?.dirty || showAgeFrom?.touched)">
+            <div *ngIf="showAgeFrom?.errors?.['min']" class="error-message-1">
+                Min searching age must be more than {{showAgeFrom?.errors?.['min']?.['min']}}.
+            </div>
+            <div *ngIf="showAgeFrom?.errors?.['max']" class="error-message-1">
+                Min searching age must be less than {{showAgeFrom?.errors?.['max']?.['max']}}.
+            </div>
+        </div>
+    </div>
+
+    <!-- Max searching age -->
+    <div class="md-form mb-4">
+        <input
+            type="number"
+            class="form-control"
+            placeholder="Max searching age"
+            formControlName="showAgeTo"
+        />
+        <div *ngIf="showAgeTo?.invalid && (showAgeTo?.dirty || showAgeTo?.touched)">
+            <div *ngIf="showAgeTo?.errors?.['min']" class="error-message-1">
+                Max searching age must be more than {{showAgeTo?.errors?.['min']?.['min']}}.
+            </div>
+            <div *ngIf="showAgeTo?.errors?.['max']" class="error-message-1">
+                Max searching age must be less than {{showAgeTo?.errors?.['max']?.['max']}}.
             </div>
         </div>
     </div>

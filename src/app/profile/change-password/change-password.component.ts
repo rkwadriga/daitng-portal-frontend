@@ -11,9 +11,6 @@ import { User, UserService } from "../../services/user.service";
 import { userSettings } from "../../config/user.settings";
 import { Subscription } from "rxjs";
 
-let api: ApiService | null = null;
-let checkedPasswords: KeyValueInterface = {};
-
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
@@ -23,13 +20,14 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     private subscriptions = new Subscription();
     user: User | null = null;
     routes = routes;
+    checkedPasswords: KeyValueInterface = {};
 
     validationForm = new FormGroup({
         oldPassword: new FormControl('', [
             Validators.required,
             Validators.minLength(userSettings.minPasswordLength),
             Validators.maxLength(userSettings.maxPasswordLength)
-        ], this.oldPasswordValidatorAsync),
+        ], (group) => this.oldPasswordValidatorAsync(group)),
         password: new FormControl('', [
             Validators.required,
             Validators.minLength(userSettings.minPasswordLength),
@@ -54,7 +52,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subscriptions.add(this.userService.getUser().subscribe(user => this.user = user));
-        api = this.api;
     }
 
     ngOnDestroy(): void {
@@ -63,20 +60,20 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
     async oldPasswordValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
         const password = group.value;
-        if (!password || password.length < userSettings.minPasswordLength || api === null) {
+        if (!password || password.length < userSettings.minPasswordLength) {
             return null;
         }
 
-        if (checkedPasswords[password] !== undefined) {
-            return checkedPasswords[password];
+        if (this.checkedPasswords[password] !== undefined) {
+            return this.checkedPasswords[password];
         }
 
-        const response = await api.call(apiUrls.checkPassword, {'password': password});
+        const response = await this.api.call(apiUrls.checkPassword, {'password': password});
         if (!response.ok) {
-            return checkedPasswords[password] = {validation: {message: response.error?.message}};
+            return this.checkedPasswords[password] = {validation: {message: response.error?.message}};
         }
 
-        return checkedPasswords[password] = response.body.result ? null : {validation: true};
+        return this.checkedPasswords[password] = response.body.result ? null : {validation: true};
     }
 
     passwordValidator(group: AbstractControl): ValidationErrors | null {
