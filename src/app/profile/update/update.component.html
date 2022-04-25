@@ -34,7 +34,7 @@
                 {{ email?.errors?.['required'] ? 'Email is required' : 'Invalid email' }}
             </div>
             <div class="error-message-1" *ngIf="email?.errors?.['emailNotUnique']">
-                This username is already user, please select another one.
+                This email is already used, please select another one.
             </div>
         </div>
     </div>

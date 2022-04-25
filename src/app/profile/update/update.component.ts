@@ -17,10 +17,6 @@ import { KeyValueInterface } from "../../interfaces/keyvalue.interface";
 import { Subscription } from "rxjs";
 import {userSettings} from "../../config/user.settings";
 
-let apiService: ApiService | null = null;
-let checkedEmails: KeyValueInterface = {};
-let oldEmail: string | null = null;
-
 @Component({
   selector: 'app-update',
   templateUrl: './update.component.html',
@@ -33,6 +29,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
     genders = genders;
     orientations = orientations;
     validationForm?: FormGroup;
+    oldEmail: string | null = null;
+    checkedEmails: KeyValueInterface = {};
 
     constructor(
         private readonly userService: UserService,
@@ -43,8 +41,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        apiService = this.api;
-
         this.subscriptions.add(
             this.userService.getUser().subscribe(user => {
                 this.user = user;
@@ -58,13 +54,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
 
     initForm(user: User | null): void {
-        oldEmail = user?.email ?? null;
+        this.oldEmail = user?.email ?? null;
 
         this.validationForm = new FormGroup({
             email: new FormControl(user?.email, [
                 Validators.required,
                 Validators.email
-            ], this.emailValidatorAsync),
+            ], (group) => this.emailValidatorAsync(group)),
             firstName: new FormControl(user?.firstName, [
                 Validators.minLength(2),
                 Validators.maxLength(50),
@@ -99,23 +95,23 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
     async emailValidatorAsync(group: AbstractControl): Promise<ValidationErrors | null> {
         const email = group.parent?.get('email')?.value;
-        if (apiService === null || !email || email === oldEmail) {
+        if (this.api === null || !email || email === this.oldEmail) {
             return null;
         }
 
         const error = {emailNotUnique: true};
-        if (checkedEmails[email] !== undefined) {
-            return checkedEmails[email] ? null : error;
+        if (this.checkedEmails[email] !== undefined) {
+            return this.checkedEmails[email] ? null : error;
         }
 
         apiUrls.checkUsername.params.username = email;
-        const resp = await apiService.call(apiUrls.checkUsername);
+        const resp = await this.api.call(apiUrls.checkUsername);
         if (!resp.ok) {
             this.logger.log('Can not check the user password: ' + (resp.error?.message ?? `Status code: ${resp.status}`));
             return null;
         }
 
-        checkedEmails[email] = resp.body.result;
+        this.checkedEmails[email] = resp.body.result;
         if (resp.body.result === true) {
             return null;
         }
