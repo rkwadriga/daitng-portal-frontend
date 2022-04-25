@@ -43,7 +43,6 @@
                     <img
                         [src]="user | img:user.avatar:avatarSize"
                         class="rounded-circle"
-                        height="55"
                         loading="lazy"
                     />
                 </a>
@@ -81,4 +80,5 @@
 
 <div class="container">
     <router-outlet></router-outlet>
+    <app-notification-popup></app-notification-popup>
 </div>
