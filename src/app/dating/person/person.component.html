@@ -2,8 +2,12 @@
 
 <div class="row" *ngIf="account">
     <div class="col-sm-4"></div>
-    <div class="card col-sm-4" style="width: 20rem;">
-        <img [src]="account | img:account.photos[photoIndex]:viewPhotoSize" class="card-img-top" alt="Avatar">
+    <div class="card col-sm-4" style="width: 27rem;">
+        <img
+            [src]="account | img:account.photos[photoIndex]:viewPhotoSize"
+            class="card-img-top"
+            [alt]="account.name + ' photo ' + photoIndex"
+        />
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
             <p class="card-text">Gender: {{ account.gender }} ({{ account.orientation }})</p>

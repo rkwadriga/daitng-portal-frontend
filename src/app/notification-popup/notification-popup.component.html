@@ -5,12 +5,12 @@
     aria-modal="true"
     role="dialog"
     style="display: block;"
-    *ngIf="opened && account"
+    *ngIf="notification"
 >
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">It's match!</h5>
+            <div class="modal-header" style="background-color: {{ color }};">
+                <h5 class="modal-title">{{ title }}</h5>
                 <button
                     type="button"
                     class="btn-close"
@@ -20,22 +20,15 @@
                 ></button>
             </div>
             <div class="modal-body">
-                <img [src]="account | img:account.avatar:photoSize" [alt]="account.name + ' avatar'">
-                <p>User {{ account.name }} likes you to. You can start the dialog</p>
+                <p>{{ notification.message }}</p>
             </div>
             <div class="modal-footer">
                 <a
-                    class="nav-link btn btn-secondary"
-                    (click)="return()"
+                    class="nav-link btn btn-primary"
+                    (click)="close()"
                     href="javascript:;"
                 >
-                    Continue watching
-                </a>
-                <a
-                    class="nav-link btn btn-primary"
-                    [routerLink]="routes.dialog.replace(':id', account.id)"
-                >
-                    Write a message
+                    Close
                 </a>
             </div>
         </div>

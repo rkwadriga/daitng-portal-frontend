@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, OnDestroy {
     title = 'daitng-portal-frontend';
     routes = routes;
     showUserLinks = false;
-    user: User|null = null;
+    user: User | null = null;
     avatarSize = photoSettings.avatarSize;
 
     constructor(

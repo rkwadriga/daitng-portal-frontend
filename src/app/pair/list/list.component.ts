@@ -48,7 +48,7 @@ export class ListComponent implements OnInit, OnDestroy {
         if (!resp.ok) {
             const message = 'Can not get the pairs: ' + (resp.error?.message ?? `Response status is ${resp.status}`);
             this.notifier.error(message);
-            throw new Error(message);
+            return;
         }
         resp.body.forEach((params: KeyValueInterface) => {
             this.pairs.push(new User(params));
