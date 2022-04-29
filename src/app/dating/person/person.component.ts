@@ -20,7 +20,6 @@ export class PersonComponent implements OnInit, OnDestroy {
     routes = routes;
     photoIndex = 0;
     photosCount = 0;
-    liked = false;
     isMatch = false;
     viewPhotoSize = photoSettings.viewSIze;
 
@@ -76,7 +75,7 @@ export class PersonComponent implements OnInit, OnDestroy {
         }
 
         // Mark the account as liked to disable "like" button
-        this.liked = true;
+        this.account.isLiked = true;
 
         if (resp.body.isPair) {
             // View "it's match!" pop-up

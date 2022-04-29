@@ -22,6 +22,7 @@ export class User {
     public about: string | null = null;
     public photos: string[] = [];
     public birthday: string | null = null;
+    public isLiked = false;
     public isPair = false;
     public showGender: string | null = null;
     public imagesLimit: number | null = null;
