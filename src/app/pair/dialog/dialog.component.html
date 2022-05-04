@@ -40,7 +40,7 @@
             </div>
             <div class="action d-flex justify-content-between mt-2 align-items-center">
                 <div class="reply px-4">
-                    <small>{{ item.data.text }}</small>
+                    <small [innerHTML]="item.data.text | raw"></small>
                 </div>
             </div>
         </div>
