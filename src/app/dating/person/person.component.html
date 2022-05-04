@@ -11,7 +11,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
             <p class="card-text">Gender: {{ account.gender }} ({{ account.orientation }})</p>
-            <p class="card-text">{{ account.about }}</p>
+            <p class="card-text" [innerHTML]="account.about | raw"></p>
             <p *ngIf="account.isPair">
                 <a routerLink="{{ routes.dialog.replace(':id', account.id) }}" class="nav-link">Dialog</a>
             </p>
