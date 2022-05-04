@@ -4,7 +4,7 @@
         <img [src]="account | img:account.photos[0]:viewPhotoSize" class="card-img-top" alt="Avatar">
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
-            <p class="card-text">{{ account.about | short }}</p>
+            <p class="card-text" [innerHTML]="account.about | raw:3:250"></p>
             <div class="row">
                 <div class="col-sm-4">
                     <button
