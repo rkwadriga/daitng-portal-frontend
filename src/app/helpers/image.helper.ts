@@ -11,3 +11,8 @@ export const getBase64FromUrl = async (url: string): Promise<string> => {
         }
     });
 }
+
+export const getImageDataByUrl = async (url: string): Promise<string> => {
+    const base64Data = await getBase64FromUrl(url);
+    return base64Data.replace('data:application/octet-stream', 'data:image/jpeg');
+}
