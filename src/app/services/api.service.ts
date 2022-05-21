@@ -60,8 +60,6 @@ export class ApiService {
         const apiRequest = `${apiUrl.method} ${url}`;
         const isAuthRequest = inArray(apiUrl.path, [apiUrls.login.path, apiUrls.registration.path, apiUrls.refreshToken.path]);
 
-        //this.logger.log(`Send request ${apiRequest}`);
-
         // Add rul params to url
         if (apiUrl.params !== undefined) {
             Object.keys(apiUrl.params).forEach(key => {

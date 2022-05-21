@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
-import {environment} from "../../environments/environment";
-import {AccountInterface} from "../interfaces/account.interface";
-import {photoSettings} from "../config/photo.settings";
+import { environment } from "../../environments/environment";
+import { AccountInterface } from "../interfaces/account.interface";
+import { photoSettings } from "../config/photo.settings";
+import { SecurityService } from "./security.service";
 
 @Injectable({
     providedIn: 'root'
@@ -9,7 +10,9 @@ import {photoSettings} from "../config/photo.settings";
 export class StaticService {
     private baseUrl: string;
 
-    constructor() {
+    constructor(
+        private readonly security: SecurityService
+    ) {
         this.baseUrl = environment.staticUrl;
     }
 
@@ -20,6 +23,9 @@ export class StaticService {
         if (size === null) {
             size = photoSettings.defaultSize;
         }
-        return `${this.baseUrl}/img/${user.id}/${path}/${size}`;
+
+        const signature = this.security.generateSignature(user);
+
+        return `${this.baseUrl}/img/${signature.data}/${signature.value}/${path}/${size}`;
     }
 }
