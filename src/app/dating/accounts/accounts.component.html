@@ -5,18 +5,16 @@
         <div class="card-body">
             <h5 class="card-title">{{ account.name }}, {{ account.age }}</h5>
             <p class="card-text" [innerHTML]="account.about | raw:3:250"></p>
-            <div class="row">
-                <div class="col-sm-4">
-                    <button
-                        class="btn btn-success"
-                        title="Like"
-                        (click)="onLike()"
-                        [disabled]="isMatch || account.isPair"
-                    >
-                        <i class="bi bi-heart-fill"></i>
-                    </button>
-                </div>
-                <div class="col-sm-4">
+            <div class="cart-buttons-row">
+                <button
+                    class="btn btn-success"
+                    title="Like"
+                    (click)="onLike()"
+                    [disabled]="isMatch || account.isPair"
+                >
+                    <i class="bi bi-heart-fill"></i>
+                </button>
+                <div class="central-button">
                     <a
                         [routerLink]="routes.datingAccount.replace(':id', account.id)"
                         class="btn btn-primary nav-link"
@@ -25,11 +23,9 @@
                         <i class="bi bi-arrow-down"></i>
                     </a>
                 </div>
-                <div class="col-sm-4">
-                    <button (click)="onNext()" class="btn btn-danger" title="Next">
-                        <i class="bi bi-arrow-right"></i>
-                    </button>
-                </div>
+                <button (click)="onNext()" class="btn btn-danger" title="Next">
+                    <i class="bi bi-arrow-right"></i>
+                </button>
             </div>
         </div>
     </div>

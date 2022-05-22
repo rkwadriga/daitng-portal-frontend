@@ -11,7 +11,7 @@ import { photoSettings } from "../../config/photo.settings";
 @Component({
   selector: 'app-person',
   templateUrl: './person.component.html',
-  styleUrls: ['./person.component.scss']
+  styleUrls: ['./person.component.scss', '../dating.component.scss']
 })
 export class PersonComponent implements OnInit, OnDestroy {
     private subscriptions = new Subscription();

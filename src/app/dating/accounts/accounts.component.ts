@@ -10,7 +10,7 @@ import { photoSettings } from "../../config/photo.settings";
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',
-    styleUrls: ['./accounts.component.scss']
+    styleUrls: ['./accounts.component.scss', '../dating.component.scss']
 })
 export class AccountsComponent implements OnInit {
     user: User | null = null;

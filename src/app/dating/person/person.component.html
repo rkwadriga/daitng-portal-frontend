@@ -10,18 +10,16 @@
         />
 
         <!-- Buttons -->
-        <div class="row">
-            <div class="col-sm-4">
-                <button
-                    (click)="photoIndex = photoIndex  - 1"
-                    class="btn btn-primary"
-                    [disabled]="photoIndex === 0"
-                    title="Prev photo"
-                >
-                    <i class="bi bi-arrow-left"></i>
-                </button>
-            </div>
-            <div class="col-sm-4">
+        <div class="cart-buttons-row">
+            <button
+                (click)="photoIndex = photoIndex  - 1"
+                class="btn btn-primary"
+                [disabled]="photoIndex === 0"
+                title="Prev photo"
+            >
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <div class="central-button">
                 <button
                     (click)="onLike()"
                     class="btn btn-success"
@@ -31,16 +29,14 @@
                     <i class="bi bi-heart-fill"></i>
                 </button>
             </div>
-            <div class="col-sm-4">
-                <button
-                    (click)="photoIndex = photoIndex + 1"
-                    class="btn btn-primary"
-                    title="Next photo"
-                    [disabled]="photoIndex === photosCount - 1"
-                >
-                    <i class="bi bi-arrow-right"></i>
-                </button>
-            </div>
+            <button
+                (click)="photoIndex = photoIndex + 1"
+                class="btn btn-primary"
+                title="Next photo"
+                [disabled]="photoIndex === photosCount - 1"
+            >
+                <i class="bi bi-arrow-right"></i>
+            </button>
         </div>
 
         <!-- Person info -->
