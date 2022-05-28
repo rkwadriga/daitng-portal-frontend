@@ -1,80 +1,37 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <!-- Container wrapper -->
-    <div class="container-fluid">
-
-        <!-- Collapsible wrapper -->
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Navbar brand -->
-            <a class="navbar-brand mt-2 mt-lg-0" href="javascript:;">
-                <img
-                    src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-                    height="15"
-                    alt="MDB Logo"
-                    loading="lazy"
-                />
-            </a>
-            <!-- Left links -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item" *ngIf="user">
+<nav class="nav-bar">
+    <div class="nav-ber__logo nav-bar__item">
+        <div class="nav-bar__logo nav-link" (click)="toggleDropdown('menu')" #menuBar></div>
+        <div class="dropdown-list">
+            <ul [class]="'dropdown-list__content menu' + (dropdowns.menu ? ' active' : '')">
+                <li class="dropdown-list__item" *ngIf="user">
                     <a class="nav-link" routerLink="{{ routes.home }}">Home</a>
                 </li>
-                <li class="nav-item" *ngIf="user">
+                <li class="dropdown-list__item" *ngIf="user">
                     <a class="nav-link" routerLink="{{ routes.pairsList }}">Pairs</a>
                 </li>
             </ul>
-            <!-- Left links -->
         </div>
-        <!-- Collapsible wrapper -->
-
-        <!-- Right elements -->
-        <div class="d-flex align-items-center" *ngIf="user">
-            <!-- Avatar -->
-            <div class="dropdown">
-                <a
-                    class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                    href="javascript:;"
-                    id="navbarDropdownMenuAvatar"
-                    role="button"
-                    data-mdb-toggle="dropdown"
-                    aria-expanded="false"
-                    (click)="toggleUserLinks()"
-                >
-                    <span class="fs-6">{{ user.name }}</span>
-                    <img
-                        [src]="user | img:user.avatar:avatarSize"
-                        class="rounded-circle"
-                        loading="lazy"
-                    />
-                </a>
-                <ul
-                    class="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="navbarDropdownMenuAvatar"
-                    *ngIf="showUserLinks"
-                >
-                    <li>
-                        <a
-                            class="dropdown-item"
-                            routerLink="{{ routes.myProfile }}"
-                            (click)="toggleUserLinks()"
-                        >
-                            My profile
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            class="dropdown-item"
-                            href="javascript:;"
-                            (click)="logout()"
-                        >
-                            Logout
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- Right elements -->
     </div>
-    <!-- Container wrapper -->
+    <div class="nav-bar__account nav-bar__item" *ngIf="user">
+        <div class="nav-link" (click)="toggleDropdown('account')" #accountBar>
+            <span class="nav-bar__username">{{ user.name }}</span>
+            <img [src]="user | img:user.avatar:avatarSize" class="nav-bar__avatar" />
+        </div>
+        <div class="dropdown-list">
+            <ul [class]="'dropdown-list__content account' + (dropdowns.account ? ' active' : '')">
+                <li class="dropdown-list__item" *ngIf="user">
+                    <a class="nav-link" routerLink="{{ routes.myProfile }}">
+                        My profile
+                    </a>
+                </li>
+                <li class="dropdown-list__item" *ngIf="user">
+                    <a class="nav-link" href="javascript:;" (click)="logout()">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </nav>
 <!-- Navbar -->
 
