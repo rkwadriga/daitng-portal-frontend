@@ -10,5 +10,11 @@ export const getRandomNumber = (from = 1000, to = 9999): number => {
     }
 
     let randomNum = Math.round(Math.random() * Math.pow(10, order));
+    if (randomNum > to) {
+        return randomNum - to;
+    }
+    if (randomNum === to) {
+        return to;
+    }
     return from + randomNum <= to ? from + randomNum : randomNum;
 }
