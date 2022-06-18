@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from "@angular/router";
 import { routes } from "../../config/routes";
 import { ApiService } from "../../services/api.service";
@@ -88,5 +88,44 @@ export class PersonComponent implements OnInit, OnDestroy {
     async onCloseMatchPopup() {
         this.isMatch = false;
         await this.router.navigateByUrl(routes.datingAccounts);
+    }
+
+    onClickPhotoPin(i: number) {
+        this.photoIndex = i;
+    }
+
+    @HostListener('document:keydown', ['$event'])
+    onKeydown(event: KeyboardEvent) {
+        // Get pressed arrow direction
+        const direction = event.key.match(/arrow(left|right)/i);
+        if (direction === null) {
+            return;
+        }
+
+        if (direction[1].toLowerCase() === 'left') {
+            this.prevPhoto();
+        } else {
+            this.nextPhoto();
+        }
+    }
+
+    prevPhoto() {
+        if (this.photoIndex > 0) {
+            this.photoIndex--;
+        } else {
+            this.photoIndex = this.photosCount - 1;
+        }
+    }
+
+    nextPhoto() {
+        if (this.photoIndex < this.photosCount - 1) {
+            this.photoIndex++;
+        } else {
+            this.photoIndex = 0;
+        }
+    }
+
+    counter(num: number): number[] {
+        return Array.from(Array(num).keys());
     }
 }

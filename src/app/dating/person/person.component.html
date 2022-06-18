@@ -3,6 +3,14 @@
 <div class="row" *ngIf="account">
     <div class="col-sm-4"></div>
     <div class="card col-sm-4" style="width: 27rem;">
+        <p class="card-header">Photo: {{ photoIndex + 1 }} / {{ photosCount }}</p>
+        <div class="card-body align-content-center">
+            <button
+                *ngFor="let i of counter(photosCount)"
+                [class]="'carousel-pin' + (i === photoIndex ? ' active' : '')"
+                (click)="onClickPhotoPin(i)"
+            ></button>
+        </div>
         <img
             [src]="account | img:account.photos[photoIndex]:viewPhotoSize"
             class="card-img-top"
@@ -12,9 +20,8 @@
         <!-- Buttons -->
         <div class="cart-buttons-row">
             <button
-                (click)="photoIndex = photoIndex  - 1"
+                (click)="prevPhoto()"
                 class="btn btn-primary"
-                [disabled]="photoIndex === 0"
                 title="Prev photo"
             >
                 <i class="bi bi-arrow-left"></i>
@@ -30,10 +37,9 @@
                 </button>
             </div>
             <button
-                (click)="photoIndex = photoIndex + 1"
+                (click)="nextPhoto()"
                 class="btn btn-primary"
                 title="Next photo"
-                [disabled]="photoIndex === photosCount - 1"
             >
                 <i class="bi bi-arrow-right"></i>
             </button>

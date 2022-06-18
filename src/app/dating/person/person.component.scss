@@ -1,0 +1,25 @@
+.align-content-center {
+    display: flex;
+    justify-content: center;
+}
+
+.carousel-pin {
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    margin: 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    outline: none;
+    padding: 0;
+}
+
+.carousel-pin.active, .carousel-pin:hover {
+    background: #888;
+}
