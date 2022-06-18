@@ -1,0 +1,12 @@
+.cart-buttons-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    padding: 10px 0;
+    align-items: center;
+
+    .central-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

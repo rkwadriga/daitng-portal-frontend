@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { User, UserService } from "./services/user.service";
 import { Router } from "@angular/router";
 import { Location } from '@angular/common';
@@ -13,11 +13,22 @@ import { photoSettings } from "./config/photo.settings";
 })
 export class AppComponent implements OnInit, OnDestroy {
     private subscriptions = new Subscription();
+    @HostListener('document:click', ['$event'])
+    documentClick(event: MouseEvent) {
+        this.toggleDropdown('page', event);
+    }
+
+    @ViewChild("menuBar") menuBar?: ElementRef;
+    @ViewChild("accountBar") accountBar?: ElementRef;
+
     title = 'daitng-portal-frontend';
     routes = routes;
-    showUserLinks = false;
     user: User | null = null;
     avatarSize = photoSettings.avatarSize;
+    dropdowns = {
+        menu: false,
+        account: false
+    }
 
     constructor(
         private readonly userService: UserService,
@@ -43,13 +54,28 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     async logout() {
-        this.toggleUserLinks();
         this.user = null;
         this.userService.logout();
         return await this.router.navigate(['/auth', 'login']);
     }
 
-    toggleUserLinks() {
-        this.showUserLinks = !this.showUserLinks;
+    toggleDropdown(item: string, event?: any) {
+        if (event?.target !== undefined
+            && event.target !== this.menuBar?.nativeElement
+            && event.target !== this.accountBar?.nativeElement
+            && event?.target?.parentElement !== this.accountBar?.nativeElement
+        ) {
+            this.dropdowns.menu = false;
+            this.dropdowns.account = false;
+            return;
+        }
+
+        if (item === 'menu') {
+            this.dropdowns.menu = !this.dropdowns.menu;
+            this.dropdowns.account = false;
+        } else if (item === 'account') {
+            this.dropdowns.account = !this.dropdowns.account;
+            this.dropdowns.menu = false;
+        }
     }
 }

@@ -41,6 +41,7 @@ import { MatchPopupComponent } from './dating/match.popup/match.popup.component'
 import { SocketService } from "./services/socket.service";
 import { SpendPipe } from './pipes/spend.pipe';
 import { NotificationPopupComponent } from './notification-popup/notification-popup.component';
+import { RawPipe } from './pipes/raw.pipe';
 
 @NgModule({
     declarations: [
@@ -63,7 +64,8 @@ import { NotificationPopupComponent } from './notification-popup/notification-po
         DialogComponent,
         MatchPopupComponent,
         SpendPipe,
-        NotificationPopupComponent
+        NotificationPopupComponent,
+        RawPipe
     ],
     imports: [
         BrowserModule,
