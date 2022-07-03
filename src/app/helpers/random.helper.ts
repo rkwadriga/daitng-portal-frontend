@@ -1,17 +1,17 @@
 
 export const getRandomNumber = (from = 1000, to = 9999): number => {
-    if (from >= to) {
+    if (from === undefined || from > to) {
+        to = from;
+        from = 0;
+    } else if (to === from) {
         return to;
     }
-    if (to <= 1) {
-        return Math.round(Math.random());
+    if (to === 1) {
+        return Math.random();
+    } else if (to === 0) {
+        return 0;
     }
 
     const diff = to - from;
-    let order = 0, pow = 0;
-    while (pow <= diff % 10) {
-        pow = Math.pow(10, ++order);
-    }
-
-    return Math.round(from + diff * Math.random() * Math.pow(10, order - 1) / order);
+    return from + diff - Math.round(diff * Math.random());
 }
